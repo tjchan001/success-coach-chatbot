@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Dallas College Chatbot — MVP catalog snapshot. Mirrors the DegreePlan Pydantic schema in models.py.",
+  "programs": [
+    {
+      "title": "Associate of Arts — Psychology",
+      "degree_code": "AA.PSYC",
+      "total_hours": 60,
+      "semesters": [
+        {
+          "name": "Fall Semester 1",
+          "courses": [
+            { "code": "ENGL 1301", "title": "Composition I",                         "credits": "3" },
+            { "code": "PSYC 2301", "title": "General Psychology",                    "credits": "3" },
+            { "code": "MATH 1314", "title": "College Algebra",                       "credits": "3" },
+            { "code": "HIST 1301", "title": "United States History I",               "credits": "3" },
+            { "code": "SPCH 1311", "title": "Introduction to Speech Communication",  "credits": "3" }
+          ]
+        },
+        {
+          "name": "Spring Semester 1",
+          "courses": [
+            { "code": "ENGL 1302", "title": "Composition II",                        "credits": "3" },
+            { "code": "PSYC 2314", "title": "Lifespan Growth and Development",       "credits": "3" },
+            { "code": "GOVT 2305", "title": "Federal Government",                    "credits": "3" },
+            { "code": "BIOL 1406", "title": "Biology for Science Majors I",          "credits": "4" },
+            { "code": "PHIL 1301", "title": "Introduction to Philosophy",            "credits": "3" }
+          ]
+        },
+        {
+          "name": "Fall Semester 2",
+          "courses": [
+            { "code": "PSYC 2316", "title": "Psychology of Personality",             "credits": "3" },
+            { "code": "SOCI 1301", "title": "Introduction to Sociology",             "credits": "3" },
+            { "code": "GOVT 2306", "title": "Texas Government",                      "credits": "3" },
+            { "code": "HIST 1302", "title": "United States History II",              "credits": "3" },
+            { "code": "ARTS 1301", "title": "Art Appreciation",                      "credits": "3" }
+          ]
+        },
+        {
+          "name": "Spring Semester 2",
+          "courses": [
+            { "code": "PSYC 2319", "title": "Social Psychology",                     "credits": "3" },
+            { "code": "MATH 1342", "title": "Elementary Statistical Methods",        "credits": "3" },
+            { "code": "BIOL 1407", "title": "Biology for Science Majors II",         "credits": "4" },
+            { "code": "HUMA 1301", "title": "Introduction to Humanities",            "credits": "3" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Associate of Applied Science — Information Technology",
+      "degree_code": "AAS.IT",
+      "total_hours": 62,
+      "semesters": [
+        {
+          "name": "Fall Semester 1",
+          "courses": [
+            { "code": "ITSE 1302", "title": "Computer Programming",                  "credits": "3" },
+            { "code": "ITSC 1301", "title": "Introduction to Computers",             "credits": "3" },
+            { "code": "ENGL 1301", "title": "Composition I",                         "credits": "3" },
+            { "code": "MATH 1314", "title": "College Algebra",                       "credits": "3" },
+            { "code": "ITSE 1329", "title": "Personal Computer Hardware",            "credits": "3" }
+          ]
+        },
+        {
+          "name": "Spring Semester 1",
+          "courses": [
+            { "code": "ITSE 2302", "title": "Intermediate Web Programming",          "credits": "3" },
+            { "code": "ITNW 1354", "title": "Implementing and Supporting Servers",   "credits": "3" },
+            { "code": "ENGL 1302", "title": "Composition II",                        "credits": "3" },
+            { "code": "COSC 1315", "title": "Fundamentals of Programming",           "credits": "3" },
+            { "code": "GOVT 2305", "title": "Federal Government",                    "credits": "3" }
+          ]
+        },
+        {
+          "name": "Fall Semester 2",
+          "courses": [
+            { "code": "ITSE 2321", "title": "Database Programming",                  "credits": "3" },
+            { "code": "ITNW 2435", "title": "Network Administration",                "credits": "4" },
+            { "code": "HIST 1301", "title": "United States History I",               "credits": "3" },
+            { "code": "SPCH 1311", "title": "Introduction to Speech Communication",  "credits": "3" }
+          ]
+        },
+        {
+          "name": "Spring Semester 2",
+          "courses": [
+            { "code": "ITSE 2459", "title": "Advanced Computer Programming",         "credits": "4" },
+            { "code": "ITNW 2356", "title": "Network Security Fundamentals",         "credits": "3" },
+            { "code": "HIST 1302", "title": "United States History II",              "credits": "3" },
+            { "code": "GOVT 2306", "title": "Texas Government",                      "credits": "3" }
+          ]
+        }
+      ]
+    }
+  ]
+}

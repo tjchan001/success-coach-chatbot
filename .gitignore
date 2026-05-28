@@ -1,0 +1,48 @@
+# ==========================================
+# Dallas College Chatbot: Sovereign .gitignore
+# ==========================================
+
+# Core Secrets & Environment Keys (CRITICAL)
+.env
+.env.*
+*.local
+secrets.json
+
+# Python System Noise
+__pycache__/
+*.py[cod]
+*$py.class
+*.spec
+.pytest_cache/
+.coverage
+htmlcov/
+.vstyle/
+
+# Virtual Environments & Dependencies
+.venv/
+venv/
+ENV/
+env/
+lib/
+lib64/
+
+# App Data Caching (Do not sync your giant scraped DB targets)
+# Note: Keep catalog_mvp.json tracked if you want a baseline mock mock, 
+# but ignore real live production dumps here.
+data/catalog_live.json
+
+# Project IDX / Firebase Studio / VS Code configurations
+.idx/
+.vscode/launch.json
+.vscode/tasks.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS Specific Clutter
+Thumbs.db
+Ehthumbs.db
+Desktop.ini
+.DS_Store

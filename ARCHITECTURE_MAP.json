@@ -1,0 +1,185 @@
+﻿{
+  "generated": "2026-05-27T23:57:28-05:00",
+  "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
+  "pinnedFiles": [
+    "models.py",
+    "CODING_STANDARDS.md",
+    ".github/copilot-instructions.md"
+  ],
+  "excludeDirs": [
+    ".git",
+    ".github",
+    "__pycache__",
+    ".pytest_cache",
+    ".venv",
+    "node_modules",
+    "dist"
+  ],
+  "fileCount": 11,
+  "files": [
+    {
+      "path": "CODING_STANDARDS.md",
+      "isPinned": true,
+      "extension": ".md",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "models.py",
+      "isPinned": true,
+      "extension": ".py",
+      "classes": [
+        "class Course(BaseModel):",
+        "class Semester(BaseModel):",
+        "class DegreePlan(BaseModel):"
+      ],
+      "functions": [],
+      "imports": [
+        "from __future__ import annotations",
+        "from pydantic import BaseModel, ConfigDict, Field"
+      ],
+      "routes": []
+    },
+    {
+      "path": "api/__init__.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "api/chat.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [
+        "class ChatRequest(BaseModel):",
+        "class ChatResponse(BaseModel):"
+      ],
+      "functions": [],
+      "imports": [
+        "from __future__ import annotations",
+        "import os",
+        "from typing import Annotated",
+        "from fastapi import FastAPI, HTTPException, status",
+        "from pydantic import BaseModel, ConfigDict, Field"
+      ],
+      "routes": [
+        "def health_check() -> dict[str, str]:",
+        "def chat(request: ChatRequest) -> ChatResponse:",
+        "def _retrieve_mock_chunks(query: str) -> list[str]:",
+        "def _synthesise_answer(query: str, chunks: list[str]) -> str:"
+      ]
+    },
+    {
+      "path": "api/helper_reranker.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [],
+      "imports": [
+        "from __future__ import annotations",
+        "import math",
+        "import re",
+        "from collections import Counter"
+      ],
+      "routes": [
+        "def rerank_chunks(query: str, chunks: list[str], top_k: int = 5) -> list[str]:",
+        "def _tokenise(text: str) -> list[str]:",
+        "def _score_chunk(query: str, chunk: str) -> float:"
+      ]
+    },
+    {
+      "path": "data/catalog_mvp.json",
+      "isPinned": false,
+      "extension": ".json",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "public/index.html",
+      "isPinned": false,
+      "extension": ".html",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "public/widget.js",
+      "isPinned": false,
+      "extension": ".js",
+      "classes": [],
+      "functions": [
+        "function appendMessage(text, role) {",
+        "function setTypingIndicator(visible) {",
+        "function setInputEnabled(enabled) {"
+      ],
+      "imports": [],
+      "routes": [
+        "const response = await fetch(`${API_BASE}/chat`, {",
+        "sendBtn.addEventListener(\"click\", () => { void handleSend(); });",
+        "userInput.addEventListener(\"keydown\", (event) => {"
+      ]
+    },
+    {
+      "path": "scripts/scraper.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def _validate_catalog_url(url: str) -> None:",
+        "def _extract_total_hours(soup: BeautifulSoup) -> int:",
+        "def _parse_course_row(row: BeautifulSoup) -> Course | None:",
+        "def parse_degree_page(url: str) -> DegreePlan:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import re",
+        "import httpx",
+        "from bs4 import BeautifulSoup",
+        "from models import Course, DegreePlan, Semester"
+      ],
+      "routes": []
+    },
+    {
+      "path": "tests/__init__.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "tests/test_scraper.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [
+        "class TestCourseInitialisation:",
+        "class TestCourseValidationErrors:",
+        "class TestDegreePlanNestedStructure:"
+      ],
+      "functions": [
+        "def test_course_initialises_with_string_credits(self) -> None:",
+        "def test_missing_code_raises_validation_error(self) -> None:",
+        "def test_missing_total_hours_raises_validation_error(self) -> None:",
+        "def test_degree_plan_nests_semesters_and_courses(self) -> None:",
+        "def test_degree_plan_without_degree_code_defaults_to_none(self) -> None:",
+        "def test_course_is_immutable(self) -> None:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import pytest",
+        "from pydantic import ValidationError",
+        "from models import Course, DegreePlan, Semester"
+      ],
+      "routes": []
+    }
+  ]
+}
