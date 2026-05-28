@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-27T23:57:28-05:00",
+  "generated": "2026-05-28T00:26:59-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -15,7 +15,7 @@
     "node_modules",
     "dist"
   ],
-  "fileCount": 11,
+  "fileCount": 12,
   "files": [
     {
       "path": "CODING_STANDARDS.md",
@@ -57,21 +57,35 @@
       "extension": ".py",
       "classes": [
         "class ChatRequest(BaseModel):",
-        "class ChatResponse(BaseModel):"
+        "class ChatResponse(BaseModel):",
+        "class GeminiPart(BaseModel):",
+        "class GeminiContent(BaseModel):",
+        "class GeminiRequest(BaseModel):",
+        "class GroqMessage(BaseModel):",
+        "class GroqRequest(BaseModel):"
       ],
       "functions": [],
       "imports": [
         "from __future__ import annotations",
+        "import json",
+        "import logging",
         "import os",
+        "from pathlib import Path",
         "from typing import Annotated",
+        "import httpx",
         "from fastapi import FastAPI, HTTPException, status",
         "from pydantic import BaseModel, ConfigDict, Field"
       ],
       "routes": [
-        "def health_check() -> dict[str, str]:",
-        "def chat(request: ChatRequest) -> ChatResponse:",
-        "def _retrieve_mock_chunks(query: str) -> list[str]:",
-        "def _synthesise_answer(query: str, chunks: list[str]) -> str:"
+        "def _parse_cors_origins() -> list[str]:",
+        "def _load_catalog_prompt_payload() -> str:",
+        "def _build_system_prompt(catalog_payload: str) -> str:",
+        "def _load_groq_api_keys() -> list[str]:",
+        "def _load_gemini_api_keys() -> list[str]:",
+        "def _build_gemini_request(message: str, catalog_payload: str) -> GeminiRequest:",
+        "def _build_groq_request(message: str, catalog_payload: str) -> GroqRequest:",
+        "def _extract_gemini_text(response_payload: dict[str, object]) -> str:",
+        "def _extract_groq_text(response_payload: dict[str, object]) -> str:"
       ]
     },
     {
@@ -116,15 +130,22 @@
       "extension": ".js",
       "classes": [],
       "functions": [
+        "function createElement(tagName, className) {",
+        "function setSafeText(element, text) {",
+        "function mountStyles() {",
         "function appendMessage(text, role) {",
+        "function setInteractiveState(enabled) {",
+        "function setPanelOpen(open) {",
+        "function setStatus(text) {",
         "function setTypingIndicator(visible) {",
-        "function setInputEnabled(enabled) {"
+        "function readValidatedMessage() {"
       ],
       "imports": [],
       "routes": [
-        "const response = await fetch(`${API_BASE}/chat`, {",
-        "sendBtn.addEventListener(\"click\", () => { void handleSend(); });",
-        "userInput.addEventListener(\"keydown\", (event) => {"
+        "const response = await fetch(API_URL, {",
+        "launcher.addEventListener(\"click\", () => {",
+        "sendButton.addEventListener(\"click\", () => {",
+        "input.addEventListener(\"keydown\", (event) => {"
       ]
     },
     {
@@ -135,14 +156,24 @@
       "functions": [
         "def _validate_catalog_url(url: str) -> None:",
         "def _extract_total_hours(soup: BeautifulSoup) -> int:",
-        "def _parse_course_row(row: BeautifulSoup) -> Course | None:",
+        "def _parse_course_row(element: Tag) -> Course | None:",
+        "def _infer_degree_code(url: str, title: str) -> str | None:",
+        "def _extract_semesters_from_courseleaf_table(table: Tag) -> list[Semester]:",
+        "def _extract_semesters_by_section_scan(soup: BeautifulSoup) -> list[Semester]:",
+        "def _extract_semesters_by_regex_sweep(soup: BeautifulSoup) -> list[Semester]:",
+        "def _parse_courseleaf_course_item(item: Tag) -> Course | None:",
+        "def _extract_semesters_from_courseleaf_program_list(soup: BeautifulSoup) -> list[Semester]:",
         "def parse_degree_page(url: str) -> DegreePlan:"
       ],
       "imports": [
         "from __future__ import annotations",
+        "import json",
+        "import logging",
         "import re",
+        "import sys",
+        "from pathlib import Path",
         "import httpx",
-        "from bs4 import BeautifulSoup",
+        "from bs4 import BeautifulSoup, NavigableString, Tag",
         "from models import Course, DegreePlan, Semester"
       ],
       "routes": []
@@ -155,6 +186,31 @@
       "functions": [],
       "imports": [],
       "routes": []
+    },
+    {
+      "path": "tests/test_chat.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [
+        "class DummyAsyncClient:",
+        "class DummyAsyncClient:"
+      ],
+      "functions": [
+        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
+        "def __init__(self, *_args: object, **_kwargs: object) -> None:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import json",
+        "from pathlib import Path",
+        "import httpx",
+        "import pytest",
+        "from fastapi import HTTPException",
+        "from api import chat"
+      ],
+      "routes": [
+        "def test_shared_prompt_and_requests_are_deterministic() -> None:"
+      ]
     },
     {
       "path": "tests/test_scraper.py",

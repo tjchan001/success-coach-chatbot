@@ -1,94 +1,673 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$comment": "Dallas College Chatbot — MVP catalog snapshot. Mirrors the DegreePlan Pydantic schema in models.py.",
   "programs": [
     {
-      "title": "Associate of Arts — Psychology",
-      "degree_code": "AA.PSYC",
+      "title": "Computer Information Technology Courses",
+      "degree_code": null,
       "total_hours": 60,
       "semesters": [
         {
-          "name": "Fall Semester 1",
+          "name": "BCIS",
           "courses": [
-            { "code": "ENGL 1301", "title": "Composition I",                         "credits": "3" },
-            { "code": "PSYC 2301", "title": "General Psychology",                    "credits": "3" },
-            { "code": "MATH 1314", "title": "College Algebra",                       "credits": "3" },
-            { "code": "HIST 1301", "title": "United States History I",               "credits": "3" },
-            { "code": "SPCH 1311", "title": "Introduction to Speech Communication",  "credits": "3" }
+            {
+              "code": "BCIS 1305",
+              "title": "Business Computer Applications",
+              "credits": "3"
+            },
+            {
+              "code": "BCIS 1405",
+              "title": "Business Computer Applications",
+              "credits": "4"
+            }
           ]
         },
         {
-          "name": "Spring Semester 1",
+          "name": "COSC",
           "courses": [
-            { "code": "ENGL 1302", "title": "Composition II",                        "credits": "3" },
-            { "code": "PSYC 2314", "title": "Lifespan Growth and Development",       "credits": "3" },
-            { "code": "GOVT 2305", "title": "Federal Government",                    "credits": "3" },
-            { "code": "BIOL 1406", "title": "Biology for Science Majors I",          "credits": "4" },
-            { "code": "PHIL 1301", "title": "Introduction to Philosophy",            "credits": "3" }
+            {
+              "code": "COSC 1301",
+              "title": "Introduction to Computing",
+              "credits": "3"
+            },
+            {
+              "code": "COSC 1315",
+              "title": "Introduction to Computer Programming",
+              "credits": "3"
+            },
+            {
+              "code": "COSC 1420",
+              "title": "C Programming",
+              "credits": "4"
+            },
+            {
+              "code": "COSC 1436",
+              "title": "Programming Fundamentals I",
+              "credits": "4"
+            },
+            {
+              "code": "COSC 1437",
+              "title": "Programming Fundamentals II",
+              "credits": "4"
+            },
+            {
+              "code": "COSC 2425",
+              "title": "Computer Organization",
+              "credits": "4"
+            },
+            {
+              "code": "COSC 2436",
+              "title": "Programming Fundamentals III",
+              "credits": "4"
+            }
           ]
         },
         {
-          "name": "Fall Semester 2",
+          "name": "CPMT",
           "courses": [
-            { "code": "PSYC 2316", "title": "Psychology of Personality",             "credits": "3" },
-            { "code": "SOCI 1301", "title": "Introduction to Sociology",             "credits": "3" },
-            { "code": "GOVT 2306", "title": "Texas Government",                      "credits": "3" },
-            { "code": "HIST 1302", "title": "United States History II",              "credits": "3" },
-            { "code": "ARTS 1301", "title": "Art Appreciation",                      "credits": "3" }
+            {
+              "code": "CPMT 1403",
+              "title": "Introduction to Computer Technology",
+              "credits": "4"
+            },
+            {
+              "code": "CPMT 1404",
+              "title": "Microcomputer System Software",
+              "credits": "4"
+            },
+            {
+              "code": "CPMT 1443",
+              "title": "Microcomputer Architecture",
+              "credits": "4"
+            },
+            {
+              "code": "CPMT 1449",
+              "title": "Computer Networking Technology",
+              "credits": "4"
+            },
+            {
+              "code": "CPMT 1451",
+              "title": "IT Essentials: PC Hardware and Software",
+              "credits": "4"
+            },
+            {
+              "code": "CPMT 2350",
+              "title": "Industry Certification Preparation",
+              "credits": "3"
+            },
+            {
+              "code": "CPMT 2445",
+              "title": "Computer System Troubleshooting",
+              "credits": "4"
+            }
           ]
         },
         {
-          "name": "Spring Semester 2",
+          "name": "ITCC",
           "courses": [
-            { "code": "PSYC 2319", "title": "Social Psychology",                     "credits": "3" },
-            { "code": "MATH 1342", "title": "Elementary Statistical Methods",        "credits": "3" },
-            { "code": "BIOL 1407", "title": "Biology for Science Majors II",         "credits": "4" },
-            { "code": "HUMA 1301", "title": "Introduction to Humanities",            "credits": "3" }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Associate of Applied Science — Information Technology",
-      "degree_code": "AAS.IT",
-      "total_hours": 62,
-      "semesters": [
-        {
-          "name": "Fall Semester 1",
-          "courses": [
-            { "code": "ITSE 1302", "title": "Computer Programming",                  "credits": "3" },
-            { "code": "ITSC 1301", "title": "Introduction to Computers",             "credits": "3" },
-            { "code": "ENGL 1301", "title": "Composition I",                         "credits": "3" },
-            { "code": "MATH 1314", "title": "College Algebra",                       "credits": "3" },
-            { "code": "ITSE 1329", "title": "Personal Computer Hardware",            "credits": "3" }
+            {
+              "code": "ITCC 1191",
+              "title": "Special Topics in System, Networking, and LAN/WAN Management/Manager",
+              "credits": "1"
+            },
+            {
+              "code": "ITCC 1314",
+              "title": "CCNA 1: Introduction to Networks",
+              "credits": "3"
+            },
+            {
+              "code": "ITCC 1344",
+              "title": "CCNA 2: Switching, Routing, and Wireless Essentials",
+              "credits": "3"
+            },
+            {
+              "code": "ITCC 1408",
+              "title": "Introduction to Voice over Internet Protocol (VoIP",
+              "credits": "4"
+            },
+            {
+              "code": "ITCC 2320",
+              "title": "CCNA 3: Enterprise Networking, Security, and Automation",
+              "credits": "3"
+            },
+            {
+              "code": "ITCC 2330",
+              "title": "CCNP Enterprise: Core Networking (ENCOR",
+              "credits": "3"
+            },
+            {
+              "code": "ITCC 2335",
+              "title": "CCNP Enterprise: Advanced Routing (ENARSI",
+              "credits": "3"
+            },
+            {
+              "code": "ITCC 2343",
+              "title": "Network Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITCC 2459",
+              "title": "Advanced Voice Over Internet Protocol (VOIP",
+              "credits": "4"
+            }
           ]
         },
         {
-          "name": "Spring Semester 1",
+          "name": "ITMC",
           "courses": [
-            { "code": "ITSE 2302", "title": "Intermediate Web Programming",          "credits": "3" },
-            { "code": "ITNW 1354", "title": "Implementing and Supporting Servers",   "credits": "3" },
-            { "code": "ENGL 1302", "title": "Composition II",                        "credits": "3" },
-            { "code": "COSC 1315", "title": "Fundamentals of Programming",           "credits": "3" },
-            { "code": "GOVT 2305", "title": "Federal Government",                    "credits": "3" }
+            {
+              "code": "ITMC 2406",
+              "title": "Populating a Data Warehouse with Microsoft SQL",
+              "credits": "4"
+            }
           ]
         },
         {
-          "name": "Fall Semester 2",
+          "name": "ITMT",
           "courses": [
-            { "code": "ITSE 2321", "title": "Database Programming",                  "credits": "3" },
-            { "code": "ITNW 2435", "title": "Network Administration",                "credits": "4" },
-            { "code": "HIST 1301", "title": "United States History I",               "credits": "3" },
-            { "code": "SPCH 1311", "title": "Introduction to Speech Communication",  "credits": "3" }
+            {
+              "code": "ITMT 1357",
+              "title": "Administering a Windows Server Operating System",
+              "credits": "3"
+            },
+            {
+              "code": "ITMT 1370",
+              "title": "Powershell Scripting",
+              "credits": "3"
+            },
+            {
+              "code": "ITMT 1403",
+              "title": "Querying Microsoft SQL Server with Transact-SQL",
+              "credits": "4"
+            },
+            {
+              "code": "ITMT 1405",
+              "title": "Configuring Advanced Windows Server Operating System",
+              "credits": "4"
+            },
+            {
+              "code": "ITMT 1406",
+              "title": "Computer Systems Networking and Telecommunications",
+              "credits": "4"
+            },
+            {
+              "code": "ITMT 1458",
+              "title": "Windows Client Operating System",
+              "credits": "4"
+            },
+            {
+              "code": "ITMT 2304",
+              "title": "Implementing an Advanced Server Infrastructure",
+              "credits": "3"
+            },
+            {
+              "code": "ITMT 2305",
+              "title": "Designing and Implementing a Server Infrastructure",
+              "credits": "3"
+            },
+            {
+              "code": "ITMT 2440",
+              "title": "Designing Security for Microsoft Networks",
+              "credits": "4"
+            }
           ]
         },
         {
-          "name": "Spring Semester 2",
+          "name": "ITNW",
           "courses": [
-            { "code": "ITSE 2459", "title": "Advanced Computer Programming",         "credits": "4" },
-            { "code": "ITNW 2356", "title": "Network Security Fundamentals",         "credits": "3" },
-            { "code": "HIST 1302", "title": "United States History II",              "credits": "3" },
-            { "code": "GOVT 2306", "title": "Texas Government",                      "credits": "3" }
+            {
+              "code": "ITNW 1164",
+              "title": "Practicum (or Field Experience) - Computer Systems Networking and Telecommunications",
+              "credits": "1"
+            },
+            {
+              "code": "ITNW 1192",
+              "title": "Special Topics in Computer Systems Networking and Telecommunications",
+              "credits": "1"
+            },
+            {
+              "code": "ITNW 1264",
+              "title": "Practicum (or Field Experience) - Computer Systems Networking and Telecommunications",
+              "credits": "2"
+            },
+            {
+              "code": "ITNW 1274",
+              "title": "Managing Web Site Development Projects",
+              "credits": "2"
+            },
+            {
+              "code": "ITNW 1308",
+              "title": "Implementing and Supporting Client Operating Systems",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1309",
+              "title": "Fundamentals of Cloud Computing",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1313",
+              "title": "Computer Virtualization",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1325",
+              "title": "Fundamentals of Networking Technologies",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1336",
+              "title": "Cloud Deployment and Infrastructure Management",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1345",
+              "title": "Implementing Network Directory Services",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1354",
+              "title": "Implementing and Supporting Servers",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1364",
+              "title": "Practicum (or Field Experience) - Computer Systems Networking and Telecommunications",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1373",
+              "title": "Cloud Computing Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1377",
+              "title": "Introduction to Infrastructure Automation",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1378",
+              "title": "Cloud Networking",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 1492",
+              "title": "Special Topics in Computer Systems Networking and Telecommunications",
+              "credits": "4"
+            },
+            {
+              "code": "ITNW 2327",
+              "title": "Advanced Cloud Concepts",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 2329",
+              "title": "Application Development for the Cloud",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 2350",
+              "title": "Enterprise Network",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 2352",
+              "title": "Administering a SQL Server",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 2364",
+              "title": "Practicum (or Field Experience)-Computer Systems Networking and Telecommunications",
+              "credits": "3"
+            },
+            {
+              "code": "ITNW 2370",
+              "title": "Containerization and Micro Services",
+              "credits": "3"
+            }
+          ]
+        },
+        {
+          "name": "ITSC",
+          "courses": [
+            {
+              "code": "ITSC 1164",
+              "title": "Practicum (or Field Experience) - Computer and Information Sciences, General",
+              "credits": "1"
+            },
+            {
+              "code": "ITSC 1166",
+              "title": "Practicum (or Field Experience) - Data Processing and Data Processing Technology/Technician",
+              "credits": "1"
+            },
+            {
+              "code": "ITSC 1171",
+              "title": "Introduction to Computers",
+              "credits": "1"
+            },
+            {
+              "code": "ITSC 1191",
+              "title": "Special Topics in Computer and Information Sciences, General",
+              "credits": "1"
+            },
+            {
+              "code": "ITSC 1291",
+              "title": "Special Topics in Computer and Information Sciences, General",
+              "credits": "2"
+            },
+            {
+              "code": "ITSC 1301",
+              "title": "Introduction to Computers",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1305",
+              "title": "Introduction to PC Operating Systems",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1315",
+              "title": "Project Management Software",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1316",
+              "title": "Linux Installation and Configuration",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1325",
+              "title": "Personal Computer Hardware",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1364",
+              "title": "Practicum (or Field Experience)-Computer and Information Sciences, General",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1370",
+              "title": "Google IT Support Professional",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1380",
+              "title": "Cooperative Education",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 1391",
+              "title": "Special Topics in Computer and Information Sciences, General",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 2325",
+              "title": "Advanced Linux",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 2335",
+              "title": "Application Software Problem Solving",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 2339",
+              "title": "Personal Computer Help Desk",
+              "credits": "3"
+            },
+            {
+              "code": "ITSC 2421",
+              "title": "Integrated Software Applications II",
+              "credits": "4"
+            },
+            {
+              "code": "ITSC 2431",
+              "title": "Integrated Software Applications III",
+              "credits": "4"
+            },
+            {
+              "code": "ITSC 2435",
+              "title": "Application Software Problem Solving",
+              "credits": "4"
+            },
+            {
+              "code": "ITSC 2437",
+              "title": "UNIX Operating System II",
+              "credits": "4"
+            },
+            {
+              "code": "ITSC 2439",
+              "title": "Personal Computer Help Desk Support",
+              "credits": "4"
+            }
+          ]
+        },
+        {
+          "name": "ITSE",
+          "courses": [
+            {
+              "code": "ITSE 1191",
+              "title": "Special Topics in Computer Programming",
+              "credits": "1"
+            },
+            {
+              "code": "ITSE 1301",
+              "title": "Web Design Tools",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1302",
+              "title": "Computer Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1303",
+              "title": "Introduction to MySQL",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1306",
+              "title": "PHP Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1307",
+              "title": "Introduction to C++ Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1311",
+              "title": "Beginning Web Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1329",
+              "title": "Programming Logic and Design",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1330",
+              "title": "Introduction to C# Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1333",
+              "title": "Mobile Applications Development",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1345",
+              "title": "Introduction to Oracle SQL",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1346",
+              "title": "Database Theory and Design",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1350",
+              "title": "System Analysis and Design",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1359",
+              "title": "Introduction to Scripting Languages",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1370",
+              "title": "Introduction to Python Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 1391",
+              "title": "Special Topics in Computer Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2302",
+              "title": "Intermediate Web Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2305",
+              "title": "Windows Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2309",
+              "title": "Database Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2310",
+              "title": "iOS Application Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2313",
+              "title": "Web Authoring",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2317",
+              "title": "Java Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2321",
+              "title": "Object-Oriented Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2331",
+              "title": "Advanced C++ Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2343",
+              "title": "Advanced Mobile Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2353",
+              "title": "Advanced C# Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2370",
+              "title": "Intermediate Python Programming",
+              "credits": "3"
+            },
+            {
+              "code": "ITSE 2371",
+              "title": "Python Data Science Tools",
+              "credits": "3"
+            }
+          ]
+        },
+        {
+          "name": "ITSY",
+          "courses": [
+            {
+              "code": "ITSY 1191",
+              "title": "Special Topics in Information Technology/Security",
+              "credits": "1"
+            },
+            {
+              "code": "ITSY 1300",
+              "title": "Fundamentals of Information Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 1342",
+              "title": "Information Technology Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 1391",
+              "title": "Special Topics in Information Technology/Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 1491",
+              "title": "Special Topics in Information Technology/Security",
+              "credits": "4"
+            },
+            {
+              "code": "ITSY 2300",
+              "title": "Operating System Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2301",
+              "title": "Firewalls and Network Security Design",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2341",
+              "title": "Security Management Practices",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2342",
+              "title": "Incident Response and Handling",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2345",
+              "title": "Network Defense and Countermeasures",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2359",
+              "title": "Security Assessment and Auditing",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2372",
+              "title": "Ethical Hacking and System Defense",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2386",
+              "title": "Internship-Computer and Information Systems Security",
+              "credits": "3"
+            },
+            {
+              "code": "ITSY 2430",
+              "title": "Intrusion Detection",
+              "credits": "4"
+            },
+            {
+              "code": "ITSY 2443",
+              "title": "Computer System Forensics",
+              "credits": "4"
+            },
+            {
+              "code": "ITSY 2445",
+              "title": "Network Defense and Countermeasures",
+              "credits": "4"
+            }
           ]
         }
       ]
