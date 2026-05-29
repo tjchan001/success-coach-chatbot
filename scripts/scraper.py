@@ -845,7 +845,7 @@ if __name__ == "__main__":
 
     _TARGET_PATHWAYS: dict[str, str] = {
         "Computer_Information_Technology_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3057",
-        "Web_Development_Certificate": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3058&print",
+        "Web_Development_Certificate": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3025",
         "Cybersecurity_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3060",
     }
 

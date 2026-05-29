@@ -675,10 +675,116 @@
     },
     {
       "program_id": "Web_Development_Certificate",
-      "title": "Conflict Management Courses",
+      "title": "Producer Certificate",
       "degree_code": null,
-      "total_hours": 60,
-      "semesters": []
+      "total_hours": 24,
+      "semesters": [
+        {
+          "name": "Commercial Music Ensemble Elective",
+          "courses": [
+            {
+              "code": "MUSP 1142",
+              "title": "Small Commercial Music Ensemble",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1150",
+              "title": "Small Commercial Music Ensemble: Jazz",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1151",
+              "title": "Small Commercial Music Ensemble: Recording",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1153",
+              "title": "Small Commercial Music Ensemble: Rock",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 2106",
+              "title": "Commercial Vocal Ensemble: General",
+              "credits": "1"
+            }
+          ]
+        },
+        {
+          "name": "Applied Commercial Music Elective",
+          "courses": [
+            {
+              "code": "MUSP 1101",
+              "title": "Applied Commercial Music: Arranging and Composition",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1104",
+              "title": "Applied Commercial Music: Bass Guitar",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1105",
+              "title": "Applied Commercial Music: Commercial Guitar",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1110",
+              "title": "Applied Commercial Music: Piano",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1117",
+              "title": "Applied Commercial Music: Percussion",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1123",
+              "title": "Applied Commercial Music: Synthesizer",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1127",
+              "title": "Applied Commercial Music: Voice",
+              "credits": "1"
+            },
+            {
+              "code": "MUSP 1201",
+              "title": "Applied Commercial Music: Arranging and Composition",
+              "credits": "2"
+            },
+            {
+              "code": "MUSP 1204",
+              "title": "Applied Commercial Music: Bass Guitar",
+              "credits": "2"
+            },
+            {
+              "code": "MUSP 1205",
+              "title": "Applied Commercial Music: Commercial Guitar",
+              "credits": "2"
+            },
+            {
+              "code": "MUSP 1210",
+              "title": "Applied Commercial Music: Piano",
+              "credits": "2"
+            },
+            {
+              "code": "MUSP 1217",
+              "title": "Applied Commercial Music: Percussion",
+              "credits": "2"
+            },
+            {
+              "code": "MUSP 1223",
+              "title": "Applied Commercial Music: Synthesizer",
+              "credits": "2"
+            },
+            {
+              "code": "MUSP 1227",
+              "title": "Applied Commercial Music: Voice",
+              "credits": "2"
+            }
+          ]
+        }
+      ]
     },
     {
       "program_id": "Cybersecurity_AAS",
