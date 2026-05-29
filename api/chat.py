@@ -335,6 +335,26 @@ class CatalogSearchEngine:
             normalized_codes.append(f"{rubric.upper()} {number}")
         return normalized_codes
 
+    def _extract_course_headers_from_query(self, user_query: str) -> list[str]:
+        """Extract normalized course-header patterns (e.g., CHEM 1411) from query text."""
+        return self._extract_course_codes(user_query)
+
+    def _lookup_program_titles_from_query(self, user_query: str) -> list[str]:
+        """Return program titles that are directly referenced in the query text."""
+        lowered_query: str = user_query.lower()
+        matched_titles: list[str] = []
+        seen_titles: set[str] = set()
+        for program in self._programs():
+            raw_title: object = program.get("title", "")
+            program_title: str = raw_title.strip() if isinstance(raw_title, str) else ""
+            if not program_title:
+                continue
+            lowered_title: str = program_title.lower()
+            if lowered_title in lowered_query and lowered_title not in seen_titles:
+                matched_titles.append(program_title)
+                seen_titles.add(lowered_title)
+        return matched_titles
+
     def _build_course_catalog_url(self, course_code: str) -> str:
         """Return a direct Dallas College catalog lookup URL for a course code."""
         normalized_course_code: str = re.sub(r"\s+", " ", course_code).strip()
@@ -342,6 +362,15 @@ class CatalogSearchEngine:
         return (
             "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
             f"search_keyword={encoded_course_code}"
+        )
+
+    def _build_program_catalog_url(self, program_title: str) -> str:
+        """Return a direct Dallas College program lookup URL for a program title."""
+        normalized_program_title: str = re.sub(r"\s+", " ", program_title).strip()
+        encoded_program_title: str = normalized_program_title.replace(" ", "+")
+        return (
+            "https://catalog.dallascollege.edu/preview_program.php?m=Programs&"
+            f"keyword={encoded_program_title}"
         )
 
     def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
@@ -523,13 +552,7 @@ class CatalogSearchEngine:
             program_title = (
                 str(raw_program_id).replace("_", " ").strip() if raw_program_id is not None else "program"
             )
-
-        normalized_title: str = re.sub(r"\s+", " ", program_title).strip()
-        encoded_title: str = normalized_title.replace(" ", "+")
-        return (
-            "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
-            f"search_keyword={encoded_title}"
-        )
+        return self._build_program_catalog_url(program_title)
 
     def _append_catalog_source_token(self, chunk_text: str, source_url: str) -> str:
         """Append the catalog source verification token while preserving context budget."""
@@ -552,6 +575,13 @@ class CatalogSearchEngine:
         targeted_payload: dict[str, object] = {
             "mode": "targeted_program",
             "program_id": program_id,
+            "citations": {
+                "program": {
+                    "token": f"[Catalog Source Verification Link: {source_url}]",
+                    "url": source_url,
+                },
+                "courses": [],
+            },
             "program": {
                 "program_id": program_id,
                 "title": program.get("title"),
@@ -579,6 +609,14 @@ class CatalogSearchEngine:
         semester_list: object = program_payload.get("semesters")
         if not isinstance(semester_list, list):
             return serialized
+
+        citations_obj: object = targeted_payload.get("citations")
+        course_citations: list[dict[str, str]] = []
+        if isinstance(citations_obj, dict):
+            citations_courses_obj: object = citations_obj.get("courses")
+            if isinstance(citations_courses_obj, list):
+                course_citations = citations_courses_obj  # type: ignore[assignment]
+        seen_course_citation_codes: set[str] = set()
 
         for semester in semesters:
             try:
@@ -613,6 +651,18 @@ class CatalogSearchEngine:
                                 compact_course["verification_token"] = (
                                     f"[Course Verification Link for {course_code}: {course_lookup_url}]"
                                 )
+                                if course_code not in seen_course_citation_codes and course_citations is not None:
+                                    course_citations.append(
+                                        {
+                                            "course_code": course_code,
+                                            "token": (
+                                                f"[Course Verification Link for {course_code}: "
+                                                f"{course_lookup_url}]"
+                                            ),
+                                            "url": course_lookup_url,
+                                        }
+                                    )
+                                    seen_course_citation_codes.add(course_code)
                             courses_container.append(compact_course)
 
                             serialized = self._json_within_budget(targeted_payload)
@@ -733,6 +783,56 @@ class CatalogSearchEngine:
                     return self._build_targeted_program_context(
                         program,
                         matched_program_id,
+                        current_source_url,
+                    )
+
+        query_course_headers: list[str] = self._extract_course_headers_from_query(user_query)
+        if query_course_headers:
+            query_course_codes: set[str] = {header.lower() for header in query_course_headers}
+            for program in self._programs():
+                try:
+                    program_id: str = str(program.get("program_id", "")).strip()
+                    semesters: object = program.get("semesters")
+                    if not isinstance(semesters, list):
+                        continue
+                    for semester in semesters:
+                        if not isinstance(semester, dict):
+                            continue
+                        courses: object = semester.get("courses")
+                        if not isinstance(courses, list):
+                            continue
+                        for course in courses:
+                            if not isinstance(course, dict):
+                                continue
+                            raw_course_code: object = course.get("code", "")
+                            normalized_course_code: str = (
+                                raw_course_code.lower().strip()
+                                if isinstance(raw_course_code, str)
+                                else ""
+                            )
+                            if normalized_course_code in query_course_codes:
+                                current_source_url: str = self._resolve_program_catalog_source_url(program)
+                                return self._build_targeted_program_context(
+                                    program,
+                                    program_id,
+                                    current_source_url,
+                                )
+                except Exception as exc:  # noqa: BLE001
+                    _LOG.warning("Skipping malformed program in course-header lookup: %s", exc)
+                    continue
+
+        matched_program_titles: list[str] = self._lookup_program_titles_from_query(user_query)
+        if matched_program_titles:
+            matched_program_title_set: set[str] = {title.lower() for title in matched_program_titles}
+            for program in self._programs():
+                raw_title: object = program.get("title", "")
+                program_title: str = raw_title.strip() if isinstance(raw_title, str) else ""
+                if program_title.lower() in matched_program_title_set:
+                    program_id = str(program.get("program_id", "")).strip()
+                    current_source_url: str = self._resolve_program_catalog_source_url(program)
+                    return self._build_targeted_program_context(
+                        program,
+                        program_id,
                         current_source_url,
                     )
 

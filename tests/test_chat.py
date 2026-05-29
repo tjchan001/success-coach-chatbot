@@ -572,8 +572,8 @@ def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) ->
 
     # Assert
     expected_url: str = (
-        "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
-        "search_keyword=Welding+Technology"
+        "https://catalog.dallascollege.edu/preview_program.php?m=Programs&"
+        "keyword=Welding+Technology"
     )
     assert f"[Catalog Source Verification Link: {expected_url}]" in context
 
@@ -614,10 +614,66 @@ def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_pa
 
     # Assert
     expected_url: str = (
-        "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
-        "search_keyword=Real+Estate"
+        "https://catalog.dallascollege.edu/preview_program.php?m=Programs&"
+        "keyword=Real+Estate"
     )
     assert f"[Catalog Source Verification Link: {expected_url}]" in context
+
+
+def test_context_slicer_matches_by_course_header_lookup(tmp_path: Path) -> None:
+    """Course-header regex extraction must map directly to its program context."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Chemistry_AAS",
+                        "title": "Chemistry AAS",
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "CHEM 1411",
+                                        "title": "General Chemistry I",
+                                        "credits": "4",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "program_id": "Business_Administration_AAS",
+                        "title": "Business Administration AAS",
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "BUSI 1301",
+                                        "title": "Business Principles",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("show CHEM 1411 prerequisites")
+
+    # Assert
+    assert "Chemistry_AAS" in context
+    assert "CHEM 1411" in context
+    assert "Business_Administration_AAS" not in context
 
 
 def test_matched_keywords_include_direct_course_lookup_url() -> None:

@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T12:10:29-05:00",
+  "generated": "2026-05-29T13:28:51-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -15,7 +15,7 @@
     "node_modules",
     "dist"
   ],
-  "fileCount": 15,
+  "fileCount": 16,
   "files": [
     {
       "path": "CODING_STANDARDS.md",
@@ -40,6 +40,15 @@
         "from __future__ import annotations",
         "from pydantic import BaseModel, ConfigDict, Field"
       ],
+      "routes": []
+    },
+    {
+      "path": ".vercel/project.json",
+      "isPinned": false,
+      "extension": ".json",
+      "classes": [],
+      "functions": [],
+      "imports": [],
       "routes": []
     },
     {
@@ -94,7 +103,10 @@
         "def is_out_of_bounds_query(self, user_query: str) -> bool:",
         "def _is_degree_layout_request(self, user_query: str) -> bool:",
         "def _extract_course_codes(self, raw_text: str) -> list[str]:",
+        "def _extract_course_headers_from_query(self, user_query: str) -> list[str]:",
+        "def _lookup_program_titles_from_query(self, user_query: str) -> list[str]:",
         "def _build_course_catalog_url(self, course_code: str) -> str:",
+        "def _build_program_catalog_url(self, program_title: str) -> str:",
         "def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:",
         "def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:",
         "def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
@@ -289,6 +301,7 @@
         "def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:",
         "def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:",
         "def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_path: Path) -> None:",
+        "def test_context_slicer_matches_by_course_header_lookup(tmp_path: Path) -> None:",
         "def test_matched_keywords_include_direct_course_lookup_url() -> None:",
         "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:",
         "def test_programs_include_continuing_education_container(tmp_path: Path) -> None:",

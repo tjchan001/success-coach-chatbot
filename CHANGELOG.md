@@ -5,6 +5,8 @@ All notable changes to this project are documented in this file.
 ## 2026-05-29
 
 ### Changed
+- Automated system-wide deep linking in [api/chat.py](api/chat.py) by adding query-time course-header and program-title extraction, dynamic program preview links (`preview_program.php?m=Programs&keyword=...`), and explicit per-course verification footprints in context payload arrays.
+- Updated deep-link regression coverage in [tests/test_chat.py](tests/test_chat.py) for program fallback URLs and course-header-driven program targeting.
 - Added strict exact-record template compliance guardrails in [api/chat.py](api/chat.py) output format rules to forbid invented course prefixes/numbers and require every displayed code to be an exact context match.
 - Expanded prompt contract assertions in [tests/test_chat.py](tests/test_chat.py) to lock the new anti-hallucination course-code constraints.
 - Upgraded [data/catalog_mvp.json](data/catalog_mvp.json) with prerequisite arrays on representative advanced Culinary/Bakery/Business courses (CHEF 1301, PSTR 2331, BUSI 2301) and added a root-level `continuing_education_programs` container with workforce contact-hour tracks.
