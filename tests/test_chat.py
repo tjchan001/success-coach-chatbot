@@ -55,7 +55,13 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     )
 
     # Assert
-    assert "123 verified course records" in system_prompt
+    assert "[ROLE]: Sovereign Automated AI Academic Advisor for Dallas College Computer Science/IT." in system_prompt
+    assert "[AI GOVERNANCE]: You MUST state that you are an automated AI system in the initial response." in system_prompt
+    assert "[MANDATORY GOVERNANCE GREETING PROTOCOL]:" in system_prompt
+    assert "Greetings, I am the automated AI Academic Advisor for Dallas College." in system_prompt
+    assert "Strict zero-tolerance hallucination lock" in system_prompt
+    assert "Academic catalog context unavailable. Connection terminal error." in system_prompt
+    assert "I cannot confirm that selection based on the current catalog data." in system_prompt
     assert catalog_payload in system_prompt
     assert groq_request.temperature == 0.0
     assert groq_request.top_p == 1.0
@@ -127,7 +133,7 @@ async def test_generate_chat_reply_uses_groq_first(monkeypatch: pytest.MonkeyPat
 
     # Assert
     assert response_model.reply == "ENGL 1301 is listed for 3 credit hours."
-    assert response_model.model == "groq/llama3-8b-8192"
+    assert response_model.model == "groq/llama-3.1-8b-instant"
     assert DummyAsyncClient.requested_urls == [chat._GROQ_CHAT_URL]
 
 

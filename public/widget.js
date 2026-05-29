@@ -16,7 +16,7 @@
 (() => {
   "use strict";
 
-  const API_URL = "http://127.0.0.1:8000/api/chat";
+  const API_URL = "http://localhost:8000/api/chat";
   const MAX_MESSAGE_LENGTH = 1000;
   const ROOT_ID = "dc-chatbot-root";
 

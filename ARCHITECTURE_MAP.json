@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-28T00:26:59-05:00",
+  "generated": "2026-05-28T23:41:41-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -15,7 +15,7 @@
     "node_modules",
     "dist"
   ],
-  "fileCount": 12,
+  "fileCount": 14,
   "files": [
     {
       "path": "CODING_STANDARDS.md",
@@ -107,6 +107,24 @@
       ]
     },
     {
+      "path": "ARCHITECTURE_REPORT.md",
+      "isPinned": false,
+      "extension": ".md",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "CHANGELOG.md",
+      "isPinned": false,
+      "extension": ".md",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
       "path": "data/catalog_mvp.json",
       "isPinned": false,
       "extension": ".json",
@@ -193,9 +211,11 @@
       "extension": ".py",
       "classes": [
         "class DummyAsyncClient:",
+        "class DummyAsyncClient:",
         "class DummyAsyncClient:"
       ],
       "functions": [
+        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:"
       ],
