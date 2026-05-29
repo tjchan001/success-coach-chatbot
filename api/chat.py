@@ -20,6 +20,8 @@ from __future__ import annotations
 import json
 import logging
 import os
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
@@ -311,11 +313,14 @@ def _parse_cors_origins() -> list[str]:
     return origins or ["*"]
 
 
-app = FastAPI(
-    title=_APP_TITLE,
-    description="Hybrid Groq and Gemini catalog-grounded Dallas College advising API.",
-    version=_APP_VERSION,
-)
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Load startup resources and yield control to the ASGI lifespan context."""
+    _get_catalog_search_engine()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 _CORS_ORIGINS: list[str] = _parse_cors_origins()
 _ALLOW_CREDENTIALS: bool = _CORS_ORIGINS != ["*"]
@@ -327,12 +332,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def _startup_load_catalog_search_engine() -> None:
-    """Warm the in-memory catalog search engine during API startup."""
-    _get_catalog_search_engine()
 
 
 class ChatRequest(BaseModel):

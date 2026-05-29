@@ -20,3 +20,4 @@ All notable changes to this project are documented in this file.
 - Added `CatalogSearchEngine` in [api/chat.py](api/chat.py) for in-memory metadata-guided context slicing, including keyword-to-program intent routing and bounded context generation via `get_optimized_context(user_query)`.
 - Refactored chat generation in [api/chat.py](api/chat.py) to inject query-optimized context snippets instead of full catalog dumps and updated metaprompt instructions to request pathway clarification when filtered slices lack exact answers.
 - Added context slicer regression tests in [tests/test_chat.py](tests/test_chat.py): targeted program isolation by keyword and generic-query budget-bound index slicing.
+- Replaced deprecated FastAPI `@app.on_event("startup")` initialization in [api/chat.py](api/chat.py) with an async lifespan context manager bound via `app = FastAPI(lifespan=lifespan)`.
