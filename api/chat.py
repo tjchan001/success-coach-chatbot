@@ -700,11 +700,13 @@ class CatalogSearchEngine:
         if matched_program_id is not None:
             for program in self._programs():
                 if str(program.get("program_id")) == matched_program_id:
-                    source_url: str = self._resolve_program_catalog_source_url(program)
+                    current_program_title: str = str(program.get("title", matched_program_id)).strip()
+                    current_source_url: str = self._resolve_program_catalog_source_url(program)
+                    _ = (current_program_title, current_source_url)
                     return self._build_targeted_program_context(
                         program,
                         matched_program_id,
-                        source_url,
+                        current_source_url,
                     )
 
         expanded_terms: list[str] = expand_user_query(user_query)
@@ -719,8 +721,14 @@ class CatalogSearchEngine:
                     term in normalized_program_title or term in normalized_program_id
                     for term in expanded_terms
                 ):
-                    source_url = self._resolve_program_catalog_source_url(program)
-                    return self._build_targeted_program_context(program, program_id, source_url)
+                    current_program_title: str = program_title
+                    current_source_url: str = self._resolve_program_catalog_source_url(program)
+                    _ = (current_program_title, current_source_url)
+                    return self._build_targeted_program_context(
+                        program,
+                        program_id,
+                        current_source_url,
+                    )
 
                 semesters: object = program.get("semesters")
                 if isinstance(semesters, list):
@@ -741,11 +749,13 @@ class CatalogSearchEngine:
                                     else ""
                                 )
                                 if any(term in normalized_course_code for term in expanded_terms):
-                                    source_url = self._resolve_program_catalog_source_url(program)
+                                    current_program_title = program_title
+                                    current_source_url = self._resolve_program_catalog_source_url(program)
+                                    _ = (current_program_title, current_source_url)
                                     return self._build_targeted_program_context(
                                         program,
                                         program_id,
-                                        source_url,
+                                        current_source_url,
                                     )
                         except Exception as exc:  # noqa: BLE001
                             _LOG.warning(

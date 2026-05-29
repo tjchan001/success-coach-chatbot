@@ -5,6 +5,8 @@ All notable changes to this project are documented in this file.
 ## 2026-05-29
 
 ### Changed
+- Updated the frontend chat-cleared system message in [public/widget.js](public/widget.js) to include the Dallas College AI Club Sandbox Engine greeting and sandbox disclaimer branding.
+- Hardened [api/chat.py](api/chat.py) optimized context matching so current program title and source URL are re-bound inside each local program iteration before appending `[Catalog Source Verification Link: ...]` tokens.
 - Replaced the inactive landing-page center input area in [public/index.html](public/index.html) with a promotional Dallas College AI Club banner and a safe external link to https://dallasai.club/.
 - Added centralized career-cluster synonym expansion in [api/chat.py](api/chat.py) via `CAREER_CLUSTER_MAP` and `expand_user_query(query_text)` to map high-level industry intent to catalog prefixes and stable search terms.
 - Updated optimized catalog context selection in [api/chat.py](api/chat.py) to evaluate whether any expanded term matches a program title, `program_id`, or course code during RAG chunk gathering, with defensive exception shielding in the iteration path.

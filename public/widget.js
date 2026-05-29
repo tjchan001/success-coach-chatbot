@@ -861,7 +861,7 @@
     localStorage.removeItem(CHAT_HISTORY_KEY);
     log.textContent = "";
     appendMessage(
-      "Chat history cleared. Ask about programs, course codes, or credit hours from the cached Dallas College catalog.",
+      "Chat history cleared.\n\nGreetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox Engine.\n\n(This application is a student-led AI Club sandbox demo and is not an officially sanctioned tool of Dallas College. For binding degree planning and institutional support, connect directly with a human advisor at the Official Dallas College Support Directory: https://www.dallascollege.edu/contact.)\n\nAsk me about programs, course codes, or credit hours from our sandbox catalog!",
       "bot",
       false,
       false,
