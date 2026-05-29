@@ -2,17 +2,17 @@
  * Dallas College Chatbot Widget.
  *
  * Architectural Intent:
- *   This file self-mounts an isolated floating chat widget into any page
- *   that includes it. The widget owns only presentation and transport,
- *   while all advisory logic stays in the FastAPI backend.
+ * This file self-mounts an isolated floating chat widget into any page
+ * that includes it. The widget owns only presentation and transport,
+ * while all advisory logic stays in the FastAPI backend.
  *
  * Security Rationale:
- *   - User input remains text-only; markdown rendering is applied only to
- *     backend reply strings after local HTML escaping.
- *   - No third-party markdown library is used; formatting is constrained to
- *     bold and bullet transformations with deterministic regex rules.
- *   - Network calls target a fixed local API endpoint and never include
- *     user-controlled URLs.
+ * - User input remains text-only; markdown rendering is applied only to
+ * backend reply strings after local HTML escaping.
+ * - No third-party markdown library is used; formatting is constrained to
+ * bold and bullet transformations with deterministic regex rules.
+ * - Network calls target a fixed local API endpoint and never include
+ * user-controlled URLs.
  */
 
 (() => {
@@ -608,6 +608,7 @@
             const required = Array.isArray(prerequisiteTree[courseCode])
               ? prerequisiteTree[courseCode]
               : [];
+            
             if (required.length > 0) {
               const completed = new Set(
                 historyCard.courses
@@ -615,12 +616,7 @@
                   .map((candidateCourse) => String(candidateCourse.code || "").trim()),
               );
               const missing = required.filter((neededCode) => !completed.has(neededCode));
-              if (missing.includes(courseCode)) {
-                const index = missing.indexOf(courseCode);
-                if (index >= 0) {
-                  missing.splice(index, 1);
-                }
-+              }
+              
               if (missing.length > 0) {
                 checkbox.checked = false;
                 warning.textContent = `Requires ${missing.join(", ")} first!`;
@@ -727,7 +723,7 @@
    * Send the chat request to the local FastAPI backend.
    *
    * @param {string} message
-  * @returns {Promise<{reply: string, model: string, progress_cards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>, prerequisite_tree?: Object.<string, Array<string>>}>}
+   * @returns {Promise<{reply: string, model: string, progress_cards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>, prerequisite_tree?: Object.<string, Array<string>>}>}
    */
   async function postMessage(message) {
     const response = await fetch(API_URL, {

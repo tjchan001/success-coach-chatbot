@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T00:26:12-05:00",
+  "generated": "2026-05-29T00:46:19-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -221,6 +221,7 @@
         "def _extract_semesters_by_regex_sweep(soup: BeautifulSoup) -> list[Semester]:",
         "def _parse_courseleaf_course_item(item: Tag) -> Course | None:",
         "def _extract_semesters_from_courseleaf_program_list(soup: BeautifulSoup) -> list[Semester]:",
+        "def discover_all_program_pathways() -> dict[str, str]:",
         "def parse_degree_page(url: str) -> DegreePlan:",
         "def _build_catalog_payload(pathways: dict[str, str]) -> dict[str, list[dict[str, object]]]:",
         "def _write_json_atomic(payload: dict[str, object], destination_path: Path) -> None:"
@@ -233,6 +234,7 @@
         "import re",
         "import sys",
         "import tempfile",
+        "import time",
         "from pathlib import Path",
         "import httpx",
         "from bs4 import BeautifulSoup, NavigableString, Tag",
