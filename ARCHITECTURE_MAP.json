@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-28T23:41:41-05:00",
+  "generated": "2026-05-28T23:54:05-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -150,8 +150,10 @@
       "functions": [
         "function createElement(tagName, className) {",
         "function setSafeText(element, text) {",
+        "function escapeHtml(text) {",
+        "function formatMarkdown(text) {",
         "function mountStyles() {",
-        "function appendMessage(text, role) {",
+        "function appendMessage(text, role, useMarkdown = false) {",
         "function setInteractiveState(enabled) {",
         "function setPanelOpen(open) {",
         "function setStatus(text) {",
@@ -181,14 +183,18 @@
         "def _extract_semesters_by_regex_sweep(soup: BeautifulSoup) -> list[Semester]:",
         "def _parse_courseleaf_course_item(item: Tag) -> Course | None:",
         "def _extract_semesters_from_courseleaf_program_list(soup: BeautifulSoup) -> list[Semester]:",
-        "def parse_degree_page(url: str) -> DegreePlan:"
+        "def parse_degree_page(url: str) -> DegreePlan:",
+        "def _build_catalog_payload(pathways: dict[str, str]) -> dict[str, list[dict[str, object]]]:",
+        "def _write_json_atomic(payload: dict[str, object], destination_path: Path) -> None:"
       ],
       "imports": [
         "from __future__ import annotations",
         "import json",
         "import logging",
+        "import os",
         "import re",
         "import sys",
+        "import tempfile",
         "from pathlib import Path",
         "import httpx",
         "from bs4 import BeautifulSoup, NavigableString, Tag",
@@ -247,13 +253,18 @@
         "def test_missing_total_hours_raises_validation_error(self) -> None:",
         "def test_degree_plan_nests_semesters_and_courses(self) -> None:",
         "def test_degree_plan_without_degree_code_defaults_to_none(self) -> None:",
-        "def test_course_is_immutable(self) -> None:"
+        "def test_course_is_immutable(self) -> None:",
+        "def _fake_parse_degree_page(_url: str) -> DegreePlan:",
+        "def test_write_json_atomic_writes_complete_payload(tmp_path: Path) -> None:"
       ],
       "imports": [
         "from __future__ import annotations",
+        "import json",
+        "from pathlib import Path",
         "import pytest",
         "from pydantic import ValidationError",
-        "from models import Course, DegreePlan, Semester"
+        "from models import Course, DegreePlan, Semester",
+        "from scripts import scraper"
       ],
       "routes": []
     }

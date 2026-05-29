@@ -12,10 +12,14 @@ Architectural Intent:
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
 from models import Course, DegreePlan, Semester
+from scripts import scraper
 
 
 # ---------------------------------------------------------------------------
@@ -205,3 +209,66 @@ class TestDegreePlanNestedStructure:
         # Act / Assert
         with pytest.raises((TypeError, ValidationError)):
             course.credits = "4"  # type: ignore[misc]
+
+
+def test_build_catalog_payload_adds_program_id_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Collector payload must include explicit program_id metadata per pathway key.
+
+    Arrange:
+        Stub parse_degree_page to return deterministic DegreePlan models for
+        two pathway URLs.
+    Act:
+        Build the multi-program payload using _build_catalog_payload.
+    Assert:
+        Output keeps the top-level "programs" shape and each item includes
+        the originating program_id.
+    """
+
+    def _fake_parse_degree_page(_url: str) -> DegreePlan:
+        return DegreePlan(
+            title="Sample Program",
+            degree_code="AAS.SAMP",
+            total_hours=60,
+            semesters=[Semester(name="Semester 1", courses=[])],
+        )
+
+    # Arrange
+    pathways: dict[str, str] = {
+        "Computer_Information_Technology_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3057",
+        "Web_Development_Certificate": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3058",
+    }
+    monkeypatch.setattr(scraper, "parse_degree_page", _fake_parse_degree_page)
+
+    # Act
+    payload: dict[str, list[dict[str, object]]] = scraper._build_catalog_payload(pathways)
+
+    # Assert
+    assert "programs" in payload
+    assert len(payload["programs"]) == 2
+    assert payload["programs"][0]["program_id"] == "Computer_Information_Technology_AAS"
+    assert payload["programs"][1]["program_id"] == "Web_Development_Certificate"
+
+
+def test_write_json_atomic_writes_complete_payload(tmp_path: Path) -> None:
+    """Atomic writer must persist the full JSON payload at destination path."""
+    # Arrange
+    destination: Path = tmp_path / "catalog_mvp.json"
+    payload: dict[str, object] = {
+        "programs": [
+            {
+                "program_id": "Cybersecurity_AAS",
+                "title": "Cybersecurity AAS",
+                "total_hours": 60,
+                "semesters": [],
+            }
+        ]
+    }
+
+    # Act
+    scraper._write_json_atomic(payload=payload, destination_path=destination)
+
+    # Assert
+    written_payload: dict[str, object] = json.loads(destination.read_text(encoding="utf-8"))
+    assert written_payload == payload

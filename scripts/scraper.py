@@ -31,8 +31,10 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -681,6 +683,62 @@ def parse_degree_page(url: str) -> DegreePlan:
     )
 
 
+def _build_catalog_payload(pathways: dict[str, str]) -> dict[str, list[dict[str, object]]]:
+    """Build the multi-program cache payload from pathway IDs and source URLs.
+
+    Architectural Intent:
+        Centralizes the multi-pathway scrape collector so cache-shape changes
+        can be tested without running live network requests from the CLI block.
+
+    Args:
+        pathways: Mapping of stable program IDs to catalog URLs.
+
+    Returns:
+        A dictionary with one top-level key, ``programs``, containing scraped
+        program objects with explicit ``program_id`` metadata.
+    """
+    programs: list[dict[str, object]] = []
+    for program_id, program_url in pathways.items():
+        _LOG.info("Starting catalog scrape → %s (%s)", program_id, program_url)
+        plan: DegreePlan = parse_degree_page(program_url)
+        program_object: dict[str, object] = {
+            "program_id": program_id,
+            **plan.model_dump(mode="json"),
+        }
+        programs.append(program_object)
+
+    return {"programs": programs}
+
+
+def _write_json_atomic(payload: dict[str, object], destination_path: Path) -> None:
+    """Atomically write the JSON payload to disk.
+
+    Architectural Intent:
+        Guarantees readers never observe a partially written catalog file by
+        writing to a temporary file in the same directory and replacing the
+        destination in one filesystem operation.
+
+    Args:
+        payload: JSON-serializable payload to persist.
+        destination_path: Final cache path.
+    """
+    destination_path.parent.mkdir(parents=True, exist_ok=True)
+    serialized_payload: str = json.dumps(payload, indent=2, ensure_ascii=False)
+
+    with tempfile.NamedTemporaryFile(
+        mode="w",
+        encoding="utf-8",
+        dir=destination_path.parent,
+        delete=False,
+    ) as temp_file:
+        temp_file.write(serialized_payload)
+        temp_file.flush()
+        os.fsync(temp_file.fileno())
+        temp_path: Path = Path(temp_file.name)
+
+    temp_path.replace(destination_path)
+
+
 # ---------------------------------------------------------------------------
 # CLI / cache-refresh entry point
 # ---------------------------------------------------------------------------
@@ -692,36 +750,24 @@ if __name__ == "__main__":
         stream=sys.stdout,
     )
 
-    _TEST_URL: str = (
-        "https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=3057"
-    )
-
-    _LOG.info("Starting catalog scrape → %s", _TEST_URL)
+    _TARGET_PATHWAYS: dict[str, str] = {
+        "Computer_Information_Technology_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3057",
+        "Web_Development_Certificate": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3058",
+        "Cybersecurity_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3060",
+    }
 
     try:
-        plan: DegreePlan = parse_degree_page(_TEST_URL)
+        output_payload: dict[str, list[dict[str, object]]] = _build_catalog_payload(
+            _TARGET_PATHWAYS
+        )
     except (httpx.HTTPStatusError, httpx.TimeoutException, ValueError) as exc:
         _LOG.error("Scrape failed: %s", exc)
         sys.exit(1)
 
-    _LOG.info(
-        "Scraped '%s' (%d semesters, %d total hours).",
-        plan.title,
-        len(plan.semesters),
-        plan.total_hours,
-    )
-
-    # Wrap in the same top-level shape used by data/catalog_mvp.json so the
-    # API and tests can load either the hand-crafted fixture or this live dump
-    # interchangeably.
-    output_payload: dict = {"programs": [plan.model_dump()]}
+    _LOG.info("Scraped %d programs.", len(output_payload["programs"]))
 
     cache_path: Path = Path(__file__).parent.parent / "data" / "catalog_mvp.json"
-    cache_path.parent.mkdir(parents=True, exist_ok=True)
-    cache_path.write_text(
-        json.dumps(output_payload, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
+    _write_json_atomic(output_payload, cache_path)
 
     _LOG.info("Cache written → %s", cache_path.resolve())
 

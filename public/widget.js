@@ -7,8 +7,10 @@
  *   while all advisory logic stays in the FastAPI backend.
  *
  * Security Rationale:
- *   - All response rendering uses text nodes and textContent only.
- *   - No innerHTML, template injection, or HTML interpolation is used.
+ *   - User input remains text-only; markdown rendering is applied only to
+ *     backend reply strings after local HTML escaping.
+ *   - No third-party markdown library is used; formatting is constrained to
+ *     bold and bullet transformations with deterministic regex rules.
  *   - Network calls target a fixed local API endpoint and never include
  *     user-controlled URLs.
  */
@@ -48,6 +50,42 @@
    */
   function setSafeText(element, text) {
     element.textContent = text;
+  }
+
+  /**
+   * Escape special HTML characters before controlled markdown rendering.
+   *
+   * @param {string} text
+   * @returns {string}
+   */
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  /**
+   * Convert a constrained markdown subset into safe HTML.
+   *
+   * Supported rules:
+   * - **bold** -> <strong>
+   * - - bullet -> <li>, grouped into <ul>
+   *
+   * @param {string} text
+   * @returns {string}
+   */
+  function formatMarkdown(text) {
+    const escaped = escapeHtml(text).replace(/\r\n/g, "\n");
+    const withBold = escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    const withListItems = withBold.replace(/(^|\n)\s*-\s+(.+?)(?=\n|$)/g, "$1<li>$2</li>");
+    const groupedLists = withListItems.replace(
+      /(?:<li>.*?<\/li>\s*)+/gs,
+      (match) => `<ul style="margin: 0.4em 0; padding-left: 1.2em;">${match}</ul>`,
+    );
+    return groupedLists.replace(/\n/g, "<br>");
   }
 
   /**
@@ -300,9 +338,13 @@
    * @param {"user"|"bot"|"error"} role
    * @returns {HTMLElement}
    */
-  function appendMessage(text, role) {
+  function appendMessage(text, role, useMarkdown = false) {
     const bubble = createElement("div", `dc-message dc-message-${role}`);
-    setSafeText(bubble, text);
+    if (useMarkdown) {
+      bubble.innerHTML = formatMarkdown(text);
+    } else {
+      setSafeText(bubble, text);
+    }
     log.appendChild(bubble);
     log.scrollTop = log.scrollHeight;
     return bubble;
@@ -438,7 +480,7 @@
     try {
       const payload = await postMessage(message);
       setTypingIndicator(false);
-      appendMessage(payload.reply, "bot");
+      appendMessage(payload.reply, "bot", true);
       setStatus(`Answered by ${payload.model}`);
     } catch (error) {
       setTypingIndicator(false);
