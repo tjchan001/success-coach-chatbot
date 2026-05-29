@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T10:37:55-05:00",
+  "generated": "2026-05-29T10:43:25-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -101,7 +101,8 @@
         "def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:",
         "def get_degree_prerequisite_tree(self, user_query: str) -> dict[str, list[str]]:",
         "def _json_within_budget(self, payload: dict[str, object]) -> str:",
-        "def _build_targeted_program_context(self, program: dict[str, object], program_id: str) -> str:",
+        "def _resolve_program_catalog_source_url(self, program: dict[str, object]) -> str:",
+        "def _append_catalog_source_token(self, chunk_text: str, source_url: str) -> str:",
         "def _build_generic_index_context(self) -> str:",
         "def get_optimized_context(self, user_query: str) -> str:",
         "def _get_catalog_search_engine() -> CatalogSearchEngine:",
@@ -283,6 +284,8 @@
         "def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:",
         "def test_expand_user_query_appends_cluster_targets() -> None:",
         "def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Path) -> None:",
+        "def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:",
+        "def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:",
         "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:",
         "def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -> None:",
         "def classify_intent(self, _user_query: str) -> str:",

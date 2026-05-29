@@ -62,9 +62,8 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     assert "Directly below the greeting, append this markdown italicized bracket notice exactly:" in system_prompt
     assert "*(This application is a student-led AI Club sandbox demo and is not an officially sanctioned tool of Dallas College." in system_prompt
     assert "[SOURCE CITATION VERIFICATION RULES]:" in system_prompt
-    assert "Game Development: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=2897" in system_prompt
-    assert "Culinary Arts: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=3061" in system_prompt
-    assert "Welding: https://catalog.dallascollege.edu/preview_program.php?catoid=2&poid=650" in system_prompt
+    assert "When rendering a program data card, look for the '[Catalog Source Verification Link: ...]' token" in system_prompt
+    assert "labeled with an incremented index like [1], [2]" in system_prompt
     assert "Strict zero-tolerance hallucination lock" in system_prompt
     assert "Academic catalog context unavailable. Connection terminal error." in system_prompt
     assert "I cannot confirm that selection based on the current catalog data." in system_prompt
@@ -479,6 +478,87 @@ def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Pat
     assert "ITSE 1301" in context
     assert "Cybersecurity_AAS" not in context
     assert "ITNW 1358" not in context
+
+
+def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:
+    """Targeted context must append source token using direct program source URL when present."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Web_Development_Certificate",
+                        "title": "Web Development Certificate",
+                        "source_url": "https://catalog.example.edu/program/web",
+                        "semesters": [
+                            {
+                                "name": "Core",
+                                "courses": [
+                                    {
+                                        "code": "ITSE 1301",
+                                        "title": "Web Design Tools",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("web requirements")
+
+    # Assert
+    assert "[Catalog Source Verification Link: https://catalog.example.edu/program/web]" in context
+
+
+def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:
+    """Targeted context must append fallback advanced-search source URL when direct URL is absent."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Welding_Certificate",
+                        "title": "Welding Technology",
+                        "semesters": [
+                            {
+                                "name": "Core",
+                                "courses": [
+                                    {
+                                        "code": "WLDG 1313",
+                                        "title": "Introduction to Blueprint Reading",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("welding technology program")
+
+    # Assert
+    expected_url: str = (
+        "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
+        "search_keyword=Welding+Technology"
+    )
+    assert f"[Catalog Source Verification Link: {expected_url}]" in context
 
 
 def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:

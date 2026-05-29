@@ -11,6 +11,10 @@ All notable changes to this project are documented in this file.
 - Updated governance greeting text in [api/chat.py](api/chat.py) to the Dallas College AI Club Sandbox Engine statement and added a mandatory student-led sandbox legal disclaimer rule directly below the greeting.
 - Added source-citation verification rules in [api/chat.py](api/chat.py) for Game Development, Culinary Arts, and Welding schema outputs with official Dallas College catalog footer links.
 - Expanded prompt contract assertions in [tests/test_chat.py](tests/test_chat.py) to lock the new greeting, disclaimer, and source-link rule matrix.
+- Refactored [api/chat.py](api/chat.py) targeted context generation to append a dynamic per-program token (`[Catalog Source Verification Link: ...]`) using direct catalog source URL fields when present and a generated advanced-search fallback URL from program title when absent.
+- Extended [api/chat.py](api/chat.py) generic catalog index signature generation to inject per-program `[Catalog Source Verification Link: ...]` tokens so broad-query context chunks also carry verification URLs across the full program catalog.
+- Updated [api/chat.py](api/chat.py) system prompt citation instructions to extract and render markdown footer citations from embedded `[Catalog Source Verification Link: ...]` tokens instead of hardcoded program link examples.
+- Added regression coverage in [tests/test_chat.py](tests/test_chat.py) for direct-source and fallback-source verification link token injection in optimized targeted context.
 
 ## 2026-05-28
 

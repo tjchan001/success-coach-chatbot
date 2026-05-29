@@ -488,7 +488,45 @@ class CatalogSearchEngine:
 
         return overflow_serialized[: self.char_budget]
 
-    def _build_targeted_program_context(self, program: dict[str, object], program_id: str) -> str:
+    def _resolve_program_catalog_source_url(self, program: dict[str, object]) -> str:
+        """Return canonical source URL for a program or generate a safe catalog fallback."""
+        for key in ("source_url", "catalog_url", "source", "url", "link"):
+            raw_value: object = program.get(key)
+            if isinstance(raw_value, str) and raw_value.strip().startswith("http"):
+                return raw_value.strip()
+
+        raw_title: object = program.get("title", "")
+        program_title: str = raw_title.strip() if isinstance(raw_title, str) else ""
+        if not program_title:
+            raw_program_id: object = program.get("program_id", "program")
+            program_title = (
+                str(raw_program_id).replace("_", " ").strip() if raw_program_id is not None else "program"
+            )
+
+        normalized_title: str = re.sub(r"\s+", " ", program_title).strip()
+        encoded_title: str = normalized_title.replace(" ", "+")
+        return (
+            "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
+            f"search_keyword={encoded_title}"
+        )
+
+    def _append_catalog_source_token(self, chunk_text: str, source_url: str) -> str:
+        """Append the catalog source verification token while preserving context budget."""
+        token: str = f"\n[Catalog Source Verification Link: {source_url}]"
+        if len(chunk_text) + len(token) <= self.char_budget:
+            return f"{chunk_text}{token}"
+
+        remaining_budget: int = self.char_budget - len(token)
+        if remaining_budget > 0:
+            return f"{chunk_text[:remaining_budget]}{token}"
+        return token[: self.char_budget]
+
+    def _build_targeted_program_context(
+        self,
+        program: dict[str, object],
+        program_id: str,
+        source_url: str,
+    ) -> str:
         """Build a bounded targeted context payload for one matched program."""
         targeted_payload: dict[str, object] = {
             "mode": "targeted_program",
@@ -504,7 +542,10 @@ class CatalogSearchEngine:
 
         semesters: object = program.get("semesters")
         if not isinstance(semesters, list):
-            return self._json_within_budget(targeted_payload)
+            return self._append_catalog_source_token(
+                self._json_within_budget(targeted_payload),
+                source_url,
+            )
 
         serialized: str = self._json_within_budget(targeted_payload)
         program_payload_obj: object = targeted_payload.get("program")
@@ -561,7 +602,7 @@ class CatalogSearchEngine:
             if len(serialized) >= self.char_budget:
                 return serialized
 
-        return serialized
+        return self._append_catalog_source_token(serialized, source_url)
 
     def _build_generic_index_context(self) -> str:
         """Build a compressed token-signature map for broad user queries."""
@@ -571,10 +612,22 @@ class CatalogSearchEngine:
             return self._json_within_budget(index_payload)
 
         seen_entries: set[tuple[str, str]] = set()
+        seen_program_source_tokens: set[str] = set()
 
         for program in self._programs():
             try:
                 program_id: str = str(program.get("program_id", "unknown_program"))
+                source_url: str = self._resolve_program_catalog_source_url(program)
+                if program_id not in seen_program_source_tokens:
+                    signature_entries.append(
+                        f"{program_id}|[Catalog Source Verification Link: {source_url}]"
+                    )
+                    seen_program_source_tokens.add(program_id)
+                    index_payload["signature"] = ";".join(signature_entries)
+                    serialized = self._json_within_budget(index_payload)
+                    if len(serialized) >= self.char_budget:
+                        return serialized
+
                 semesters: object = program.get("semesters")
                 if not isinstance(semesters, list):
                     continue
@@ -645,7 +698,12 @@ class CatalogSearchEngine:
         if matched_program_id is not None:
             for program in self._programs():
                 if str(program.get("program_id")) == matched_program_id:
-                    return self._build_targeted_program_context(program, matched_program_id)
+                    source_url: str = self._resolve_program_catalog_source_url(program)
+                    return self._build_targeted_program_context(
+                        program,
+                        matched_program_id,
+                        source_url,
+                    )
 
         expanded_terms: list[str] = expand_user_query(user_query)
         for program in self._programs():
@@ -659,7 +717,8 @@ class CatalogSearchEngine:
                     term in normalized_program_title or term in normalized_program_id
                     for term in expanded_terms
                 ):
-                    return self._build_targeted_program_context(program, program_id)
+                    source_url = self._resolve_program_catalog_source_url(program)
+                    return self._build_targeted_program_context(program, program_id, source_url)
 
                 semesters: object = program.get("semesters")
                 if isinstance(semesters, list):
@@ -680,7 +739,12 @@ class CatalogSearchEngine:
                                     else ""
                                 )
                                 if any(term in normalized_course_code for term in expanded_terms):
-                                    return self._build_targeted_program_context(program, program_id)
+                                    source_url = self._resolve_program_catalog_source_url(program)
+                                    return self._build_targeted_program_context(
+                                        program,
+                                        program_id,
+                                        source_url,
+                                    )
                         except Exception as exc:  # noqa: BLE001
                             _LOG.warning(
                                 "Skipping malformed semester in expanded match loop: %s",
@@ -987,10 +1051,8 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "If the precise answer is missing from this slice, guide them to specify which degree plan or certificate pathway they want to inspect.\n"
         "\n"
         "[SOURCE CITATION VERIFICATION RULES]:\n"
-        "- When displaying program schemas, map the source records to their official online counterparts by appending markdown footer links for verification:\n"
-        "- Game Development: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=2897\n"
-        "- Culinary Arts: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=3061\n"
-        "- Welding: https://catalog.dallascollege.edu/preview_program.php?catoid=2&poid=650\n"
+        "- When rendering a program data card, look for the '[Catalog Source Verification Link: ...]' token embedded inside the provided text context chunk.\n"
+        "- Extract that specific URL and present it cleanly as an official markdown footer citation link labeled with an incremented index like [1], [2] to verify the source catalog.\n"
         "\n"
         "[GUARDRAIL TRIGGER ACTIONS]:\n"
         "- If the user requests courses/tracks not explicitly keyed in <context>, emit exactly:\n"
