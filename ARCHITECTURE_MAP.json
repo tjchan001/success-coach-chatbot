@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T00:55:16-05:00",
+  "generated": "2026-05-29T01:39:31-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -15,7 +15,7 @@
     "node_modules",
     "dist"
   ],
-  "fileCount": 14,
+  "fileCount": 15,
   "files": [
     {
       "path": "CODING_STANDARDS.md",
@@ -94,6 +94,7 @@
         "def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:",
         "def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:",
         "def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
+        "def _get_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
         "def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:",
         "def get_degree_prerequisite_tree(self, user_query: str) -> dict[str, list[str]]:",
         "def _json_within_budget(self, payload: dict[str, object]) -> str:",
@@ -154,6 +155,15 @@
       "routes": []
     },
     {
+      "path": "data/analytics_logs.json",
+      "isPinned": false,
+      "extension": ".json",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
       "path": "data/catalog_mvp.json",
       "isPinned": false,
       "extension": ".json",
@@ -199,7 +209,7 @@
         "checkbox.addEventListener(\"change\", () => {",
         "const response = await fetch(API_URL, {",
         "launcher.addEventListener(\"click\", () => {",
-        "sendButton.addEventListener(\"click\", () => {",
+        "sendButton.addEventListener(\"click\", (event) => {",
         "input.addEventListener(\"keydown\", (event) => {",
         "clearButton.addEventListener(\"click\", () => {"
       ]

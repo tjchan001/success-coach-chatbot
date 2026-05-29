@@ -23,6 +23,8 @@
   const ROOT_ID = "dc-chatbot-root";
   const CHAT_HISTORY_KEY = "dc_chatbot_history";
 
+  console.log("[DIAGNOSTIC] Chatbot widget initialized. Outgoing target API_URL is:", API_URL);
+
   if (document.getElementById(ROOT_ID)) {
     return;
   }
@@ -726,6 +728,13 @@
    * @returns {Promise<{reply: string, model: string, progress_cards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>, prerequisite_tree?: Object.<string, Array<string>>}>}
    */
   async function postMessage(message) {
+    console.log(
+      "[DIAGNOSTIC] Dispatching POST fetch request to destination:",
+      API_URL,
+      "with message string:",
+      message,
+    );
+
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -744,6 +753,8 @@
       } catch (error) {
         const fallbackError = error;
         console.warn("[DCChatbot] Failed to parse error payload.", fallbackError);
+        const rawText = await response.text();
+        throw rawText;
       }
       throw new Error(detail);
     }
@@ -809,7 +820,12 @@
       setStatus(`Answered by ${payload.model}`);
     } catch (error) {
       setTypingIndicator(false);
-      const messageText = error instanceof Error ? error.message : "Connection error.";
+      const messageText =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string" && error
+            ? error
+            : "Connection error.";
       appendMessage(`Connection error: ${messageText}`, "error");
       setStatus("Connection error");
       console.error("[DCChatbot] Chat request failed.", error);
@@ -824,7 +840,8 @@
     setPanelOpen(nextOpenState);
   });
 
-  sendButton.addEventListener("click", () => {
+  sendButton.addEventListener("click", (event) => {
+    event.preventDefault();
     void handleSubmit();
   });
 

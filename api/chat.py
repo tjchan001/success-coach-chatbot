@@ -31,6 +31,7 @@ from typing import Annotated
 import httpx
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 _LOG: logging.Logger = logging.getLogger(__name__)
@@ -90,6 +91,8 @@ class CatalogSearchEngine:
         self.cache_path: Path = cache_path
         self.char_budget: int = char_budget
         self._catalog_payload: dict[str, object] = self._load_catalog_payload()
+        self._programs_cache: list[dict[str, object]] | None = None
+        self._prerequisite_index_cache: dict[str, dict[str, list[str]]] | None = None
         self._intent_map: dict[str, tuple[str, ...]] = {
             "Cybersecurity_AAS": ("cyber", "security", "network", "networking"),
             "Web_Development_Certificate": ("web", "html", "css", "frontend"),
@@ -157,7 +160,6 @@ class CatalogSearchEngine:
             "requirements",
             "checklist",
         )
-        self._prerequisite_index: dict[str, dict[str, list[str]]] = self._build_prerequisite_index()
 
     def _load_catalog_payload(self) -> dict[str, object]:
         """Load the local catalog cache into a dictionary."""
@@ -176,11 +178,16 @@ class CatalogSearchEngine:
 
     def _programs(self) -> list[dict[str, object]]:
         """Return the normalized list of program objects from cache payload."""
+        if self._programs_cache is not None:
+            return self._programs_cache
+
         programs: object = self._catalog_payload.get("programs")
         if not isinstance(programs, list):
-            return []
+            self._programs_cache = []
+            return self._programs_cache
 
-        return [program for program in programs if isinstance(program, dict)]
+        self._programs_cache = [program for program in programs if isinstance(program, dict)]
+        return self._programs_cache
 
     def _classify_program_intent(self, user_query: str) -> str | None:
         """Map query keywords to a specific program ID when confidence is high."""
@@ -282,27 +289,38 @@ class CatalogSearchEngine:
         """Build directed prerequisite relationships per program."""
         index: dict[str, dict[str, list[str]]] = {}
         for program in self._programs():
-            program_id: str = str(program.get("program_id", "unknown_program"))
-            program_index: dict[str, list[str]] = {}
-            semesters: object = program.get("semesters")
-            if isinstance(semesters, list):
-                for semester in semesters:
-                    if not isinstance(semester, dict):
-                        continue
-                    courses: object = semester.get("courses")
-                    if not isinstance(courses, list):
-                        continue
-                    for course in courses:
-                        if not isinstance(course, dict):
+            try:
+                program_id: str = str(program.get("program_id", "unknown_program"))
+                program_index: dict[str, list[str]] = {}
+                semesters: object = program.get("semesters")
+                if isinstance(semesters, list):
+                    for semester in semesters:
+                        if not isinstance(semester, dict):
                             continue
-                        course_code: str = str(course.get("code", "")).strip()
-                        if not course_code:
+                        courses: object = semester.get("courses")
+                        if not isinstance(courses, list):
                             continue
-                        prerequisites: list[str] = self._extract_prerequisite_codes(course)
-                        if prerequisites:
-                            program_index[course_code] = prerequisites
-            index[program_id] = program_index
+                        for course in courses:
+                            if not isinstance(course, dict):
+                                continue
+                            course_code: str = str(course.get("code", "")).strip()
+                            if not course_code:
+                                continue
+                            prerequisites: list[str] = self._extract_prerequisite_codes(course)
+                            if prerequisites:
+                                program_index[course_code] = prerequisites
+                index[program_id] = program_index
+            except Exception as exc:  # noqa: BLE001
+                _LOG.warning("Skipping malformed program prerequisite block: %s", exc)
+                continue
+
         return index
+
+    def _get_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:
+        """Return lazily-built prerequisite index, caching after first build."""
+        if self._prerequisite_index_cache is None:
+            self._prerequisite_index_cache = self._build_prerequisite_index()
+        return self._prerequisite_index_cache
 
     def get_missing_prerequisites(
         self,
@@ -311,7 +329,10 @@ class CatalogSearchEngine:
     ) -> dict[str, list[str]]:
         """Return advanced courses that remain locked by missing prerequisites."""
         completed_set: set[str] = {code.upper().strip() for code in completed_courses}
-        program_dependencies: dict[str, list[str]] = self._prerequisite_index.get(target_program, {})
+        program_dependencies: dict[str, list[str]] = self._get_prerequisite_index().get(
+            target_program,
+            {},
+        )
 
         missing_map: dict[str, list[str]] = {}
         for course_code, dependencies in program_dependencies.items():
@@ -647,9 +668,9 @@ _ALLOW_CREDENTIALS: bool = _CORS_ORIGINS != ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_CORS_ORIGINS,
-    allow_credentials=_ALLOW_CREDENTIALS,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -1207,8 +1228,15 @@ async def health_check() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/api/test-routing", status_code=status.HTTP_200_OK)
+async def test_routing() -> dict[str, str]:
+    """Return a static probe to confirm uvicorn is serving this module."""
+    return {"message": "Uvicorn is successfully serving api/chat.py"}
+
+
+@app.post("/api/chat/", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 @app.post("/api/chat", response_model=ChatResponse, status_code=status.HTTP_200_OK)
-async def chat(request: ChatRequest) -> ChatResponse:
+async def chat(request: ChatRequest) -> ChatResponse | JSONResponse:
     """Handle a widget message through the hybrid Groq-to-Gemini cascade.
 
     Args:
@@ -1217,4 +1245,11 @@ async def chat(request: ChatRequest) -> ChatResponse:
     Returns:
         A grounded assistant reply generated from the local catalog payload.
     """
-    return await _generate_chat_reply(message=request.message)
+    try:
+        return await _generate_chat_reply(message=request.message)
+    except Exception as e:  # noqa: BLE001
+        logging.exception("Fatal exception in chat handler")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"Internal Server Error: {str(e)}"},
+        )

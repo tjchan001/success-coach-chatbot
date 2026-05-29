@@ -32,3 +32,11 @@ All notable changes to this project are documented in this file.
 - Upgraded [public/widget.js](public/widget.js) with animated skeleton loading states, smooth scroll snapping, and prerequisite-aware progress-card checkbox enforcement with inline warnings and shake animation feedback.
 - Added prerequisite regression coverage in [tests/test_chat.py](tests/test_chat.py) for dependency indexing and degree-layout `prerequisite_tree` emission.
 - Updated discovery root index in [scripts/scraper.py](scripts/scraper.py) to `https://catalog.dallascollege.edu/content.php?catoid=4&navoid=944` and made program-link extraction catoid-agnostic by matching `preview_program.php` + `poid=` across catalog version rotations.
+- Wrapped [api/chat.py](api/chat.py) `/api/chat` handler execution in a top-level try/except that logs full tracebacks and returns standardized JSON 500 error payloads instead of raw unstructured failures.
+- Added robust non-JSON error fallback handling in [public/widget.js](public/widget.js) by reading `response.text()` when error JSON decoding fails and surfacing the raw message for clearer debugging.
+- Added trailing-slash chat route aliasing in [api/chat.py](api/chat.py) so both `/api/chat` and `/api/chat/` resolve to the same handler for local routing resiliency.
+- Set CORSMiddleware `allow_origins=["*"]` explicitly in [api/chat.py](api/chat.py) as a local preflight diagnostics override.
+- Added local diagnostics logging in [public/widget.js](public/widget.js) to print active `API_URL` at initialization and emit explicit fetch dispatch target logs before POST requests.
+- Updated local CORS diagnostics in [api/chat.py](api/chat.py) to `allow_origins=["*"]`, `allow_credentials=True`, `allow_methods=["*"]`, and `allow_headers=["*"]` for preflight troubleshooting.
+- Added a dedicated routing probe endpoint in [api/chat.py](api/chat.py): `GET /api/test-routing` returning a static module-serving confirmation message.
+- Optimized large-catalog startup behavior in [api/chat.py](api/chat.py) by making prerequisite index construction lazy and cached, and added defensive try/except skipping for malformed program structures during dependency indexing.
