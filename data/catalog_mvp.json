@@ -1,6 +1,7 @@
 {
   "programs": [
     {
+      "program_id": "Computer_Information_Technology_AAS",
       "title": "Computer Information Technology Courses",
       "degree_code": null,
       "total_hours": 60,
@@ -667,6 +668,211 @@
               "code": "ITSY 2445",
               "title": "Network Defense and Countermeasures",
               "credits": "4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "program_id": "Web_Development_Certificate",
+      "title": "Conflict Management Courses",
+      "degree_code": null,
+      "total_hours": 60,
+      "semesters": []
+    },
+    {
+      "program_id": "Cybersecurity_AAS",
+      "title": "Criminal Justice Courses",
+      "degree_code": null,
+      "total_hours": 60,
+      "semesters": [
+        {
+          "name": "CJSA",
+          "courses": [
+            {
+              "code": "CJSA 1308",
+              "title": "Criminalistics I",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1330",
+              "title": "Cybercrimes",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1347",
+              "title": "Police Organization and Administration",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1348",
+              "title": "Ethics in Criminal Justice",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1382",
+              "title": "Cooperative Education - Criminal Justice/Safety Studies",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1392",
+              "title": "Special Topics in Criminal Justice/Law Enforcement Administration",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1393",
+              "title": "Special Topics in Criminal Justice Studies",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 1400",
+              "title": "Death Investigations I",
+              "credits": "4"
+            },
+            {
+              "code": "CJSA 1401",
+              "title": "Death Investigations II",
+              "credits": "4"
+            },
+            {
+              "code": "CJSA 1471",
+              "title": "Forensic Science I",
+              "credits": "4"
+            },
+            {
+              "code": "CJSA 1472",
+              "title": "Forensic Science II",
+              "credits": "4"
+            },
+            {
+              "code": "CJSA 2323",
+              "title": "Criminalistics II",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 2334",
+              "title": "Contemporary Issues in Criminal Justice",
+              "credits": "3"
+            },
+            {
+              "code": "CJSA 2382",
+              "title": "Cooperative Education - Criminal Justice/Safety Studies",
+              "credits": "3"
+            }
+          ]
+        },
+        {
+          "name": "CRIJ",
+          "courses": [
+            {
+              "code": "CRIJ 1301",
+              "title": "Introduction to Criminal Justice",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 1306",
+              "title": "Court Systems and Practices",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 1307",
+              "title": "Crime in America",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 1310",
+              "title": "Fundamentals of Criminal Law",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 1313",
+              "title": "Juvenile Justice System",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 2301",
+              "title": "Community Resources in Corrections",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 2313",
+              "title": "Correctional Systems and Practices",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 2314",
+              "title": "Criminal Investigation",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 2323",
+              "title": "Legal Aspects of Law Enforcement",
+              "credits": "3"
+            },
+            {
+              "code": "CRIJ 2328",
+              "title": "Police Systems and Practices",
+              "credits": "3"
+            }
+          ]
+        },
+        {
+          "name": "HMSY",
+          "courses": [
+            {
+              "code": "HMSY 1337",
+              "title": "Introduction to Homeland Security",
+              "credits": "3"
+            },
+            {
+              "code": "HMSY 1342",
+              "title": "Understanding and Combating Terrorism",
+              "credits": "3"
+            },
+            {
+              "code": "HMSY 1470",
+              "title": "Cyber Terrorism",
+              "credits": "4"
+            },
+            {
+              "code": "HMSY 2306",
+              "title": "Organized Crime and Terrorism",
+              "credits": "3"
+            }
+          ]
+        },
+        {
+          "name": "PSYT",
+          "courses": [
+            {
+              "code": "PSYT 2321",
+              "title": "Crisis Intervention",
+              "credits": "3"
+            },
+            {
+              "code": "PSYT 2335",
+              "title": "Family Systems",
+              "credits": "3"
+            },
+            {
+              "code": "PSYT 2345",
+              "title": "Principles of Behavior Management and Modification",
+              "credits": "3"
+            }
+          ]
+        },
+        {
+          "name": "SLPS",
+          "courses": [
+            {
+              "code": "SLPS 2330",
+              "title": "Security of Computers and Data",
+              "credits": "3"
+            },
+            {
+              "code": "SLPS 2333",
+              "title": "Private Investigation",
+              "credits": "3"
             }
           ]
         }

@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 import pytest
+from bs4 import BeautifulSoup
 from pydantic import ValidationError
 
 from models import Course, DegreePlan, Semester
@@ -272,3 +273,56 @@ def test_write_json_atomic_writes_complete_payload(tmp_path: Path) -> None:
     # Assert
     written_payload: dict[str, object] = json.loads(destination.read_text(encoding="utf-8"))
     assert written_payload == payload
+
+
+def test_extract_flat_certificate_requirements_returns_synthetic_semester() -> None:
+        """Flat certificate pages must map detected rows into one synthetic semester."""
+        # Arrange
+        html: str = """
+        <html>
+            <body>
+                <ul>
+                    <li>ITSE 1302 Computer Programming 3</li>
+                    <li>ITSE 1359 Introduction to Scripting Languages 3</li>
+                    <li>Not a course line item</li>
+                </ul>
+            </body>
+        </html>
+        """
+        soup: BeautifulSoup = BeautifulSoup(html, "html.parser")
+
+        # Act
+        semesters: list[Semester] = scraper._extract_flat_certificate_requirements(soup)
+
+        # Assert
+        assert len(semesters) == 1
+        assert semesters[0].name == "Certificate Core Requirements"
+        assert [course.code for course in semesters[0].courses] == ["ITSE 1302", "ITSE 1359"]
+
+
+def test_extract_flat_certificate_requirements_reads_nested_anchor_text() -> None:
+        """Fallback must parse course anchors nested in non-list/non-table containers."""
+        # Arrange
+        html: str = """
+        <html>
+            <body>
+                <div class="acalog-core">
+                    <section>
+                        <a href="#">ITSC 1305 Business Computer Applications (3 Credit Hours)</a>
+                    </section>
+                    <article>
+                        <a href="#">ITSC 1325 Personal Computer Hardware (3 Credit Hours)</a>
+                    </article>
+                </div>
+            </body>
+        </html>
+        """
+        soup: BeautifulSoup = BeautifulSoup(html, "html.parser")
+
+        # Act
+        semesters: list[Semester] = scraper._extract_flat_certificate_requirements(soup)
+
+        # Assert
+        assert len(semesters) == 1
+        assert semesters[0].name == "Certificate Core Requirements"
+        assert [course.code for course in semesters[0].courses] == ["ITSC 1305", "ITSC 1325"]

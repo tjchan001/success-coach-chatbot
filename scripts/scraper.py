@@ -434,6 +434,94 @@ def _extract_semesters_by_section_scan(soup: BeautifulSoup) -> list[Semester]:
     return semesters
 
 
+def _extract_flat_certificate_requirements(soup: BeautifulSoup) -> list[Semester]:
+    """Parse flat certificate layouts into one synthetic semester.
+
+    Architectural Intent:
+        Certificate pages often omit semester headers and present requirements
+        as arbitrary nested containers. This fallback scans globally across
+        anchor tags and text nodes, then groups detected courses into one
+        synthetic semester block to preserve schema compatibility.
+
+    Args:
+        soup: Parsed HTML document.
+
+    Returns:
+        A list containing a single synthetic semester named
+        ``Certificate Core Requirements`` when course rows are found,
+        otherwise an empty list.
+    """
+    def _build_course_from_text(raw_text: str) -> Course | None:
+        """Build a Course from a raw string when no useful DOM parent exists."""
+        line: str = raw_text.strip()
+        code_match: re.Match[str] | None = re.match(r"^([A-Z]{4})\s+(\d{4})\b", line)
+        if not code_match:
+            return None
+
+        code: str = f"{code_match.group(1)} {code_match.group(2)}"
+        after_code: str = line[code_match.end():]
+        after_code = re.sub(r"^\s*[-\u2013\u00a0\s]+", "", after_code)
+
+        paren_match: re.Match[str] | None = _PARENTHETICAL_CREDIT_RE.search(after_code)
+        if paren_match:
+            credits_str: str = paren_match.group(1).strip()
+            title: str = after_code[: paren_match.start()].strip(" .-\u2013()\u00a0")
+        else:
+            trail_match: re.Match[str] | None = _CREDIT_RE.search(after_code)
+            if trail_match:
+                credits_str = trail_match.group(1).strip()
+                title = after_code[: trail_match.start()].strip(" .-\u2013\u00a0")
+            else:
+                credits_str = "3"
+                title = after_code.strip(" .-\u2013\u00a0")
+
+        return Course(code=code, title=title or code, credits=credits_str)
+
+    courses: list[Course] = []
+    seen_codes: set[str] = set()
+
+    for anchor in soup.find_all("a"):
+        if not isinstance(anchor, Tag):
+            continue
+
+        anchor_text: str = anchor.get_text(separator=" ", strip=True)
+        if not re.match(r"^[A-Z]{4}\s+\d{4}\b", anchor_text):
+            continue
+
+        course_from_anchor: Course | None = _parse_course_row(anchor)
+        course: Course | None = course_from_anchor or _build_course_from_text(anchor_text)
+        if course is not None and course.code not in seen_codes:
+            courses.append(course)
+            seen_codes.add(course.code)
+
+    for text_node in soup.find_all(string=True):
+        if not isinstance(text_node, str):
+            continue
+
+        node_text: str = text_node.strip()
+        if not node_text or not re.match(r"^[A-Z]{4}\s+\d{4}\b", node_text):
+            continue
+
+        parent_tag: Tag | None = text_node.parent if isinstance(text_node.parent, Tag) else None
+        if isinstance(parent_tag, Tag) and parent_tag.name == "a":
+            # Already handled in the anchor pass.
+            continue
+
+        course: Course | None = None
+        if isinstance(parent_tag, Tag):
+            course = _parse_course_row(parent_tag)
+        if course is None:
+            course = _build_course_from_text(node_text)
+        if course is not None and course.code not in seen_codes:
+            courses.append(course)
+            seen_codes.add(course.code)
+
+    if not courses:
+        return []
+
+    return [Semester(name="Certificate Core Requirements", courses=courses)]
+
+
 def _extract_semesters_by_regex_sweep(soup: BeautifulSoup) -> list[Semester]:
     """Last-resort: sweep all text nodes in the document for course-code patterns.
 
@@ -663,6 +751,11 @@ def parse_degree_page(url: str) -> DegreePlan:
         _LOG.debug("Strategy 2: Falling back to semantic section scan.")
         semesters = _extract_semesters_by_section_scan(soup)
 
+    # Strategy 2b: Flat certificate table/list fallback
+    if not semesters:
+        _LOG.debug("Strategy 2b: Falling back to flat certificate requirements scan.")
+        semesters = _extract_flat_certificate_requirements(soup)
+
     # Strategy 3: Full-page regex sweep
     if not semesters:
         _LOG.debug("Strategy 3: Falling back to full-page regex sweep.")
@@ -752,7 +845,7 @@ if __name__ == "__main__":
 
     _TARGET_PATHWAYS: dict[str, str] = {
         "Computer_Information_Technology_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3057",
-        "Web_Development_Certificate": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3058",
+        "Web_Development_Certificate": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3058&print",
         "Cybersecurity_AAS": "https://catalog.dallascollege.edu/preview_program.php?catoid=33&poid=3060",
     }
 
