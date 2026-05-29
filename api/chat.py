@@ -656,8 +656,7 @@ def _parse_cors_origins() -> list[str]:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Load startup resources and yield control to the ASGI lifespan context."""
-    _get_catalog_search_engine()
+    """Yield ASGI lifespan context without forcing heavy startup initialization."""
     yield
 
 

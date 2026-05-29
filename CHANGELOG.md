@@ -41,3 +41,4 @@ All notable changes to this project are documented in this file.
 - Added a dedicated routing probe endpoint in [api/chat.py](api/chat.py): `GET /api/test-routing` returning a static module-serving confirmation message.
 - Optimized large-catalog startup behavior in [api/chat.py](api/chat.py) by making prerequisite index construction lazy and cached, and added defensive try/except skipping for malformed program structures during dependency indexing.
 - Hardened the [api/chat.py](api/chat.py) `/api/chat` and `/api/chat/` route handler to catch all runtime search exceptions, log `Search route exception: ...`, and return a stable widget-safe fallback payload (`System-Fallback-Shield`) instead of crashing.
+- Removed eager catalog-engine initialization from FastAPI lifespan startup in [api/chat.py](api/chat.py) so missing/malformed catalog or provider environment variance cannot crash app boot before the first request path handles fallback logic.
