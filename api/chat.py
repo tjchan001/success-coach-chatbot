@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -54,6 +55,10 @@ _SELECTION_GUARDRAIL: str = (
 )
 _MANDATORY_GOVERNANCE_GREETING: str = (
     "Greetings, I am the automated AI Academic Advisor for Dallas College."
+)
+_OUT_OF_BOUNDS_REPLY: str = (
+    "I can only assist with Dallas College academic advising topics. "
+    "Please ask about degree plans, certificates, pathways, or course requirements."
 )
 
 
@@ -92,6 +97,62 @@ class CatalogSearchEngine:
                 "cit",
             ),
         }
+        self._academic_keywords: tuple[str, ...] = (
+            "dallas college",
+            "degree",
+            "plan",
+            "certificate",
+            "course",
+            "class",
+            "credit",
+            "semester",
+            "program",
+            "pathway",
+            "major",
+            "advisor",
+            "coach",
+            "catalog",
+            "curriculum",
+            "cyber",
+            "security",
+            "network",
+            "web",
+            "html",
+            "css",
+            "frontend",
+            "computer",
+            "information",
+            "technology",
+            "cit",
+            "bcis",
+            "itsc",
+            "cosc",
+            "itnw",
+            "itse",
+        )
+        self._non_academic_keywords: tuple[str, ...] = (
+            "poem",
+            "weather",
+            "recipe",
+            "stock",
+            "sports",
+            "joke",
+            "movie",
+            "song",
+            "travel",
+            "bitcoin",
+            "horoscope",
+            "game",
+        )
+        self._degree_layout_keywords: tuple[str, ...] = (
+            "degree plan",
+            "show my degree",
+            "degree layout",
+            "course layout",
+            "program layout",
+            "requirements",
+            "checklist",
+        )
 
     def _load_catalog_payload(self) -> dict[str, object]:
         """Load the local catalog cache into a dictionary."""
@@ -123,6 +184,81 @@ class CatalogSearchEngine:
             if any(keyword in lowered_query for keyword in keywords):
                 return program_id
         return None
+
+    def is_out_of_bounds_query(self, user_query: str) -> bool:
+        """Return True when a query falls outside academic advising scope."""
+        lowered_query: str = user_query.lower().strip()
+        if not lowered_query:
+            return True
+
+        if re.search(r"\b[a-z]{4}\s*\d{4}\b", lowered_query):
+            return False
+
+        has_academic_signal: bool = any(
+            keyword in lowered_query for keyword in self._academic_keywords
+        )
+        has_non_academic_signal: bool = any(
+            keyword in lowered_query for keyword in self._non_academic_keywords
+        )
+
+        if has_non_academic_signal and not has_academic_signal:
+            return True
+
+        return not has_academic_signal
+
+    def _is_degree_layout_request(self, user_query: str) -> bool:
+        """Return True when the user asks for degree-plan structure output."""
+        lowered_query: str = user_query.lower()
+        return any(keyword in lowered_query for keyword in self._degree_layout_keywords)
+
+    def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:
+        """Return flattened degree-plan checklist cards for explicit layout requests."""
+        if not self._is_degree_layout_request(user_query):
+            return []
+
+        program_id: str | None = self._classify_program_intent(user_query)
+        if program_id is None:
+            return []
+
+        for program in self._programs():
+            if str(program.get("program_id")) != program_id:
+                continue
+
+            card_payload: dict[str, object] = {
+                "program_id": program_id,
+                "title": str(program.get("title", program_id)),
+                "courses": [],
+            }
+            courses_payload: object = card_payload.get("courses")
+            if not isinstance(courses_payload, list):
+                return []
+
+            semesters: object = program.get("semesters")
+            if isinstance(semesters, list):
+                for semester in semesters:
+                    if not isinstance(semester, dict):
+                        continue
+                    semester_name: str = str(semester.get("name", "Requirements"))
+                    courses: object = semester.get("courses")
+                    if not isinstance(courses, list):
+                        continue
+
+                    for course in courses:
+                        if not isinstance(course, dict):
+                            continue
+                        courses_payload.append(
+                            {
+                                "semester": semester_name,
+                                "code": course.get("code"),
+                                "title": course.get("title"),
+                                "credits": course.get("credits"),
+                                "completed": False,
+                            }
+                        )
+
+            return [card_payload]
+
+        return []
 
     def _json_within_budget(self, payload: dict[str, object]) -> str:
         """Serialize payload and enforce the configured character budget."""
@@ -302,6 +438,16 @@ def _get_optimized_catalog_context(user_query: str) -> str:
         ) from exc
 
 
+def _is_out_of_bounds_query(user_query: str) -> bool:
+    """Return True when the query falls outside advising scope."""
+    return _get_catalog_search_engine().is_out_of_bounds_query(user_query)
+
+
+def _get_degree_progress_cards(user_query: str) -> list[dict[str, object]]:
+    """Return checklist card payloads for explicit degree-layout requests."""
+    return _get_catalog_search_engine().get_degree_progress_cards(user_query)
+
+
 def _parse_cors_origins() -> list[str]:
     """Return the configured CORS origin list from the environment.
 
@@ -355,12 +501,17 @@ class ChatResponse(BaseModel):
     Args:
         reply: Plain-text grounded response returned to the widget.
         model: Provider/model pair used to generate the response.
+        progress_cards: Optional structured progress card payload for UI rendering.
     """
 
     model_config = ConfigDict(frozen=True)
 
     reply: str = Field(..., description="Plain-text grounded response returned to the widget.")
     model: str = Field(..., description="Provider/model pair used to generate the response.")
+    progress_cards: list[dict[str, object]] | None = Field(
+        default=None,
+        description="Optional structured progress-card payload for interactive checklist rendering.",
+    )
 
 
 class GeminiPart(BaseModel):
@@ -811,6 +962,24 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
     Raises:
         HTTPException: If catalog loading fails or all providers fail.
     """
+    if _is_out_of_bounds_query(message):
+        return ChatResponse(
+            reply=_OUT_OF_BOUNDS_REPLY,
+            model="guardrail/local",
+            progress_cards=None,
+        )
+
+    degree_progress_cards: list[dict[str, object]] = _get_degree_progress_cards(message)
+    if degree_progress_cards:
+        return ChatResponse(
+            reply=(
+                "Degree progress checklist generated from your requested pathway. "
+                "Mark completed courses to track remaining requirements."
+            ),
+            model="catalog/local",
+            progress_cards=degree_progress_cards,
+        )
+
     catalog_payload: str = _get_optimized_catalog_context(message)
 
     async with httpx.AsyncClient(timeout=_HTTP_TIMEOUT_SECONDS) as client:

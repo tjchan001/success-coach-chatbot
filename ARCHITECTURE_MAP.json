@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T00:10:10-05:00",
+  "generated": "2026-05-29T00:19:21-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -71,6 +71,7 @@
         "import json",
         "import logging",
         "import os",
+        "import re",
         "from contextlib import asynccontextmanager",
         "from pathlib import Path",
         "from typing import Annotated",
@@ -83,12 +84,17 @@
         "def _load_catalog_payload(self) -> dict[str, object]:",
         "def _programs(self) -> list[dict[str, object]]:",
         "def _classify_program_intent(self, user_query: str) -> str | None:",
+        "def is_out_of_bounds_query(self, user_query: str) -> bool:",
+        "def _is_degree_layout_request(self, user_query: str) -> bool:",
+        "def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:",
         "def _json_within_budget(self, payload: dict[str, object]) -> str:",
         "def _build_targeted_program_context(self, program: dict[str, object], program_id: str) -> str:",
         "def _build_generic_index_context(self) -> str:",
         "def get_optimized_context(self, user_query: str) -> str:",
         "def _get_catalog_search_engine() -> CatalogSearchEngine:",
         "def _get_optimized_catalog_context(user_query: str) -> str:",
+        "def _is_out_of_bounds_query(user_query: str) -> bool:",
+        "def _get_degree_progress_cards(user_query: str) -> list[dict[str, object]]:",
         "def _parse_cors_origins() -> list[str]:",
         "def _load_catalog_prompt_payload() -> str:",
         "def _build_system_prompt(catalog_payload: str) -> str:",
@@ -165,7 +171,10 @@
         "function escapeHtml(text) {",
         "function formatMarkdown(text) {",
         "function mountStyles() {",
-        "function appendMessage(text, role, useMarkdown = false) {",
+        "function saveChatHistory() {",
+        "function loadChatHistory() {",
+        "function appendMessage(text, role, useMarkdown = false, shouldPersist = true) {",
+        "function appendProgressCardMessage(",
         "function setInteractiveState(enabled) {",
         "function setPanelOpen(open) {",
         "function setStatus(text) {",
@@ -174,10 +183,12 @@
       ],
       "imports": [],
       "routes": [
+        "checkbox.addEventListener(\"change\", () => {",
         "const response = await fetch(API_URL, {",
         "launcher.addEventListener(\"click\", () => {",
         "sendButton.addEventListener(\"click\", () => {",
-        "input.addEventListener(\"keydown\", (event) => {"
+        "input.addEventListener(\"keydown\", (event) => {",
+        "clearButton.addEventListener(\"click\", () => {"
       ]
     },
     {
@@ -232,9 +243,11 @@
       "classes": [
         "class DummyAsyncClient:",
         "class DummyAsyncClient:",
+        "class DummyAsyncClient:",
         "class DummyAsyncClient:"
       ],
       "functions": [
+        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",

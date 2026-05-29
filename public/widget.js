@@ -18,9 +18,10 @@
 (() => {
   "use strict";
 
-  const API_URL = "http://localhost:8000/api/chat";
+  const API_URL = "http://success-coach-chatbot.vercel.app/api/chat";
   const MAX_MESSAGE_LENGTH = 1000;
   const ROOT_ID = "dc-chatbot-root";
+  const CHAT_HISTORY_KEY = "dc_chatbot_history";
 
   if (document.getElementById(ROOT_ID)) {
     return;
@@ -164,6 +165,28 @@
         opacity: 0.88;
       }
 
+      #${ROOT_ID} .dc-header-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      #${ROOT_ID} .dc-clear-chat {
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        background: transparent;
+        color: #ffffff;
+        border-radius: 10px;
+        font-size: 11px;
+        line-height: 1;
+        padding: 6px 8px;
+        cursor: pointer;
+      }
+
+      #${ROOT_ID} .dc-clear-chat:hover {
+        background: rgba(255, 255, 255, 0.16);
+      }
+
       #${ROOT_ID} .dc-status {
         margin-top: 8px;
         font-size: 12px;
@@ -210,6 +233,46 @@
         background: #fef2f2;
         color: #991b1b;
         border: 1px solid #fecaca;
+      }
+
+      #${ROOT_ID} .dc-progress-card {
+        margin-top: 10px;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 10px;
+      }
+
+      #${ROOT_ID} .dc-progress-title {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e3a8a;
+      }
+
+      #${ROOT_ID} .dc-progress-list {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #${ROOT_ID} .dc-progress-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      #${ROOT_ID} .dc-progress-item label {
+        cursor: pointer;
+      }
+
+      #${ROOT_ID} .dc-progress-meta {
+        display: block;
+        font-size: 11px;
+        color: #475569;
       }
 
       #${ROOT_ID} .dc-composer {
@@ -299,13 +362,20 @@
   panel.id = "dc-chatbot-panel";
 
   const header = createElement("header", "dc-header");
+  const headerTop = createElement("div", "dc-header-top");
   const title = createElement("h2", "dc-title");
+  const clearButton = /** @type {HTMLButtonElement} */ (createElement("button", "dc-clear-chat"));
   const subtitle = createElement("p", "dc-subtitle");
   const statusText = createElement("p", "dc-status");
   setSafeText(title, "Dallas College Advisor");
+  clearButton.type = "button";
+  clearButton.setAttribute("aria-label", "Clear chat history");
+  clearButton.title = "Clear Chat";
+  setSafeText(clearButton, "X");
   setSafeText(subtitle, "Grounded in the local catalog cache.");
   setSafeText(statusText, "Ready");
-  header.append(title, subtitle, statusText);
+  headerTop.append(title, clearButton);
+  header.append(headerTop, subtitle, statusText);
 
   const log = createElement("div", "dc-log");
   log.setAttribute("role", "log");
@@ -330,6 +400,61 @@
 
   /** @type {HTMLElement | null} */
   let typingMessage = null;
+  /** @type {Array<{role: "user"|"bot"|"error", kind: "text"|"progress", text: string, useMarkdown?: boolean, progressCards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>}>} */
+  let conversationHistory = [];
+
+  /**
+   * Persist in-memory chat history to localStorage.
+   *
+   * @returns {void}
+   */
+  function saveChatHistory() {
+    try {
+      localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(conversationHistory));
+    } catch (error) {
+      console.warn("[DCChatbot] Unable to persist chat history.", error);
+    }
+  }
+
+  /**
+   * Re-hydrate chat bubbles from localStorage if available.
+   *
+   * @returns {void}
+   */
+  function loadChatHistory() {
+    try {
+      const raw = localStorage.getItem(CHAT_HISTORY_KEY);
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        return;
+      }
+
+      conversationHistory = parsed;
+      for (let i = 0; i < conversationHistory.length; i += 1) {
+        const entry = conversationHistory[i];
+        if (!entry || typeof entry !== "object") {
+          continue;
+        }
+        if (entry.kind === "progress") {
+          appendProgressCardMessage(
+            entry.text || "",
+            entry.role || "bot",
+            entry.progressCards || [],
+            false,
+            i,
+          );
+        } else {
+          appendMessage(entry.text || "", entry.role || "bot", Boolean(entry.useMarkdown), false);
+        }
+      }
+    } catch (error) {
+      console.warn("[DCChatbot] Unable to load chat history.", error);
+    }
+  }
 
   /**
    * Append a message bubble safely.
@@ -338,7 +463,7 @@
    * @param {"user"|"bot"|"error"} role
    * @returns {HTMLElement}
    */
-  function appendMessage(text, role, useMarkdown = false) {
+  function appendMessage(text, role, useMarkdown = false, shouldPersist = true) {
     const bubble = createElement("div", `dc-message dc-message-${role}`);
     if (useMarkdown) {
       bubble.innerHTML = formatMarkdown(text);
@@ -347,6 +472,96 @@
     }
     log.appendChild(bubble);
     log.scrollTop = log.scrollHeight;
+
+    if (shouldPersist) {
+      conversationHistory.push({ role, kind: "text", text, useMarkdown });
+      saveChatHistory();
+    }
+
+    return bubble;
+  }
+
+  /**
+   * Render interactive checklist cards in a bot bubble.
+   *
+   * @param {string} text
+   * @param {"user"|"bot"|"error"} role
+   * @param {Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>} progressCards
+   * @param {boolean=} shouldPersist
+   * @param {number=} historyIndexOverride
+   * @returns {HTMLElement}
+   */
+  function appendProgressCardMessage(
+    text,
+    role,
+    progressCards,
+    shouldPersist = true,
+    historyIndexOverride = -1,
+  ) {
+    const bubble = createElement("div", `dc-message dc-message-${role}`);
+    const intro = createElement("div");
+    intro.innerHTML = formatMarkdown(text);
+    bubble.appendChild(intro);
+
+    const entryIndex = shouldPersist ? conversationHistory.length : historyIndexOverride;
+
+    progressCards.forEach((card, cardIndex) => {
+      const cardContainer = createElement("section", "dc-progress-card");
+      const cardTitle = createElement("h4", "dc-progress-title");
+      setSafeText(cardTitle, card.title || card.program_id || "Degree Plan");
+      cardContainer.appendChild(cardTitle);
+
+      const courseList = createElement("ul", "dc-progress-list");
+      const courses = Array.isArray(card.courses) ? card.courses : [];
+
+      courses.forEach((course, courseIndex) => {
+        const listItem = createElement("li", "dc-progress-item");
+        const checkbox = /** @type {HTMLInputElement} */ (createElement("input"));
+        checkbox.type = "checkbox";
+        checkbox.checked = Boolean(course.completed);
+
+        const label = createElement("label");
+        const main = createElement("span");
+        const meta = createElement("span", "dc-progress-meta");
+        setSafeText(main, `${course.code || "COURSE"}: ${course.title || "Title"}`);
+        setSafeText(meta, `${course.semester || "Requirements"} • ${course.credits || "?"} credits`);
+        label.append(main, meta);
+
+        checkbox.addEventListener("change", () => {
+          if (entryIndex < 0 || entryIndex >= conversationHistory.length) {
+            return;
+          }
+          const historyEntry = conversationHistory[entryIndex];
+          if (!historyEntry || historyEntry.kind !== "progress" || !Array.isArray(historyEntry.progressCards)) {
+            return;
+          }
+          const historyCard = historyEntry.progressCards[cardIndex];
+          if (!historyCard || !Array.isArray(historyCard.courses)) {
+            return;
+          }
+          if (!historyCard.courses[courseIndex]) {
+            return;
+          }
+          historyCard.courses[courseIndex].completed = checkbox.checked;
+          saveChatHistory();
+        });
+
+        listItem.append(checkbox, label);
+        courseList.appendChild(listItem);
+      });
+
+      cardContainer.appendChild(courseList);
+      bubble.appendChild(cardContainer);
+    });
+
+    log.appendChild(bubble);
+    log.scrollTop = log.scrollHeight;
+
+    if (shouldPersist) {
+      conversationHistory.push({ role, kind: "progress", text, progressCards });
+      saveChatHistory();
+    }
+
     return bubble;
   }
 
@@ -409,7 +624,7 @@
    * Send the chat request to the local FastAPI backend.
    *
    * @param {string} message
-   * @returns {Promise<{reply: string, model: string}>}
+  * @returns {Promise<{reply: string, model: string, progress_cards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>}>}
    */
   async function postMessage(message) {
     const response = await fetch(API_URL, {
@@ -480,7 +695,11 @@
     try {
       const payload = await postMessage(message);
       setTypingIndicator(false);
-      appendMessage(payload.reply, "bot", true);
+      if (Array.isArray(payload.progress_cards) && payload.progress_cards.length > 0) {
+        appendProgressCardMessage(payload.reply, "bot", payload.progress_cards);
+      } else {
+        appendMessage(payload.reply, "bot", true);
+      }
       setStatus(`Answered by ${payload.model}`);
     } catch (error) {
       setTypingIndicator(false);
@@ -510,8 +729,24 @@
     }
   });
 
-  appendMessage(
-    "Ask about programs, course codes, or credit hours from the cached Dallas College catalog.",
-    "bot",
-  );
+  clearButton.addEventListener("click", () => {
+    conversationHistory = [];
+    localStorage.removeItem(CHAT_HISTORY_KEY);
+    log.textContent = "";
+    appendMessage(
+      "Chat history cleared. Ask about programs, course codes, or credit hours from the cached Dallas College catalog.",
+      "bot",
+      false,
+      false,
+    );
+    setStatus("History cleared");
+  });
+
+  loadChatHistory();
+  if (!conversationHistory.length) {
+    appendMessage(
+      "Ask about programs, course codes, or credit hours from the cached Dallas College catalog.",
+      "bot",
+    );
+  }
 })();

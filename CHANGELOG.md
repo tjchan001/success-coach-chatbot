@@ -21,3 +21,8 @@ All notable changes to this project are documented in this file.
 - Refactored chat generation in [api/chat.py](api/chat.py) to inject query-optimized context snippets instead of full catalog dumps and updated metaprompt instructions to request pathway clarification when filtered slices lack exact answers.
 - Added context slicer regression tests in [tests/test_chat.py](tests/test_chat.py): targeted program isolation by keyword and generic-query budget-bound index slicing.
 - Replaced deprecated FastAPI `@app.on_event("startup")` initialization in [api/chat.py](api/chat.py) with an async lifespan context manager bound via `app = FastAPI(lifespan=lifespan)`.
+- Added frontend session persistence in [public/widget.js](public/widget.js) using `localStorage` (`dc_chatbot_history`), including automatic re-hydration and a top-level clear-history control.
+- Added dynamic interactive progress-card rendering in [public/widget.js](public/widget.js) for structured backend checklist payloads with per-course completion toggles persisted to history state.
+- Added backend scope guardrails in [api/chat.py](api/chat.py) to short-circuit out-of-bounds non-academic requests with a local containment reply and no provider calls.
+- Added structured `progress_cards` response support in [api/chat.py](api/chat.py) for explicit degree-layout requests, enabling UI checklist rendering of pathway course requirements.
+- Added out-of-bounds containment regression coverage in [tests/test_chat.py](tests/test_chat.py) to verify boundary enforcement without upstream context/token spend.

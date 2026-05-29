@@ -298,9 +298,51 @@ async def test_generate_chat_reply_fails_without_provider_keys(
 
     # Act / Assert
     with pytest.raises(HTTPException) as exc_info:
-        await chat._generate_chat_reply("Hello")
+        await chat._generate_chat_reply("degree plan requirements")
 
     assert exc_info.value.status_code == 503
+
+
+@pytest.mark.anyio
+async def test_out_of_bounds_query_short_circuits_provider_calls(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Out-of-bounds queries must be contained locally without provider token usage."""
+
+    class DummyAsyncClient:
+        """Fail immediately if network calls are attempted for out-of-bounds input."""
+
+        def __init__(self, *_args: object, **_kwargs: object) -> None:
+            return None
+
+        async def __aenter__(self) -> DummyAsyncClient:
+            return self
+
+        async def __aexit__(
+            self,
+            _exc_type: type[BaseException] | None,
+            _exc: BaseException | None,
+            _tb: object | None,
+        ) -> None:
+            return None
+
+        async def post(
+            self,
+            url: str,
+            headers: dict[str, str] | None = None,
+            json: dict[str, object] | None = None,
+        ) -> httpx.Response:
+            pytest.fail(f"Provider call must not occur for out-of-bounds query: {url}")
+
+    # Arrange
+    monkeypatch.setattr(chat.httpx, "AsyncClient", DummyAsyncClient)
+
+    # Act
+    response_model: chat.ChatResponse = await chat._generate_chat_reply("write a poem about rain")
+
+    # Assert
+    assert response_model.model == "guardrail/local"
+    assert "Dallas College academic advising topics" in response_model.reply
 
 
 def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:
