@@ -74,7 +74,13 @@ _SELECTION_GUARDRAIL: str = (
     "Please consult a Dallas College success coach or human advisor for verified pathways."
 )
 _MANDATORY_GOVERNANCE_GREETING: str = (
-    "Greetings, I am the automated AI Academic Advisor for Dallas College."
+    "Greetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox Engine."
+)
+_MANDATORY_SANDBOX_DISCLAIMER_NOTICE: str = (
+    "*(This application is a student-led AI Club sandbox demo and is not an officially sanctioned "
+    "tool of Dallas College. For binding degree planning and institutional support, connect directly "
+    "with a human advisor at the Official Dallas College Support Directory: "
+    "https://www.dallascollege.edu/contact).*"
 )
 _OUT_OF_BOUNDS_REPLY: str = (
     "I can only assist with Dallas College academic advising topics. "
@@ -963,6 +969,7 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "\n"
         "[MANDATORY GOVERNANCE GREETING PROTOCOL]:\n"
         f"- Every initial interaction must begin exactly with: \"{_MANDATORY_GOVERNANCE_GREETING}\" followed immediately by a dense layout of the requested data.\n"
+        f"- Directly below the greeting, append this markdown italicized bracket notice exactly: \"{_MANDATORY_SANDBOX_DISCLAIMER_NOTICE}\"\n"
         "- For exact guardrail/fallback outputs, emit the required string exactly with no prefix or suffix.\n"
         "\n"
         "[DETERMINISTIC CONTEXT FILTER RULES]:\n"
@@ -978,6 +985,12 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "- Strict zero-temperature simulation: Do not vary terminology.\n"
         "- You have been provided a highly filtered context snippet matching the student's topical intent. "
         "If the precise answer is missing from this slice, guide them to specify which degree plan or certificate pathway they want to inspect.\n"
+        "\n"
+        "[SOURCE CITATION VERIFICATION RULES]:\n"
+        "- When displaying program schemas, map the source records to their official online counterparts by appending markdown footer links for verification:\n"
+        "- Game Development: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=2897\n"
+        "- Culinary Arts: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=3061\n"
+        "- Welding: https://catalog.dallascollege.edu/preview_program.php?catoid=2&poid=650\n"
         "\n"
         "[GUARDRAIL TRIGGER ACTIONS]:\n"
         "- If the user requests courses/tracks not explicitly keyed in <context>, emit exactly:\n"

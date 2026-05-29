@@ -58,7 +58,13 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     assert "[ROLE]: Sovereign Automated AI Academic Advisor for Dallas College Computer Science/IT." in system_prompt
     assert "[AI GOVERNANCE]: You MUST state that you are an automated AI system in the initial response." in system_prompt
     assert "[MANDATORY GOVERNANCE GREETING PROTOCOL]:" in system_prompt
-    assert "Greetings, I am the automated AI Academic Advisor for Dallas College." in system_prompt
+    assert "Greetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox Engine." in system_prompt
+    assert "Directly below the greeting, append this markdown italicized bracket notice exactly:" in system_prompt
+    assert "*(This application is a student-led AI Club sandbox demo and is not an officially sanctioned tool of Dallas College." in system_prompt
+    assert "[SOURCE CITATION VERIFICATION RULES]:" in system_prompt
+    assert "Game Development: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=2897" in system_prompt
+    assert "Culinary Arts: https://catalog.dallascollege.edu/preview_program.php?catoid=5&poid=3061" in system_prompt
+    assert "Welding: https://catalog.dallascollege.edu/preview_program.php?catoid=2&poid=650" in system_prompt
     assert "Strict zero-tolerance hallucination lock" in system_prompt
     assert "Academic catalog context unavailable. Connection terminal error." in system_prompt
     assert "I cannot confirm that selection based on the current catalog data." in system_prompt
