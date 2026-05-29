@@ -40,3 +40,4 @@ All notable changes to this project are documented in this file.
 - Updated local CORS diagnostics in [api/chat.py](api/chat.py) to `allow_origins=["*"]`, `allow_credentials=True`, `allow_methods=["*"]`, and `allow_headers=["*"]` for preflight troubleshooting.
 - Added a dedicated routing probe endpoint in [api/chat.py](api/chat.py): `GET /api/test-routing` returning a static module-serving confirmation message.
 - Optimized large-catalog startup behavior in [api/chat.py](api/chat.py) by making prerequisite index construction lazy and cached, and added defensive try/except skipping for malformed program structures during dependency indexing.
+- Hardened the [api/chat.py](api/chat.py) `/api/chat` and `/api/chat/` route handler to catch all runtime search exceptions, log `Search route exception: ...`, and return a stable widget-safe fallback payload (`System-Fallback-Shield`) instead of crashing.

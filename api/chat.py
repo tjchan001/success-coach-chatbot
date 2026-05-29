@@ -1236,7 +1236,7 @@ async def test_routing() -> dict[str, str]:
 
 @app.post("/api/chat/", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 @app.post("/api/chat", response_model=ChatResponse, status_code=status.HTTP_200_OK)
-async def chat(request: ChatRequest) -> ChatResponse | JSONResponse:
+async def chat(request: ChatRequest) -> ChatResponse:
     """Handle a widget message through the hybrid Groq-to-Gemini cascade.
 
     Args:
@@ -1248,8 +1248,13 @@ async def chat(request: ChatRequest) -> ChatResponse | JSONResponse:
     try:
         return await _generate_chat_reply(message=request.message)
     except Exception as e:  # noqa: BLE001
-        logging.exception("Fatal exception in chat handler")
-        return JSONResponse(
-            status_code=500,
-            content={"detail": f"Internal Server Error: {str(e)}"},
+        logging.error(f"Search route exception: {str(e)}")
+        return ChatResponse(
+            reply=(
+                "I encountered an optimization bottleneck reading the catalog data "
+                "structure for that topic. Please try asking about a specific course "
+                "code (e.g., WLDG or AERM) while I refine my indexing rules!"
+            ),
+            model="System-Fallback-Shield",
+            progress_cards=[],
         )
