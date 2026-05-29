@@ -746,15 +746,19 @@
     if (!response.ok) {
       let detail = `Request failed with status ${response.status}.`;
       try {
-        const payload = await response.json();
-        if (payload && typeof payload.detail === "string" && payload.detail) {
-          detail = payload.detail;
-        }
-      } catch (error) {
-        const fallbackError = error;
-        console.warn("[DCChatbot] Failed to parse error payload.", fallbackError);
         const rawText = await response.text();
-        throw rawText;
+        try {
+          const payload = JSON.parse(rawText);
+          if (payload && typeof payload.detail === "string" && payload.detail) {
+            detail = payload.detail;
+          } else {
+            detail = rawText || detail;
+          }
+        } catch {
+          detail = rawText || detail;
+        }
+      } catch (streamError) {
+        console.warn("[DCChatbot] Could not read response stream.", streamError);
       }
       throw new Error(detail);
     }
