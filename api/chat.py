@@ -82,6 +82,46 @@ _OUT_OF_BOUNDS_REPLY: str = (
 )
 _COURSE_CODE_PATTERN: re.Pattern[str] = re.compile(r"\b([A-Z]{4})\s*(\d{4})\b", re.IGNORECASE)
 
+CAREER_CLUSTER_MAP: dict[str, list[str]] = {
+    "cooking": ["chef", "pstr", "culinary arts"],
+    "programming": ["itse", "inew", "software"],
+    "cybersecurity": ["cyber", "itnw", "network security"],
+    "networking": ["itnw", "network", "infrastructure"],
+    "web": ["itse", "web", "frontend"],
+    "business": ["bcis", "business", "applications"],
+}
+
+
+def expand_user_query(query_text: str) -> list[str]:
+    """Expand a user query with cluster-derived search targets.
+
+    Architectural Intent:
+        Keep search expansion centralized and lightweight so query routing can
+        match catalog prefixes without injecting a heavy synonym engine.
+
+    Security Rationale:
+        Expansion is deterministic, local-only, and bounded to static cluster
+        values, preventing untrusted dynamic prompt growth.
+    """
+    normalized_query: str = query_text.lower().strip()
+    if not normalized_query:
+        return []
+
+    expanded_terms: list[str] = [normalized_query]
+    seen_terms: set[str] = {normalized_query}
+
+    for cluster_term, cluster_targets in CAREER_CLUSTER_MAP.items():
+        if cluster_term not in normalized_query:
+            continue
+        for target in cluster_targets:
+            normalized_target: str = target.lower().strip()
+            if not normalized_target or normalized_target in seen_terms:
+                continue
+            expanded_terms.append(normalized_target)
+            seen_terms.add(normalized_target)
+
+    return expanded_terms
+
 
 class CatalogSearchEngine:
     """In-memory catalog indexer and context slicer for token-efficient prompts.
@@ -600,6 +640,50 @@ class CatalogSearchEngine:
             for program in self._programs():
                 if str(program.get("program_id")) == matched_program_id:
                     return self._build_targeted_program_context(program, matched_program_id)
+
+        expanded_terms: list[str] = expand_user_query(user_query)
+        for program in self._programs():
+            try:
+                program_id: str = str(program.get("program_id", "")).strip()
+                program_title: str = str(program.get("title", "")).strip()
+                normalized_program_id: str = program_id.lower()
+                normalized_program_title: str = program_title.lower()
+
+                if any(
+                    term in normalized_program_title or term in normalized_program_id
+                    for term in expanded_terms
+                ):
+                    return self._build_targeted_program_context(program, program_id)
+
+                semesters: object = program.get("semesters")
+                if isinstance(semesters, list):
+                    for semester in semesters:
+                        try:
+                            if not isinstance(semester, dict):
+                                continue
+                            courses: object = semester.get("courses")
+                            if not isinstance(courses, list):
+                                continue
+                            for course in courses:
+                                if not isinstance(course, dict):
+                                    continue
+                                raw_course_code: object = course.get("code", "")
+                                normalized_course_code: str = (
+                                    raw_course_code.lower().strip()
+                                    if isinstance(raw_course_code, str)
+                                    else ""
+                                )
+                                if any(term in normalized_course_code for term in expanded_terms):
+                                    return self._build_targeted_program_context(program, program_id)
+                        except Exception as exc:  # noqa: BLE001
+                            _LOG.warning(
+                                "Skipping malformed semester in expanded match loop: %s",
+                                exc,
+                            )
+                            continue
+            except Exception as exc:  # noqa: BLE001
+                _LOG.warning("Skipping malformed program in expanded match loop: %s", exc)
+                continue
 
         return self._build_generic_index_context()
 

@@ -404,6 +404,77 @@ def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:
     assert "ITNW 1358" not in context
 
 
+def test_expand_user_query_appends_cluster_targets() -> None:
+    """Cluster-mapped keywords must append deterministic prefix targets."""
+    # Arrange / Act
+    expanded_terms: list[str] = chat.expand_user_query("programming options")
+
+    # Assert
+    assert expanded_terms[0] == "programming options"
+    assert "itse" in expanded_terms
+    assert "inew" in expanded_terms
+    assert "software" in expanded_terms
+
+
+def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Path) -> None:
+    """Expanded query terms must match against course prefixes in RAG gatherer logic."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Web_Development_Certificate",
+                        "title": "Web Development Certificate",
+                        "total_hours": 30,
+                        "semesters": [
+                            {
+                                "name": "Certificate Core",
+                                "courses": [
+                                    {
+                                        "code": "ITSE 1301",
+                                        "title": "Web Design Tools",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "program_id": "Cybersecurity_AAS",
+                        "title": "Cybersecurity AAS",
+                        "total_hours": 60,
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "ITNW 1358",
+                                        "title": "Network Plus",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("programming certificate options")
+
+    # Assert
+    assert "Web_Development_Certificate" in context
+    assert "ITSE 1301" in context
+    assert "Cybersecurity_AAS" not in context
+    assert "ITNW 1358" not in context
+
+
 def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:
     """Generic queries must return a slim index map within the configured budget."""
     # Arrange
