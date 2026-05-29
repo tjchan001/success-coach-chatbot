@@ -421,6 +421,19 @@ def test_expand_user_query_appends_cluster_targets() -> None:
     assert "software" in expanded_terms
 
 
+def test_expand_user_query_supports_real_estate_aliases() -> None:
+    """Both spaced and unspaced real-estate queries must expand to catalog targets."""
+    # Arrange / Act
+    spaced_terms: list[str] = chat.expand_user_query("real estate listings")
+    compact_terms: list[str] = chat.expand_user_query("realestate listings")
+
+    # Assert
+    assert "rele" in spaced_terms
+    assert "rele" in compact_terms
+    assert "bmgt" in spaced_terms
+    assert "busi" in compact_terms
+
+
 def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Path) -> None:
     """Expanded query terms must match against course prefixes in RAG gatherer logic."""
     # Arrange
@@ -557,6 +570,48 @@ def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) ->
     expected_url: str = (
         "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
         "search_keyword=Welding+Technology"
+    )
+    assert f"[Catalog Source Verification Link: {expected_url}]" in context
+
+
+def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_path: Path) -> None:
+    """Real-estate fallback links must normalize to the requested advanced-search URL."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Real_Estate_Certificate",
+                        "title": "Real Estate",
+                        "semesters": [
+                            {
+                                "name": "Core",
+                                "courses": [
+                                    {
+                                        "code": "RELE 1300",
+                                        "title": "Principles of Real Estate",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("realestate program")
+
+    # Assert
+    expected_url: str = (
+        "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
+        "search_keyword=Real+Estate"
     )
     assert f"[Catalog Source Verification Link: {expected_url}]" in context
 

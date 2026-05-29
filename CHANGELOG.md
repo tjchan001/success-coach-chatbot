@@ -15,6 +15,8 @@ All notable changes to this project are documented in this file.
 - Extended [api/chat.py](api/chat.py) generic catalog index signature generation to inject per-program `[Catalog Source Verification Link: ...]` tokens so broad-query context chunks also carry verification URLs across the full program catalog.
 - Updated [api/chat.py](api/chat.py) system prompt citation instructions to extract and render markdown footer citations from embedded `[Catalog Source Verification Link: ...]` tokens instead of hardcoded program link examples.
 - Added regression coverage in [tests/test_chat.py](tests/test_chat.py) for direct-source and fallback-source verification link token injection in optimized targeted context.
+- Added real-estate cluster aliases in [api/chat.py](api/chat.py) for both spaced and unspaced user phrasing, mapping to RELE, BUSI, and BMGT catalog targets.
+- Added regression coverage in [tests/test_chat.py](tests/test_chat.py) for real-estate alias expansion and the Real+Estate advanced-search fallback URL token.
 
 ## 2026-05-28
 

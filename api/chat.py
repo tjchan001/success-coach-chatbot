@@ -95,6 +95,8 @@ CAREER_CLUSTER_MAP: dict[str, list[str]] = {
     "networking": ["itnw", "network", "infrastructure"],
     "web": ["itse", "web", "frontend"],
     "business": ["bcis", "business", "applications"],
+    "real estate": ["real estate", "rele", "business", "busi", "bmgt"],
+    "realestate": ["real estate", "rele", "business", "busi", "bmgt"],
 }
 
 

@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T10:43:25-05:00",
+  "generated": "2026-05-29T10:57:05-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -283,9 +283,11 @@
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:",
         "def test_expand_user_query_appends_cluster_targets() -> None:",
+        "def test_expand_user_query_supports_real_estate_aliases() -> None:",
         "def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Path) -> None:",
         "def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:",
         "def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:",
+        "def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_path: Path) -> None:",
         "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:",
         "def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -> None:",
         "def classify_intent(self, _user_query: str) -> str:",
