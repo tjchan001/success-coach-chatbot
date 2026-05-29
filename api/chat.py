@@ -450,7 +450,10 @@ class CatalogSearchEngine:
             return self._json_within_budget(targeted_payload)
 
         serialized: str = self._json_within_budget(targeted_payload)
-        program_payload: dict[str, object] = targeted_payload["program"]
+        program_payload_obj: object = targeted_payload.get("program")
+        if not isinstance(program_payload_obj, dict):
+            return serialized
+        program_payload: dict[str, object] = program_payload_obj
         if not isinstance(program_payload, dict):
             return serialized
 
@@ -459,35 +462,43 @@ class CatalogSearchEngine:
             return serialized
 
         for semester in semesters:
-            if not isinstance(semester, dict):
+            try:
+                if not isinstance(semester, dict):
+                    continue
+
+                compact_semester: dict[str, object] = {
+                    "name": semester.get("name"),
+                    "courses": [],
+                }
+                semester_list.append(compact_semester)
+
+                courses_container: object = compact_semester.get("courses")
+                if not isinstance(courses_container, list):
+                    continue
+
+                courses: object = semester.get("courses")
+                if isinstance(courses, list):
+                    for course in courses:
+                        try:
+                            if not isinstance(course, dict):
+                                continue
+
+                            compact_course: dict[str, object] = {
+                                "code": course.get("code"),
+                                "title": course.get("title"),
+                                "credits": course.get("credits"),
+                            }
+                            courses_container.append(compact_course)
+
+                            serialized = self._json_within_budget(targeted_payload)
+                            if len(serialized) >= self.char_budget:
+                                return serialized
+                        except Exception as exc:  # noqa: BLE001
+                            _LOG.warning("Skipping malformed course in targeted context: %s", exc)
+                            continue
+            except Exception as exc:  # noqa: BLE001
+                _LOG.warning("Skipping malformed semester in targeted context: %s", exc)
                 continue
-
-            compact_semester: dict[str, object] = {
-                "name": semester.get("name"),
-                "courses": [],
-            }
-            semester_list.append(compact_semester)
-
-            courses_container: object = compact_semester.get("courses")
-            if not isinstance(courses_container, list):
-                continue
-
-            courses: object = semester.get("courses")
-            if isinstance(courses, list):
-                for course in courses:
-                    if not isinstance(course, dict):
-                        continue
-
-                    compact_course: dict[str, object] = {
-                        "code": course.get("code"),
-                        "title": course.get("title"),
-                        "credits": course.get("credits"),
-                    }
-                    courses_container.append(compact_course)
-
-                    serialized = self._json_within_budget(targeted_payload)
-                    if len(serialized) >= self.char_budget:
-                        return serialized
 
             serialized = self._json_within_budget(targeted_payload)
             if len(serialized) >= self.char_budget:
@@ -505,47 +516,62 @@ class CatalogSearchEngine:
         seen_entries: set[tuple[str, str]] = set()
 
         for program in self._programs():
-            program_id: str = str(program.get("program_id", "unknown_program"))
-            semesters: object = program.get("semesters")
-            if not isinstance(semesters, list):
+            try:
+                program_id: str = str(program.get("program_id", "unknown_program"))
+                semesters: object = program.get("semesters")
+                if not isinstance(semesters, list):
+                    continue
+
+                for semester in semesters:
+                    try:
+                        if not isinstance(semester, dict):
+                            continue
+                        courses: object = semester.get("courses")
+                        if not isinstance(courses, list):
+                            continue
+
+                        for course in courses:
+                            try:
+                                if not isinstance(course, dict):
+                                    continue
+
+                                raw_code: object = course.get("code", "")
+                                code: str = raw_code.strip() if isinstance(raw_code, str) else ""
+
+                                raw_title: object = course.get("title", "")
+                                title: str = raw_title.strip() if isinstance(raw_title, str) else ""
+                                if not code and not title:
+                                    continue
+
+                                dedupe_key: tuple[str, str] = (code, title)
+                                if dedupe_key in seen_entries:
+                                    continue
+                                seen_entries.add(dedupe_key)
+
+                                raw_credits: object = course.get("credits")
+                                credits: str | int | float | None = (
+                                    raw_credits
+                                    if isinstance(raw_credits, (str, int, float))
+                                    else None
+                                )
+                                normalized_title: str = re.sub(r"\s+", " ", title).strip()
+                                signature_entries.append(
+                                    f"{program_id}|{code}|{normalized_title}|{credits}"
+                                )
+                                index_payload["signature"] = ";".join(signature_entries)
+
+                                serialized: str = self._json_within_budget(index_payload)
+                                if len(serialized) >= self.char_budget:
+                                    return serialized
+                            except Exception as exc:  # noqa: BLE001
+                                _LOG.warning("Skipping malformed course in generic context: %s", exc)
+                                continue
+                    except Exception as exc:  # noqa: BLE001
+                        _LOG.warning("Skipping malformed semester in generic context: %s", exc)
+                        continue
+            except Exception as exc:  # noqa: BLE001
+                _LOG.warning("Skipping malformed program in generic context: %s", exc)
                 continue
-
-            for semester in semesters:
-                if not isinstance(semester, dict):
-                    continue
-                courses: object = semester.get("courses")
-                if not isinstance(courses, list):
-                    continue
-
-                for course in courses:
-                    if not isinstance(course, dict):
-                        continue
-
-                    code: str = str(course.get("code", "")).strip()
-                    title: str = str(course.get("title", "")).strip()
-                    if not code and not title:
-                        continue
-
-                    dedupe_key: tuple[str, str] = (code, title)
-                    if dedupe_key in seen_entries:
-                        continue
-                    seen_entries.add(dedupe_key)
-
-                    compact_entry: dict[str, object] = {
-                        "program_id": program_id,
-                        "code": code,
-                        "title": title,
-                        "credits": course.get("credits"),
-                    }
-                    normalized_title: str = re.sub(r"\s+", " ", str(compact_entry["title"])).strip()
-                    signature_entries.append(
-                        f"{program_id}|{compact_entry['code']}|{normalized_title}|{compact_entry['credits']}"
-                    )
-                    index_payload["signature"] = ";".join(signature_entries)
-
-                    serialized: str = self._json_within_budget(index_payload)
-                    if len(serialized) >= self.char_budget:
-                        return serialized
 
         return self._json_within_budget(index_payload)
 
