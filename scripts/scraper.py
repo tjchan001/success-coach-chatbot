@@ -483,7 +483,7 @@ def discover_all_program_pathways() -> dict[str, str]:
     Implements anti-vulnerability network safeguards and browser-footprint simulations
     to seamlessly handle modern server protections.
     """
-    root_index_url = "https://catalog.dallascollege.edu/content.php?catoid=33&navoid=2416"
+    root_index_url = "https://catalog.dallascollege.edu/content.php?catoid=4&navoid=944"
     _validate_catalog_url(root_index_url)
     
     _LOG.info("Initializing global program discovery sweep on: %s", root_index_url)
@@ -500,18 +500,20 @@ def discover_all_program_pathways() -> dict[str, str]:
         
         # Parse all degree plan anchors pointing to individual program object descriptors (poid)
         for anchor in soup.find_all("a", href=True):
-            href = anchor['href']
-            if "preview_program.php" in href and "poid=" in href:
-                full_url = urljoin("https://catalog.dallascollege.edu/", href)
-                raw_title = anchor.get_text(strip=True)
-                
-                if not raw_title:
-                    continue
-                    
-                # Standardize program identifiers for clean dictionary key lookups
-                clean_id = re.sub(r"\W+", "_", raw_title).strip("_")
-                if clean_id and clean_id not in discovered_pathways:
-                    discovered_pathways[clean_id] = full_url
+            href = str(anchor.get("href", ""))
+            if "preview_program.php" not in href or "poid=" not in href:
+                continue
+
+            full_url = urljoin("https://catalog.dallascollege.edu/", href)
+            raw_title = anchor.get_text(strip=True)
+
+            if not raw_title:
+                continue
+
+            # Standardize program identifiers for clean dictionary key lookups
+            clean_id = re.sub(r"\W+", "_", raw_title).strip("_")
+            if clean_id and clean_id not in discovered_pathways:
+                discovered_pathways[clean_id] = full_url
                     
     except Exception as exc:
         _LOG.error("Failed to dynamically sweep system catalog records: %s", exc)
@@ -664,6 +666,7 @@ if __name__ == "__main__":
         )
     except (httpx.HTTPStatusError, httpx.TimeoutException, ValueError) as exc:
         _LOG.error("Scrape failed: %s", exc)
+        _LOG.error("Scrape failed. If a 404 error occurred, check if catalog.dallascollege.edu rotated its active 'catoid' or 'navoid' parameters on their Degrees & Certificates index page.")
         sys.exit(1)
 
     _LOG.info("Scraped %d programs.", len(output_payload["programs"]))

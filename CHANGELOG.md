@@ -31,3 +31,4 @@ All notable changes to this project are documented in this file.
 - Compressed broad-query catalog routing in [api/chat.py](api/chat.py) into an ultra-light token signature map (`catalog_index_signature`) that strips extraneous whitespace and secondary metadata.
 - Upgraded [public/widget.js](public/widget.js) with animated skeleton loading states, smooth scroll snapping, and prerequisite-aware progress-card checkbox enforcement with inline warnings and shake animation feedback.
 - Added prerequisite regression coverage in [tests/test_chat.py](tests/test_chat.py) for dependency indexing and degree-layout `prerequisite_tree` emission.
+- Updated discovery root index in [scripts/scraper.py](scripts/scraper.py) to `https://catalog.dallascollege.edu/content.php?catoid=4&navoid=944` and made program-link extraction catoid-agnostic by matching `preview_program.php` + `poid=` across catalog version rotations.
