@@ -28,10 +28,15 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
-import httpx
+try:
+    import httpx
+except ImportError as exc:  # pragma: no cover
+    httpx = None  # type: ignore[assignment]
+    _HTTPX_IMPORT_ERROR: ImportError | None = exc
+else:
+    _HTTPX_IMPORT_ERROR = None
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 _LOG: logging.Logger = logging.getLogger(__name__)
@@ -1200,6 +1205,21 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
         intent=intent,
         triggered_guardrail=False,
     )
+
+    if httpx is None:
+        _LOG.error(
+            "Search route exception: httpx dependency unavailable during provider request path. %s",
+            _HTTPX_IMPORT_ERROR,
+        )
+        return ChatResponse(
+            reply=(
+                "I encountered an optimization bottleneck reading the catalog data structure "
+                "for that topic. Please try asking about a specific course code (e.g., WLDG "
+                "or AERM) while I refine my indexing rules!"
+            ),
+            model="System-Fallback-Shield",
+            progress_cards=[],
+        )
 
     async with httpx.AsyncClient(timeout=_HTTP_TIMEOUT_SECONDS) as client:
         groq_response: ChatResponse | None = await _request_groq_reply(
