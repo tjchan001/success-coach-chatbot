@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T00:19:21-05:00",
+  "generated": "2026-05-29T00:26:12-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -68,10 +68,12 @@
       "functions": [],
       "imports": [
         "from __future__ import annotations",
+        "import asyncio",
         "import json",
         "import logging",
         "import os",
         "import re",
+        "from datetime import datetime, timezone",
         "from contextlib import asynccontextmanager",
         "from pathlib import Path",
         "from typing import Annotated",
@@ -84,9 +86,16 @@
         "def _load_catalog_payload(self) -> dict[str, object]:",
         "def _programs(self) -> list[dict[str, object]]:",
         "def _classify_program_intent(self, user_query: str) -> str | None:",
+        "def classify_intent(self, user_query: str) -> str:",
+        "def get_matched_keywords(self, user_query: str) -> list[str]:",
         "def is_out_of_bounds_query(self, user_query: str) -> bool:",
         "def _is_degree_layout_request(self, user_query: str) -> bool:",
+        "def _extract_course_codes(self, raw_text: str) -> list[str]:",
+        "def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:",
+        "def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:",
+        "def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
         "def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:",
+        "def get_degree_prerequisite_tree(self, user_query: str) -> dict[str, list[str]]:",
         "def _json_within_budget(self, payload: dict[str, object]) -> str:",
         "def _build_targeted_program_context(self, program: dict[str, object], program_id: str) -> str:",
         "def _build_generic_index_context(self) -> str:",
@@ -95,6 +104,8 @@
         "def _get_optimized_catalog_context(user_query: str) -> str:",
         "def _is_out_of_bounds_query(user_query: str) -> bool:",
         "def _get_degree_progress_cards(user_query: str) -> list[dict[str, object]]:",
+        "def _get_degree_prerequisite_tree(user_query: str) -> dict[str, list[str]]:",
+        "def _write_analytics_entry_sync(entry: dict[str, object], output_path: Path) -> None:",
         "def _parse_cors_origins() -> list[str]:",
         "def _load_catalog_prompt_payload() -> str:",
         "def _build_system_prompt(catalog_payload: str) -> str:",
@@ -173,8 +184,10 @@
         "function mountStyles() {",
         "function saveChatHistory() {",
         "function loadChatHistory() {",
+        "function scrollToBottom() {",
         "function appendMessage(text, role, useMarkdown = false, shouldPersist = true) {",
         "function appendProgressCardMessage(",
+        "const missing = required.filter((neededCode) => !completed.has(neededCode));",
         "function setInteractiveState(enabled) {",
         "function setPanelOpen(open) {",
         "function setStatus(text) {",
@@ -244,7 +257,8 @@
         "class DummyAsyncClient:",
         "class DummyAsyncClient:",
         "class DummyAsyncClient:",
-        "class DummyAsyncClient:"
+        "class DummyAsyncClient:",
+        "class DummySearchEngine:"
       ],
       "functions": [
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
@@ -252,7 +266,10 @@
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:",
-        "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:"
+        "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:",
+        "def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -> None:",
+        "def classify_intent(self, _user_query: str) -> str:",
+        "def get_matched_keywords(self, _user_query: str) -> list[str]:"
       ],
       "imports": [
         "from __future__ import annotations",

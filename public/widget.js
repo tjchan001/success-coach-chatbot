@@ -275,6 +275,53 @@
         color: #475569;
       }
 
+      #${ROOT_ID} .dc-loading-skeleton {
+        width: 180px;
+        height: 14px;
+        border-radius: 999px;
+        background: linear-gradient(
+          90deg,
+          rgba(148, 163, 184, 0.25) 25%,
+          rgba(148, 163, 184, 0.45) 50%,
+          rgba(148, 163, 184, 0.25) 75%
+        );
+        background-size: 220% 100%;
+        animation: dc-skeleton-shimmer 1.2s linear infinite;
+      }
+
+      #${ROOT_ID} .dc-loading-skeleton + .dc-loading-skeleton {
+        margin-top: 8px;
+        width: 120px;
+      }
+
+      #${ROOT_ID} .dc-warning-note {
+        margin-top: 6px;
+        font-size: 11px;
+        color: #b91c1c;
+      }
+
+      #${ROOT_ID} .dc-shake {
+        animation: dc-shake 0.35s linear;
+      }
+
+      @keyframes dc-skeleton-shimmer {
+        from {
+          background-position: 200% 0;
+        }
+        to {
+          background-position: -20% 0;
+        }
+      }
+
+      @keyframes dc-shake {
+        0% { transform: translateX(0); }
+        20% { transform: translateX(-4px); }
+        40% { transform: translateX(4px); }
+        60% { transform: translateX(-3px); }
+        80% { transform: translateX(3px); }
+        100% { transform: translateX(0); }
+      }
+
       #${ROOT_ID} .dc-composer {
         display: flex;
         gap: 10px;
@@ -400,7 +447,7 @@
 
   /** @type {HTMLElement | null} */
   let typingMessage = null;
-  /** @type {Array<{role: "user"|"bot"|"error", kind: "text"|"progress", text: string, useMarkdown?: boolean, progressCards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>}>} */
+  /** @type {Array<{role: "user"|"bot"|"error", kind: "text"|"progress", text: string, useMarkdown?: boolean, progressCards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>, prerequisiteTree?: Object.<string, Array<string>>}>} */
   let conversationHistory = [];
 
   /**
@@ -446,6 +493,7 @@
             entry.progressCards || [],
             false,
             i,
+            entry.prerequisiteTree || {},
           );
         } else {
           appendMessage(entry.text || "", entry.role || "bot", Boolean(entry.useMarkdown), false);
@@ -454,6 +502,15 @@
     } catch (error) {
       console.warn("[DCChatbot] Unable to load chat history.", error);
     }
+  }
+
+  /**
+   * Snap the chat log to the latest content with smooth animation.
+   *
+   * @returns {void}
+   */
+  function scrollToBottom() {
+    log.scrollTo({ top: log.scrollHeight, behavior: "smooth" });
   }
 
   /**
@@ -471,7 +528,7 @@
       setSafeText(bubble, text);
     }
     log.appendChild(bubble);
-    log.scrollTop = log.scrollHeight;
+    scrollToBottom();
 
     if (shouldPersist) {
       conversationHistory.push({ role, kind: "text", text, useMarkdown });
@@ -489,6 +546,7 @@
    * @param {Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>} progressCards
    * @param {boolean=} shouldPersist
    * @param {number=} historyIndexOverride
+   * @param {Object.<string, Array<string>>=} prerequisiteTree
    * @returns {HTMLElement}
    */
   function appendProgressCardMessage(
@@ -497,6 +555,7 @@
     progressCards,
     shouldPersist = true,
     historyIndexOverride = -1,
+    prerequisiteTree = {},
   ) {
     const bubble = createElement("div", `dc-message dc-message-${role}`);
     const intro = createElement("div");
@@ -519,6 +578,7 @@
         const checkbox = /** @type {HTMLInputElement} */ (createElement("input"));
         checkbox.type = "checkbox";
         checkbox.checked = Boolean(course.completed);
+        const warning = createElement("small", "dc-warning-note");
 
         const label = createElement("label");
         const main = createElement("span");
@@ -542,11 +602,43 @@
           if (!historyCard.courses[courseIndex]) {
             return;
           }
+
+          const courseCode = String(course.code || "").trim();
+          if (checkbox.checked && courseCode) {
+            const required = Array.isArray(prerequisiteTree[courseCode])
+              ? prerequisiteTree[courseCode]
+              : [];
+            if (required.length > 0) {
+              const completed = new Set(
+                historyCard.courses
+                  .filter((candidateCourse) => Boolean(candidateCourse.completed))
+                  .map((candidateCourse) => String(candidateCourse.code || "").trim()),
+              );
+              const missing = required.filter((neededCode) => !completed.has(neededCode));
+              if (missing.includes(courseCode)) {
+                const index = missing.indexOf(courseCode);
+                if (index >= 0) {
+                  missing.splice(index, 1);
+                }
++              }
+              if (missing.length > 0) {
+                checkbox.checked = false;
+                warning.textContent = `Requires ${missing.join(", ")} first!`;
+                listItem.classList.add("dc-shake");
+                setTimeout(() => {
+                  listItem.classList.remove("dc-shake");
+                }, 400);
+                return;
+              }
+            }
+          }
+
+          warning.textContent = "";
           historyCard.courses[courseIndex].completed = checkbox.checked;
           saveChatHistory();
         });
 
-        listItem.append(checkbox, label);
+        listItem.append(checkbox, label, warning);
         courseList.appendChild(listItem);
       });
 
@@ -555,10 +647,16 @@
     });
 
     log.appendChild(bubble);
-    log.scrollTop = log.scrollHeight;
+    scrollToBottom();
 
     if (shouldPersist) {
-      conversationHistory.push({ role, kind: "progress", text, progressCards });
+      conversationHistory.push({
+        role,
+        kind: "progress",
+        text,
+        progressCards,
+        prerequisiteTree,
+      });
       saveChatHistory();
     }
 
@@ -587,7 +685,7 @@
     launcher.setAttribute("aria-expanded", String(open));
     if (open) {
       input.focus();
-      log.scrollTop = log.scrollHeight;
+      scrollToBottom();
     }
   }
 
@@ -609,7 +707,12 @@
    */
   function setTypingIndicator(visible) {
     if (visible && !typingMessage) {
-      typingMessage = appendMessage("...typing", "bot");
+      typingMessage = createElement("div", "dc-message dc-message-bot");
+      const lineOne = createElement("div", "dc-loading-skeleton");
+      const lineTwo = createElement("div", "dc-loading-skeleton");
+      typingMessage.append(lineOne, lineTwo);
+      log.appendChild(typingMessage);
+      scrollToBottom();
       typingMessage.dataset.typing = "true";
       return;
     }
@@ -624,7 +727,7 @@
    * Send the chat request to the local FastAPI backend.
    *
    * @param {string} message
-  * @returns {Promise<{reply: string, model: string, progress_cards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>}>}
+  * @returns {Promise<{reply: string, model: string, progress_cards?: Array<{program_id?: string, title?: string, courses?: Array<{semester?: string, code?: string, title?: string, credits?: string|number, completed?: boolean}>}>, prerequisite_tree?: Object.<string, Array<string>>}>}
    */
   async function postMessage(message) {
     const response = await fetch(API_URL, {
@@ -696,7 +799,14 @@
       const payload = await postMessage(message);
       setTypingIndicator(false);
       if (Array.isArray(payload.progress_cards) && payload.progress_cards.length > 0) {
-        appendProgressCardMessage(payload.reply, "bot", payload.progress_cards);
+        appendProgressCardMessage(
+          payload.reply,
+          "bot",
+          payload.progress_cards,
+          true,
+          -1,
+          payload.prerequisite_tree || {},
+        );
       } else {
         appendMessage(payload.reply, "bot", true);
       }

@@ -17,10 +17,12 @@ Security Rationale:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
 import re
+from datetime import datetime, timezone
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -36,6 +38,7 @@ _LOG: logging.Logger = logging.getLogger(__name__)
 _APP_TITLE: str = "Dallas College Chatbot API"
 _APP_VERSION: str = "0.3.0"
 _CATALOG_CACHE_PATH: Path = Path(__file__).resolve().parent.parent / "data" / "catalog_mvp.json"
+_ANALYTICS_LOG_PATH: Path = Path(__file__).resolve().parent.parent / "data" / "analytics_logs.json"
 _HTTP_TIMEOUT_SECONDS: float = 30.0
 _CONTEXT_CHAR_BUDGET: int = 6000
 
@@ -60,6 +63,7 @@ _OUT_OF_BOUNDS_REPLY: str = (
     "I can only assist with Dallas College academic advising topics. "
     "Please ask about degree plans, certificates, pathways, or course requirements."
 )
+_COURSE_CODE_PATTERN: re.Pattern[str] = re.compile(r"\b([A-Z]{4})\s*(\d{4})\b", re.IGNORECASE)
 
 
 class CatalogSearchEngine:
@@ -153,6 +157,7 @@ class CatalogSearchEngine:
             "requirements",
             "checklist",
         )
+        self._prerequisite_index: dict[str, dict[str, list[str]]] = self._build_prerequisite_index()
 
     def _load_catalog_payload(self) -> dict[str, object]:
         """Load the local catalog cache into a dictionary."""
@@ -185,6 +190,37 @@ class CatalogSearchEngine:
                 return program_id
         return None
 
+    def classify_intent(self, user_query: str) -> str:
+        """Classify query intent for routing, guardrails, and analytics."""
+        if self.is_out_of_bounds_query(user_query):
+            return "OUT_OF_BOUNDS"
+        if self._is_degree_layout_request(user_query):
+            return "DEGREE_LAYOUT"
+        if self._classify_program_intent(user_query) is not None:
+            return "PROGRAM_FOCUSED"
+        return "GENERIC_CATALOG"
+
+    def get_matched_keywords(self, user_query: str) -> list[str]:
+        """Return matched routing keywords for anonymized analytics logging."""
+        lowered_query: str = user_query.lower()
+        matched: set[str] = set()
+
+        for keyword in self._academic_keywords:
+            if keyword in lowered_query:
+                matched.add(keyword)
+        for keyword in self._non_academic_keywords:
+            if keyword in lowered_query:
+                matched.add(keyword)
+        for keywords in self._intent_map.values():
+            for keyword in keywords:
+                if keyword in lowered_query:
+                    matched.add(keyword)
+
+        for rubric, number in _COURSE_CODE_PATTERN.findall(user_query):
+            matched.add(f"{rubric.upper()} {number}")
+
+        return sorted(matched)
+
     def is_out_of_bounds_query(self, user_query: str) -> bool:
         """Return True when a query falls outside academic advising scope."""
         lowered_query: str = user_query.lower().strip()
@@ -210,6 +246,82 @@ class CatalogSearchEngine:
         """Return True when the user asks for degree-plan structure output."""
         lowered_query: str = user_query.lower()
         return any(keyword in lowered_query for keyword in self._degree_layout_keywords)
+
+    def _extract_course_codes(self, raw_text: str) -> list[str]:
+        """Normalize and extract course codes from arbitrary prerequisite strings."""
+        normalized_codes: list[str] = []
+        for rubric, number in _COURSE_CODE_PATTERN.findall(raw_text):
+            normalized_codes.append(f"{rubric.upper()} {number}")
+        return normalized_codes
+
+    def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
+        """Extract completed course codes from user text as best-effort context."""
+        return self._extract_course_codes(user_query)
+
+    def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:
+        """Parse prerequisite logic strings and return prerequisite course codes."""
+        prerequisite_sources: list[str] = []
+        for field_name in ("prerequisite", "prerequisites", "notes", "description"):
+            value: object = course.get(field_name)
+            if isinstance(value, str) and "prereq" in value.lower():
+                prerequisite_sources.append(value)
+
+        embedded_list: object = course.get("prerequisite_courses")
+        if isinstance(embedded_list, list):
+            for item in embedded_list:
+                if isinstance(item, str):
+                    prerequisite_sources.append(item)
+
+        prerequisite_codes: set[str] = set()
+        for source in prerequisite_sources:
+            prerequisite_codes.update(self._extract_course_codes(source))
+
+        return sorted(prerequisite_codes)
+
+    def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:
+        """Build directed prerequisite relationships per program."""
+        index: dict[str, dict[str, list[str]]] = {}
+        for program in self._programs():
+            program_id: str = str(program.get("program_id", "unknown_program"))
+            program_index: dict[str, list[str]] = {}
+            semesters: object = program.get("semesters")
+            if isinstance(semesters, list):
+                for semester in semesters:
+                    if not isinstance(semester, dict):
+                        continue
+                    courses: object = semester.get("courses")
+                    if not isinstance(courses, list):
+                        continue
+                    for course in courses:
+                        if not isinstance(course, dict):
+                            continue
+                        course_code: str = str(course.get("code", "")).strip()
+                        if not course_code:
+                            continue
+                        prerequisites: list[str] = self._extract_prerequisite_codes(course)
+                        if prerequisites:
+                            program_index[course_code] = prerequisites
+            index[program_id] = program_index
+        return index
+
+    def get_missing_prerequisites(
+        self,
+        completed_courses: list[str],
+        target_program: str,
+    ) -> dict[str, list[str]]:
+        """Return advanced courses that remain locked by missing prerequisites."""
+        completed_set: set[str] = {code.upper().strip() for code in completed_courses}
+        program_dependencies: dict[str, list[str]] = self._prerequisite_index.get(target_program, {})
+
+        missing_map: dict[str, list[str]] = {}
+        for course_code, dependencies in program_dependencies.items():
+            unmet: list[str] = [
+                dependency for dependency in dependencies if dependency.upper() not in completed_set
+            ]
+            if unmet:
+                missing_map[course_code] = unmet
+
+        return missing_map
 
     def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:
         """Return flattened degree-plan checklist cards for explicit layout requests."""
@@ -259,6 +371,18 @@ class CatalogSearchEngine:
             return [card_payload]
 
         return []
+
+    def get_degree_prerequisite_tree(self, user_query: str) -> dict[str, list[str]]:
+        """Return missing prerequisite dependency tree for a degree-layout query."""
+        if not self._is_degree_layout_request(user_query):
+            return {}
+
+        program_id: str | None = self._classify_program_intent(user_query)
+        if program_id is None:
+            return {}
+
+        completed_courses: list[str] = self._extract_completed_courses_from_query(user_query)
+        return self.get_missing_prerequisites(completed_courses, program_id)
 
     def _json_within_budget(self, payload: dict[str, object]) -> str:
         """Serialize payload and enforce the configured character budget."""
@@ -346,10 +470,10 @@ class CatalogSearchEngine:
         return serialized
 
     def _build_generic_index_context(self) -> str:
-        """Build a compact cross-program index map for broad user queries."""
-        index_payload: dict[str, object] = {"mode": "catalog_index", "courses": []}
-        courses_payload: object = index_payload.get("courses")
-        if not isinstance(courses_payload, list):
+        """Build a compressed token-signature map for broad user queries."""
+        index_payload: dict[str, object] = {"mode": "catalog_index_signature", "signature": ""}
+        signature_entries: list[str] = []
+        if not isinstance(index_payload.get("signature"), str):
             return self._json_within_budget(index_payload)
 
         seen_entries: set[tuple[str, str]] = set()
@@ -387,7 +511,11 @@ class CatalogSearchEngine:
                         "title": title,
                         "credits": course.get("credits"),
                     }
-                    courses_payload.append(compact_entry)
+                    normalized_title: str = re.sub(r"\s+", " ", str(compact_entry["title"])).strip()
+                    signature_entries.append(
+                        f"{program_id}|{compact_entry['code']}|{normalized_title}|{compact_entry['credits']}"
+                    )
+                    index_payload["signature"] = ";".join(signature_entries)
 
                     serialized: str = self._json_within_budget(index_payload)
                     if len(serialized) >= self.char_budget:
@@ -448,6 +576,52 @@ def _get_degree_progress_cards(user_query: str) -> list[dict[str, object]]:
     return _get_catalog_search_engine().get_degree_progress_cards(user_query)
 
 
+def _get_degree_prerequisite_tree(user_query: str) -> dict[str, list[str]]:
+    """Return prerequisite dependency tree for explicit degree-layout requests."""
+    return _get_catalog_search_engine().get_degree_prerequisite_tree(user_query)
+
+
+def _write_analytics_entry_sync(entry: dict[str, object], output_path: Path) -> None:
+    """Append analytics entry to local cache file synchronously."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    existing_entries: list[dict[str, object]] = []
+    if output_path.exists():
+        try:
+            payload: object = json.loads(output_path.read_text(encoding="utf-8"))
+            if isinstance(payload, list):
+                existing_entries = [item for item in payload if isinstance(item, dict)]
+        except (OSError, json.JSONDecodeError):
+            existing_entries = []
+
+    existing_entries.append(entry)
+    output_path.write_text(
+        json.dumps(existing_entries, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+async def log_analytics_event(query: str, intent: str, triggered_guardrail: bool) -> None:
+    """Write anonymized analytics metadata to a local JSON cache file.
+
+    Privacy Design:
+        Stores no raw query text. Persists only intent metadata, matched
+        keywords, and guardrail trigger state.
+    """
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return
+
+    matched_keywords: list[str] = _get_catalog_search_engine().get_matched_keywords(query)
+    entry: dict[str, object] = {
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "intent": intent,
+        "matched_keywords": matched_keywords,
+        "triggered_guardrail": triggered_guardrail,
+    }
+
+    await asyncio.to_thread(_write_analytics_entry_sync, entry, _ANALYTICS_LOG_PATH)
+
+
 def _parse_cors_origins() -> list[str]:
     """Return the configured CORS origin list from the environment.
 
@@ -502,6 +676,7 @@ class ChatResponse(BaseModel):
         reply: Plain-text grounded response returned to the widget.
         model: Provider/model pair used to generate the response.
         progress_cards: Optional structured progress card payload for UI rendering.
+        prerequisite_tree: Optional prerequisite dependency map by course code.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -511,6 +686,10 @@ class ChatResponse(BaseModel):
     progress_cards: list[dict[str, object]] | None = Field(
         default=None,
         description="Optional structured progress-card payload for interactive checklist rendering.",
+    )
+    prerequisite_tree: dict[str, list[str]] | None = Field(
+        default=None,
+        description="Optional prerequisite dependency map for checklist constraints.",
     )
 
 
@@ -962,15 +1141,29 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
     Raises:
         HTTPException: If catalog loading fails or all providers fail.
     """
-    if _is_out_of_bounds_query(message):
+    intent: str = _get_catalog_search_engine().classify_intent(message)
+
+    if intent == "OUT_OF_BOUNDS":
+        await log_analytics_event(
+            query=message,
+            intent=intent,
+            triggered_guardrail=True,
+        )
         return ChatResponse(
             reply=_OUT_OF_BOUNDS_REPLY,
             model="guardrail/local",
             progress_cards=None,
+            prerequisite_tree=None,
         )
 
     degree_progress_cards: list[dict[str, object]] = _get_degree_progress_cards(message)
     if degree_progress_cards:
+        prerequisite_tree: dict[str, list[str]] = _get_degree_prerequisite_tree(message)
+        await log_analytics_event(
+            query=message,
+            intent="DEGREE_LAYOUT",
+            triggered_guardrail=False,
+        )
         return ChatResponse(
             reply=(
                 "Degree progress checklist generated from your requested pathway. "
@@ -978,9 +1171,15 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
             ),
             model="catalog/local",
             progress_cards=degree_progress_cards,
+            prerequisite_tree=prerequisite_tree,
         )
 
     catalog_payload: str = _get_optimized_catalog_context(message)
+    await log_analytics_event(
+        query=message,
+        intent=intent,
+        triggered_guardrail=False,
+    )
 
     async with httpx.AsyncClient(timeout=_HTTP_TIMEOUT_SECONDS) as client:
         groq_response: ChatResponse | None = await _request_groq_reply(

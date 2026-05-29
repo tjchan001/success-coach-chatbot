@@ -466,5 +466,87 @@ def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -
     context: str = search_engine.get_optimized_context("what classes are available")
 
     # Assert
-    assert '"mode":"catalog_index"' in context or '"truncated":true' in context
+    assert '"mode":"catalog_index_signature"' in context or '"truncated":true' in context
     assert len(context) <= char_budget
+
+
+def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -> None:
+    """Prerequisite evaluator must surface locked courses for incomplete pathways."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Web_Development_Certificate",
+                        "title": "Web Development Certificate",
+                        "semesters": [
+                            {
+                                "name": "Core",
+                                "courses": [
+                                    {
+                                        "code": "ITSE 1401",
+                                        "title": "Web Foundations",
+                                        "credits": "4",
+                                    },
+                                    {
+                                        "code": "ITSE 2302",
+                                        "title": "Advanced Web",
+                                        "credits": "3",
+                                        "prerequisites": "Prerequisite: ITSE 1401 or equivalent",
+                                    },
+                                ],
+                            }
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    missing: dict[str, list[str]] = search_engine.get_missing_prerequisites(
+        completed_courses=[],
+        target_program="Web_Development_Certificate",
+    )
+
+    # Assert
+    assert missing == {"ITSE 2302": ["ITSE 1401"]}
+
+
+@pytest.mark.anyio
+async def test_degree_layout_response_includes_prerequisite_tree(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Degree layout responses must include prerequisite_tree metadata for UI enforcement."""
+    # Arrange
+    async def _no_op_log(
+        query: str,
+        intent: str,
+        triggered_guardrail: bool,
+    ) -> None:
+        _ = (query, intent, triggered_guardrail)
+        return None
+
+    monkeypatch.setattr(chat, "_get_degree_progress_cards", lambda _message: [{"program_id": "Web_Development_Certificate", "title": "Web Development", "courses": []}])
+    monkeypatch.setattr(chat, "_get_degree_prerequisite_tree", lambda _message: {"ITSE 2302": ["ITSE 1401"]})
+    monkeypatch.setattr(chat, "log_analytics_event", _no_op_log)
+
+    class DummySearchEngine:
+        def classify_intent(self, _user_query: str) -> str:
+            return "DEGREE_LAYOUT"
+
+        def get_matched_keywords(self, _user_query: str) -> list[str]:
+            return []
+
+    monkeypatch.setattr(chat, "_get_catalog_search_engine", lambda: DummySearchEngine())
+
+    # Act
+    response_model: chat.ChatResponse = await chat._generate_chat_reply("show my degree plan")
+
+    # Assert
+    assert response_model.model == "catalog/local"
+    assert response_model.prerequisite_tree == {"ITSE 2302": ["ITSE 1401"]}

@@ -26,3 +26,8 @@ All notable changes to this project are documented in this file.
 - Added backend scope guardrails in [api/chat.py](api/chat.py) to short-circuit out-of-bounds non-academic requests with a local containment reply and no provider calls.
 - Added structured `progress_cards` response support in [api/chat.py](api/chat.py) for explicit degree-layout requests, enabling UI checklist rendering of pathway course requirements.
 - Added out-of-bounds containment regression coverage in [tests/test_chat.py](tests/test_chat.py) to verify boundary enforcement without upstream context/token spend.
+- Added prerequisite dependency indexing and directed missing-prerequisite evaluation in [api/chat.py](api/chat.py) via `get_missing_prerequisites(completed_courses, target_program)` and degree-layout `prerequisite_tree` response payload support.
+- Added asynchronous local anonymized analytics logging in [api/chat.py](api/chat.py) writing timestamped intent metadata to `data/analytics_logs.json` without storing raw query text.
+- Compressed broad-query catalog routing in [api/chat.py](api/chat.py) into an ultra-light token signature map (`catalog_index_signature`) that strips extraneous whitespace and secondary metadata.
+- Upgraded [public/widget.js](public/widget.js) with animated skeleton loading states, smooth scroll snapping, and prerequisite-aware progress-card checkbox enforcement with inline warnings and shake animation feedback.
+- Added prerequisite regression coverage in [tests/test_chat.py](tests/test_chat.py) for dependency indexing and degree-layout `prerequisite_tree` emission.
