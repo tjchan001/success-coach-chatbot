@@ -5,6 +5,7 @@ All notable changes to this project are documented in this file.
 ## 2026-05-29
 
 ### Changed
+- Replaced the inactive landing-page center input area in [public/index.html](public/index.html) with a promotional Dallas College AI Club banner and a safe external link to https://dallasai.club/.
 - Added centralized career-cluster synonym expansion in [api/chat.py](api/chat.py) via `CAREER_CLUSTER_MAP` and `expand_user_query(query_text)` to map high-level industry intent to catalog prefixes and stable search terms.
 - Updated optimized catalog context selection in [api/chat.py](api/chat.py) to evaluate whether any expanded term matches a program title, `program_id`, or course code during RAG chunk gathering, with defensive exception shielding in the iteration path.
 - Added regression tests in [tests/test_chat.py](tests/test_chat.py) for deterministic cluster expansion and expanded-term-driven program targeting.

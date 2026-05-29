@@ -86,39 +86,58 @@
     }
 
     #input-row {
-      display: flex;
-      gap: 8px;
-      padding: 12px 16px;
+      padding: 16px;
       border-top: 1px solid #e5e9f0;
-      background: #fafbfc;
+      background:
+        radial-gradient(circle at top right, rgba(0, 87, 217, 0.14), transparent 38%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
     }
 
-    #user-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #cdd3dc;
-      border-radius: 24px;
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    #user-input:focus { border-color: #003087; }
-
-    #send-btn {
-      padding: 10px 18px;
-      background: #003087;
+    .promo-banner {
+      padding: 18px 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(0, 48, 135, 0.14);
+      background: linear-gradient(135deg, #003087 0%, #0f4dbd 55%, #1d7ed6 100%);
       color: #fff;
-      border: none;
-      border-radius: 24px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
+      box-shadow: 0 14px 30px rgba(0, 48, 135, 0.18);
     }
 
-    #send-btn:hover   { background: #00419e; }
-    #send-btn:disabled { background: #9ba8bb; cursor: default; }
+    .promo-banner h2 {
+      font-size: 1rem;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      margin-bottom: 8px;
+    }
+
+    .promo-banner p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      opacity: 0.95;
+      margin-bottom: 14px;
+      max-width: 34ch;
+    }
+
+    .promo-banner a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: #fff;
+      color: #003087;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .promo-banner a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.22);
+    }
 
     footer {
       font-size: 0.7rem;
@@ -144,15 +163,11 @@
     </div>
 
     <div id="input-row">
-      <input
-        id="user-input"
-        type="text"
-        placeholder="Type your question…"
-        maxlength="2000"
-        autocomplete="off"
-        aria-label="Your message"
-      />
-      <button id="send-btn" type="button" aria-label="Send message">Send</button>
+      <section class="promo-banner" aria-label="Dallas College AI Club promotional banner">
+        <h2>Dallas College AI Club</h2>
+        <p>This sandbox advisor is built and maintained by the student innovators at the Dallas College AI Club.</p>
+        <a href="https://dallasai.club/" target="_blank" rel="noopener noreferrer">Visit the AI Club</a>
+      </section>
     </div>
 
     <footer>Powered by Dallas College Catalog · MVP v0.1.0</footer>
