@@ -22,6 +22,7 @@ import json
 import logging
 import os
 import re
+import tempfile
 from datetime import datetime, timezone
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -43,10 +44,20 @@ _LOG: logging.Logger = logging.getLogger(__name__)
 
 _APP_TITLE: str = "Dallas College Chatbot API"
 _APP_VERSION: str = "0.3.0"
-_CATALOG_CACHE_PATH: Path = Path(__file__).resolve().parent.parent / "data" / "catalog_mvp.json"
-_ANALYTICS_LOG_PATH: Path = Path(__file__).resolve().parent.parent / "data" / "analytics_logs.json"
+_PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent
+_CATALOG_CACHE_PATH: Path = _PROJECT_ROOT / "data" / "catalog_mvp.json"
 _HTTP_TIMEOUT_SECONDS: float = 30.0
 _CONTEXT_CHAR_BUDGET: int = 6000
+
+
+def _resolve_analytics_log_path() -> Path:
+    """Resolve a writable analytics log path across local and serverless environments."""
+    if os.environ.get("VERCEL") or not os.access(str(_PROJECT_ROOT), os.W_OK):
+        return Path(tempfile.gettempdir()) / "analytics_logs.json"
+    return _PROJECT_ROOT / "data" / "analytics_logs.json"
+
+
+_ANALYTICS_LOG_PATH: Path = _resolve_analytics_log_path()
 
 _GROQ_MODEL_NAME: str = "llama-3.1-8b-instant"
 _GROQ_CHAT_URL: str = "https://api.groq.com/openai/v1/chat/completions"
