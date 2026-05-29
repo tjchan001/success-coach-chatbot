@@ -245,12 +245,20 @@ class CatalogSearchEngine:
         if self._programs_cache is not None:
             return self._programs_cache
 
+        normalized_programs: list[dict[str, object]] = []
         programs: object = self._catalog_payload.get("programs")
-        if not isinstance(programs, list):
-            self._programs_cache = []
-            return self._programs_cache
+        if isinstance(programs, list):
+            normalized_programs.extend(program for program in programs if isinstance(program, dict))
 
-        self._programs_cache = [program for program in programs if isinstance(program, dict)]
+        continuing_education_programs: object = self._catalog_payload.get(
+            "continuing_education_programs"
+        )
+        if isinstance(continuing_education_programs, list):
+            normalized_programs.extend(
+                program for program in continuing_education_programs if isinstance(program, dict)
+            )
+
+        self._programs_cache = normalized_programs
         return self._programs_cache
 
     def _classify_program_intent(self, user_query: str) -> str | None:
@@ -288,7 +296,9 @@ class CatalogSearchEngine:
                     matched.add(keyword)
 
         for rubric, number in _COURSE_CODE_PATTERN.findall(user_query):
-            matched.add(f"{rubric.upper()} {number}")
+            course_code: str = f"{rubric.upper()} {number}"
+            matched.add(course_code)
+            matched.add(self._build_course_catalog_url(course_code))
 
         return sorted(matched)
 
@@ -324,6 +334,15 @@ class CatalogSearchEngine:
         for rubric, number in _COURSE_CODE_PATTERN.findall(raw_text):
             normalized_codes.append(f"{rubric.upper()} {number}")
         return normalized_codes
+
+    def _build_course_catalog_url(self, course_code: str) -> str:
+        """Return a direct Dallas College catalog lookup URL for a course code."""
+        normalized_course_code: str = re.sub(r"\s+", " ", course_code).strip()
+        encoded_course_code: str = normalized_course_code.replace(" ", "+")
+        return (
+            "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
+            f"search_keyword={encoded_course_code}"
+        )
 
     def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
         """Extract completed course codes from user text as best-effort context."""
@@ -588,6 +607,12 @@ class CatalogSearchEngine:
                                 "title": course.get("title"),
                                 "credits": course.get("credits"),
                             }
+                            course_code: str = str(compact_course.get("code", "")).strip()
+                            if course_code:
+                                course_lookup_url: str = self._build_course_catalog_url(course_code)
+                                compact_course["verification_token"] = (
+                                    f"[Course Verification Link for {course_code}: {course_lookup_url}]"
+                                )
                             courses_container.append(compact_course)
 
                             serialized = self._json_within_budget(targeted_payload)
@@ -667,8 +692,10 @@ class CatalogSearchEngine:
                                     else None
                                 )
                                 normalized_title: str = re.sub(r"\s+", " ", title).strip()
+                                course_lookup_url: str = self._build_course_catalog_url(code)
                                 signature_entries.append(
-                                    f"{program_id}|{code}|{normalized_title}|{credits}"
+                                    f"{program_id}|{code}|{normalized_title}|{credits}|"
+                                    f"[Course Verification Link for {code}: {course_lookup_url}]"
                                 )
                                 index_payload["signature"] = ";".join(signature_entries)
 
@@ -1053,11 +1080,17 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "2. If user query is broad/generic, scan all 'semesters' across all 'programs' but return only structural summaries "
         "(Course Code, Title, Credits) to preserve output tokens.\n"
         "\n"
+        "[OUTPUT FORMAT RULES]:\n"
+        "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes or course numbers (e.g., ITN, BPA). Every single course code you display MUST be an exact string match from the provided text context chunk.\n"
+        "- If a course code is not explicitly written in the context data layer, you must never include it in your recommendations.\n"
+        "\n"
         "[RESPONSE COMPRESSION PROTOCOL]:\n"
         "- No conversational pleasantries.\n"
         "- Do not repeat or restate the user's question.\n"
         "- Use dense markdown bullet structures for course maps.\n"
         "- Format all courses as: **CODE**: Title (Credits).\n"
+        "- When displaying individual courses, extract the corresponding '[Course Verification Link for ...]' token from the context chunk and embed it directly as an inline hyperlink on the course code itself (e.g., [CHEF 1301](url)).\n"
+        "- If a course item in the context data list specifies items within a 'prerequisites' array, draw out a clear, structured sequence flow using text connectors (──>) to indicate the mandatory foundational track before displaying advanced classes.\n"
         "- Strict zero-temperature simulation: Do not vary terminology.\n"
         "- You have been provided a highly filtered context snippet matching the student's topical intent. "
         "If the precise answer is missing from this slice, guide them to specify which degree plan or certificate pathway they want to inspect.\n"

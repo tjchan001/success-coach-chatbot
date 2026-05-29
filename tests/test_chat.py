@@ -64,6 +64,9 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     assert "[SOURCE CITATION VERIFICATION RULES]:" in system_prompt
     assert "When rendering a program data card, look for the '[Catalog Source Verification Link: ...]' token" in system_prompt
     assert "labeled with an incremented index like [1], [2]" in system_prompt
+    assert "CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes or course numbers" in system_prompt
+    assert "If a course code is not explicitly written in the context data layer, you must never include it in your recommendations." in system_prompt
+    assert "draw out a clear, structured sequence flow using text connectors (──>)" in system_prompt
     assert "Strict zero-tolerance hallucination lock" in system_prompt
     assert "Academic catalog context unavailable. Connection terminal error." in system_prompt
     assert "I cannot confirm that selection based on the current catalog data." in system_prompt
@@ -530,6 +533,7 @@ def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:
 
     # Assert
     assert "[Catalog Source Verification Link: https://catalog.example.edu/program/web]" in context
+    assert "[Course Verification Link for ITSE 1301:" in context
 
 
 def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:
@@ -616,6 +620,21 @@ def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_pa
     assert f"[Catalog Source Verification Link: {expected_url}]" in context
 
 
+def test_matched_keywords_include_direct_course_lookup_url() -> None:
+    """Extracted course codes must emit a precise direct lookup URL for catalog navigation."""
+    # Arrange / Act
+    matched_keywords: list[str] = chat._get_catalog_search_engine().get_matched_keywords(
+        "Tell me about CHEF 1301 prerequisites"
+    )
+
+    # Assert
+    assert "CHEF 1301" in matched_keywords
+    assert (
+        "https://catalog.dallascollege.edu/search_advanced.php?cur_cat_oid=5&"
+        "search_keyword=CHEF+1301"
+    ) in matched_keywords
+
+
 def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:
     """Generic queries must return a slim index map within the configured budget."""
     # Arrange
@@ -680,6 +699,41 @@ def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -
     # Assert
     assert '"mode":"catalog_index_signature"' in context or '"truncated":true' in context
     assert len(context) <= char_budget
+
+
+def test_programs_include_continuing_education_container(tmp_path: Path) -> None:
+    """Root-level continuing_education_programs must be included in normalized program iteration."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Web_Development_Certificate",
+                        "title": "Web Development Certificate",
+                        "semesters": [],
+                    }
+                ],
+                "continuing_education_programs": [
+                    {
+                        "program_id": "CE_Business_Operations_Accelerator",
+                        "title": "Business Operations Accelerator",
+                        "tracks": [],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    program_ids: set[str] = {str(program.get("program_id")) for program in search_engine._programs()}
+
+    # Assert
+    assert "Web_Development_Certificate" in program_ids
+    assert "CE_Business_Operations_Accelerator" in program_ids
 
 
 def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -> None:

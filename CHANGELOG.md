@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 ## 2026-05-29
 
 ### Changed
+- Added strict exact-record template compliance guardrails in [api/chat.py](api/chat.py) output format rules to forbid invented course prefixes/numbers and require every displayed code to be an exact context match.
+- Expanded prompt contract assertions in [tests/test_chat.py](tests/test_chat.py) to lock the new anti-hallucination course-code constraints.
+- Upgraded [data/catalog_mvp.json](data/catalog_mvp.json) with prerequisite arrays on representative advanced Culinary/Bakery/Business courses (CHEF 1301, PSTR 2331, BUSI 2301) and added a root-level `continuing_education_programs` container with workforce contact-hour tracks.
+- Refactored [api/chat.py](api/chat.py) context aggregation to emit per-course verification tokens (`[Course Verification Link for CODE: URL]`) via the new `_build_course_catalog_url(course_code)` helper and included CE root container programs in normalized catalog iteration.
+- Matured system prompt guidance in [api/chat.py](api/chat.py) to require inline course-code hyperlinks from course verification tokens and prerequisite sequence rendering using `──>` connectors when `prerequisites` arrays are present.
+- Added regression coverage in [tests/test_chat.py](tests/test_chat.py) for prompt prerequisite-flow instruction text, course verification token emission, and root-level continuing education container parsing.
+- Added prerequisite placeholders to Bakery/Pastry A.A.S. in [data/catalog_mvp.json](data/catalog_mvp.json) for CHEF 1301 and PSTR 2331, and appended a Workforce & Continuing Education tracks placeholder object for CE keyword parsing.
+- Added direct course lookup URL emission in [api/chat.py](api/chat.py) so extracted course codes now map to the precise Dallas College advanced-search link.
 - Updated the frontend chat-cleared system message in [public/widget.js](public/widget.js) to include the Dallas College AI Club Sandbox Engine greeting and sandbox disclaimer branding.
 - Hardened [api/chat.py](api/chat.py) optimized context matching so current program title and source URL are re-bound inside each local program iteration before appending `[Catalog Source Verification Link: ...]` tokens.
 - Replaced the inactive landing-page center input area in [public/index.html](public/index.html) with a promotional Dallas College AI Club banner and a safe external link to https://dallasai.club/.

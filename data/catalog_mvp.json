@@ -8635,7 +8635,10 @@
             {
               "code": "CHEF 1301",
               "title": " Basic Food Preparation (3 Credit Hours) 1 |",
-              "credits": "5"
+              "credits": "5",
+              "prerequisites": [
+                "CHEF 1170"
+              ]
             },
             {
               "code": "CHEF 2331",
@@ -8660,7 +8663,10 @@
             {
               "code": "PSTR 2331",
               "title": " Advanced Pastry Shop",
-              "credits": "3"
+              "credits": "3",
+              "prerequisites": [
+                "PSTR 1301"
+              ]
             },
             {
               "code": "PSTR 1305",
@@ -20474,6 +20480,62 @@
               "code": "DFTG 1413",
               "title": "Drafting for Specific Occupations",
               "credits": "4"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "continuing_education_programs": [
+    {
+      "program_id": "CE_Healthcare_Tech_Bootcamp",
+      "title": "Healthcare Technology Bootcamp",
+      "credential_type": "Continuing Education",
+      "total_contact_hours": 120,
+      "tracks": [
+        {
+          "name": "Clinical Technology Foundations",
+          "courses": [
+            {
+              "code": "CEHC 1001",
+              "title": "Healthcare Systems Basics",
+              "contact_hours": 40,
+              "prerequisites": []
+            },
+            {
+              "code": "CEHC 2001",
+              "title": "Applied Clinical Informatics",
+              "contact_hours": 80,
+              "prerequisites": [
+                "CEHC 1001"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "program_id": "CE_Business_Operations_Accelerator",
+      "title": "Business Operations Accelerator",
+      "credential_type": "Continuing Education",
+      "total_contact_hours": 96,
+      "tracks": [
+        {
+          "name": "Workforce Operations Path",
+          "courses": [
+            {
+              "code": "CEBU 1001",
+              "title": "Workforce Business Foundations",
+              "contact_hours": 32,
+              "prerequisites": []
+            },
+            {
+              "code": "CEBU 2001",
+              "title": "Applied Business Process Management",
+              "contact_hours": 64,
+              "prerequisites": [
+                "CEBU 1001"
+              ]
             }
           ]
         }
