@@ -17,3 +17,6 @@ All notable changes to this project are documented in this file.
 - Added a certificate fallback regression test in [tests/test_scraper.py](tests/test_scraper.py) to lock schema-compatible output for flat certificate layouts.
 - Refactored the certificate fallback in [scripts/scraper.py](scripts/scraper.py) to scan globally across anchor text and document text nodes using the anchored rubric regex `^[A-Z]{4}\s+\d{4}\b`, ensuring nested non-`tr`/`li` course elements are captured.
 - Added nested-anchor regression coverage in [tests/test_scraper.py](tests/test_scraper.py) to validate `Certificate Core Requirements` extraction when course links are embedded in non-standard containers.
+- Added `CatalogSearchEngine` in [api/chat.py](api/chat.py) for in-memory metadata-guided context slicing, including keyword-to-program intent routing and bounded context generation via `get_optimized_context(user_query)`.
+- Refactored chat generation in [api/chat.py](api/chat.py) to inject query-optimized context snippets instead of full catalog dumps and updated metaprompt instructions to request pathway clarification when filtered slices lack exact answers.
+- Added context slicer regression tests in [tests/test_chat.py](tests/test_chat.py): targeted program isolation by keyword and generic-query budget-bound index slicing.

@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-28T23:59:07-05:00",
+  "generated": "2026-05-29T00:07:31-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -56,6 +56,7 @@
       "isPinned": false,
       "extension": ".py",
       "classes": [
+        "class CatalogSearchEngine:",
         "class ChatRequest(BaseModel):",
         "class ChatResponse(BaseModel):",
         "class GeminiPart(BaseModel):",
@@ -77,6 +78,16 @@
         "from pydantic import BaseModel, ConfigDict, Field"
       ],
       "routes": [
+        "def __init__(self, cache_path: Path, char_budget: int = _CONTEXT_CHAR_BUDGET) -> None:",
+        "def _load_catalog_payload(self) -> dict[str, object]:",
+        "def _programs(self) -> list[dict[str, object]]:",
+        "def _classify_program_intent(self, user_query: str) -> str | None:",
+        "def _json_within_budget(self, payload: dict[str, object]) -> str:",
+        "def _build_targeted_program_context(self, program: dict[str, object], program_id: str) -> str:",
+        "def _build_generic_index_context(self) -> str:",
+        "def get_optimized_context(self, user_query: str) -> str:",
+        "def _get_catalog_search_engine() -> CatalogSearchEngine:",
+        "def _get_optimized_catalog_context(user_query: str) -> str:",
         "def _parse_cors_origins() -> list[str]:",
         "def _load_catalog_prompt_payload() -> str:",
         "def _build_system_prompt(catalog_payload: str) -> str:",
@@ -225,7 +236,9 @@
       "functions": [
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
         "def __init__(self, *_args: object, **_kwargs: object) -> None:",
-        "def __init__(self, *_args: object, **_kwargs: object) -> None:"
+        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
+        "def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:",
+        "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:"
       ],
       "imports": [
         "from __future__ import annotations",

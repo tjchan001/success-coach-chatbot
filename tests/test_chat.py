@@ -125,7 +125,7 @@ async def test_generate_chat_reply_uses_groq_first(monkeypatch: pytest.MonkeyPat
     # Arrange
     monkeypatch.setenv("GROQ_API_KEYS", "groq-key-one")
     monkeypatch.setenv("GEMINI_API_KEYS", "gemini-key-one")
-    monkeypatch.setattr(chat, "_load_catalog_prompt_payload", lambda: '{"programs":[]}')
+    monkeypatch.setattr(chat, "_get_optimized_catalog_context", lambda _message: '{"programs":[]}')
     monkeypatch.setattr(chat.httpx, "AsyncClient", DummyAsyncClient)
 
     # Act
@@ -202,7 +202,7 @@ async def test_generate_chat_reply_falls_back_to_gemini_after_groq_429s(
     dummy_client: DummyAsyncClient = DummyAsyncClient()
     monkeypatch.setenv("GROQ_API_KEYS", "groq-key-one,groq-key-two")
     monkeypatch.setenv("GEMINI_API_KEYS", "gemini-key-one")
-    monkeypatch.setattr(chat, "_load_catalog_prompt_payload", lambda: '{"programs":[]}')
+    monkeypatch.setattr(chat, "_get_optimized_catalog_context", lambda _message: '{"programs":[]}')
     monkeypatch.setattr(chat.httpx, "AsyncClient", lambda *args, **kwargs: dummy_client)
 
     # Act
@@ -274,7 +274,7 @@ async def test_generate_chat_reply_falls_back_to_gemini_when_groq_keys_are_empty
     # Arrange
     monkeypatch.setenv("GROQ_API_KEYS", "")
     monkeypatch.setenv("GEMINI_API_KEYS", "gemini-key-one")
-    monkeypatch.setattr(chat, "_load_catalog_prompt_payload", lambda: '{"programs":[]}')
+    monkeypatch.setattr(chat, "_get_optimized_catalog_context", lambda _message: '{"programs":[]}')
     monkeypatch.setattr(chat.httpx, "AsyncClient", DummyAsyncClient)
 
     # Act
@@ -294,10 +294,135 @@ async def test_generate_chat_reply_fails_without_provider_keys(
     # Arrange
     monkeypatch.delenv("GROQ_API_KEYS", raising=False)
     monkeypatch.delenv("GEMINI_API_KEYS", raising=False)
-    monkeypatch.setattr(chat, "_load_catalog_prompt_payload", lambda: '{"programs":[]}')
+    monkeypatch.setattr(chat, "_get_optimized_catalog_context", lambda _message: '{"programs":[]}')
 
     # Act / Assert
     with pytest.raises(HTTPException) as exc_info:
         await chat._generate_chat_reply("Hello")
 
     assert exc_info.value.status_code == 503
+
+
+def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:
+    """Keyword-specific queries must isolate to the matched program payload only."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Web_Development_Certificate",
+                        "title": "Web Development Certificate",
+                        "total_hours": 30,
+                        "semesters": [
+                            {
+                                "name": "Certificate Core",
+                                "courses": [
+                                    {
+                                        "code": "ITSE 1301",
+                                        "title": "Web Design Tools",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "program_id": "Cybersecurity_AAS",
+                        "title": "Cybersecurity AAS",
+                        "total_hours": 60,
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "ITNW 1358",
+                                        "title": "Network Plus",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("web developer requirements")
+
+    # Assert
+    assert "Web_Development_Certificate" in context
+    assert "ITSE 1301" in context
+    assert "Cybersecurity_AAS" not in context
+    assert "ITNW 1358" not in context
+
+
+def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:
+    """Generic queries must return a slim index map within the configured budget."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Computer_Information_Technology_AAS",
+                        "title": "Computer Information Technology AAS",
+                        "total_hours": 60,
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "BCIS 1305",
+                                        "title": "Business Computer Applications",
+                                        "credits": "3",
+                                    },
+                                    {
+                                        "code": "ITSC 1309",
+                                        "title": "Integrated Software Applications I",
+                                        "credits": "3",
+                                    },
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "program_id": "Cybersecurity_AAS",
+                        "title": "Cybersecurity AAS",
+                        "total_hours": 60,
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "ITNW 1358",
+                                        "title": "Network Plus",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    char_budget: int = 220
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(
+        cache_path=cache_path,
+        char_budget=char_budget,
+    )
+
+    # Act
+    context: str = search_engine.get_optimized_context("what classes are available")
+
+    # Assert
+    assert '"mode":"catalog_index"' in context or '"truncated":true' in context
+    assert len(context) <= char_budget

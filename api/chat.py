@@ -34,6 +34,7 @@ _APP_TITLE: str = "Dallas College Chatbot API"
 _APP_VERSION: str = "0.3.0"
 _CATALOG_CACHE_PATH: Path = Path(__file__).resolve().parent.parent / "data" / "catalog_mvp.json"
 _HTTP_TIMEOUT_SECONDS: float = 30.0
+_CONTEXT_CHAR_BUDGET: int = 6000
 
 _GROQ_MODEL_NAME: str = "llama-3.1-8b-instant"
 _GROQ_CHAT_URL: str = "https://api.groq.com/openai/v1/chat/completions"
@@ -52,6 +53,251 @@ _SELECTION_GUARDRAIL: str = (
 _MANDATORY_GOVERNANCE_GREETING: str = (
     "Greetings, I am the automated AI Academic Advisor for Dallas College."
 )
+
+
+class CatalogSearchEngine:
+    """In-memory catalog indexer and context slicer for token-efficient prompts.
+
+    Architectural Intent:
+        Prevents token bloat by routing each user query to a tightly scoped
+        context slice. Program-specific queries receive one pathway payload,
+        while broad queries receive a compact index map only.
+
+    Security Rationale:
+        The engine reads only from the local cache file and returns bounded
+        strings under an explicit character budget to reduce prompt-surface
+        risk and downstream request size.
+    """
+
+    def __init__(self, cache_path: Path, char_budget: int = _CONTEXT_CHAR_BUDGET) -> None:
+        """Initialize and load catalog data into memory.
+
+        Args:
+            cache_path: Local catalog cache file path.
+            char_budget: Maximum character budget for returned context strings.
+        """
+        self.cache_path: Path = cache_path
+        self.char_budget: int = char_budget
+        self._catalog_payload: dict[str, object] = self._load_catalog_payload()
+        self._intent_map: dict[str, tuple[str, ...]] = {
+            "Cybersecurity_AAS": ("cyber", "security", "network", "networking"),
+            "Web_Development_Certificate": ("web", "html", "css", "frontend"),
+            "Computer_Information_Technology_AAS": (
+                "computer",
+                "information",
+                "technology",
+                "it",
+                "cit",
+            ),
+        }
+
+    def _load_catalog_payload(self) -> dict[str, object]:
+        """Load the local catalog cache into a dictionary."""
+        if not self.cache_path.exists():
+            raise RuntimeError(f"Catalog cache not found at '{self.cache_path}'.")
+
+        try:
+            payload: object = json.loads(self.cache_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError("Catalog cache could not be loaded.") from exc
+
+        if not isinstance(payload, dict):
+            raise RuntimeError("Catalog cache root must be a JSON object.")
+
+        return payload
+
+    def _programs(self) -> list[dict[str, object]]:
+        """Return the normalized list of program objects from cache payload."""
+        programs: object = self._catalog_payload.get("programs")
+        if not isinstance(programs, list):
+            return []
+
+        return [program for program in programs if isinstance(program, dict)]
+
+    def _classify_program_intent(self, user_query: str) -> str | None:
+        """Map query keywords to a specific program ID when confidence is high."""
+        lowered_query: str = user_query.lower()
+        for program_id, keywords in self._intent_map.items():
+            if any(keyword in lowered_query for keyword in keywords):
+                return program_id
+        return None
+
+    def _json_within_budget(self, payload: dict[str, object]) -> str:
+        """Serialize payload and enforce the configured character budget."""
+        serialized: str = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        if len(serialized) <= self.char_budget:
+            return serialized
+
+        overflow_payload: dict[str, object] = {
+            "mode": payload.get("mode"),
+            "truncated": True,
+            "note": "Context budget reached. Ask for a narrower degree plan or pathway.",
+        }
+        overflow_serialized: str = json.dumps(
+            overflow_payload,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        if len(overflow_serialized) <= self.char_budget:
+            return overflow_serialized
+
+        return overflow_serialized[: self.char_budget]
+
+    def _build_targeted_program_context(self, program: dict[str, object], program_id: str) -> str:
+        """Build a bounded targeted context payload for one matched program."""
+        targeted_payload: dict[str, object] = {
+            "mode": "targeted_program",
+            "program_id": program_id,
+            "program": {
+                "program_id": program_id,
+                "title": program.get("title"),
+                "degree_code": program.get("degree_code"),
+                "total_hours": program.get("total_hours"),
+                "semesters": [],
+            },
+        }
+
+        semesters: object = program.get("semesters")
+        if not isinstance(semesters, list):
+            return self._json_within_budget(targeted_payload)
+
+        serialized: str = self._json_within_budget(targeted_payload)
+        program_payload: dict[str, object] = targeted_payload["program"]
+        if not isinstance(program_payload, dict):
+            return serialized
+
+        semester_list: object = program_payload.get("semesters")
+        if not isinstance(semester_list, list):
+            return serialized
+
+        for semester in semesters:
+            if not isinstance(semester, dict):
+                continue
+
+            compact_semester: dict[str, object] = {
+                "name": semester.get("name"),
+                "courses": [],
+            }
+            semester_list.append(compact_semester)
+
+            courses_container: object = compact_semester.get("courses")
+            if not isinstance(courses_container, list):
+                continue
+
+            courses: object = semester.get("courses")
+            if isinstance(courses, list):
+                for course in courses:
+                    if not isinstance(course, dict):
+                        continue
+
+                    compact_course: dict[str, object] = {
+                        "code": course.get("code"),
+                        "title": course.get("title"),
+                        "credits": course.get("credits"),
+                    }
+                    courses_container.append(compact_course)
+
+                    serialized = self._json_within_budget(targeted_payload)
+                    if len(serialized) >= self.char_budget:
+                        return serialized
+
+            serialized = self._json_within_budget(targeted_payload)
+            if len(serialized) >= self.char_budget:
+                return serialized
+
+        return serialized
+
+    def _build_generic_index_context(self) -> str:
+        """Build a compact cross-program index map for broad user queries."""
+        index_payload: dict[str, object] = {"mode": "catalog_index", "courses": []}
+        courses_payload: object = index_payload.get("courses")
+        if not isinstance(courses_payload, list):
+            return self._json_within_budget(index_payload)
+
+        seen_entries: set[tuple[str, str]] = set()
+
+        for program in self._programs():
+            program_id: str = str(program.get("program_id", "unknown_program"))
+            semesters: object = program.get("semesters")
+            if not isinstance(semesters, list):
+                continue
+
+            for semester in semesters:
+                if not isinstance(semester, dict):
+                    continue
+                courses: object = semester.get("courses")
+                if not isinstance(courses, list):
+                    continue
+
+                for course in courses:
+                    if not isinstance(course, dict):
+                        continue
+
+                    code: str = str(course.get("code", "")).strip()
+                    title: str = str(course.get("title", "")).strip()
+                    if not code and not title:
+                        continue
+
+                    dedupe_key: tuple[str, str] = (code, title)
+                    if dedupe_key in seen_entries:
+                        continue
+                    seen_entries.add(dedupe_key)
+
+                    compact_entry: dict[str, object] = {
+                        "program_id": program_id,
+                        "code": code,
+                        "title": title,
+                        "credits": course.get("credits"),
+                    }
+                    courses_payload.append(compact_entry)
+
+                    serialized: str = self._json_within_budget(index_payload)
+                    if len(serialized) >= self.char_budget:
+                        return serialized
+
+        return self._json_within_budget(index_payload)
+
+    def get_optimized_context(self, user_query: str) -> str:
+        """Return a query-scoped, budget-limited context snippet for prompting.
+
+        Args:
+            user_query: End-user message used for intent-aware context slicing.
+
+        Returns:
+            A compact JSON string limited by ``char_budget``.
+        """
+        matched_program_id: str | None = self._classify_program_intent(user_query)
+        if matched_program_id is not None:
+            for program in self._programs():
+                if str(program.get("program_id")) == matched_program_id:
+                    return self._build_targeted_program_context(program, matched_program_id)
+
+        return self._build_generic_index_context()
+
+
+_CATALOG_SEARCH_ENGINE: CatalogSearchEngine | None = None
+
+
+def _get_catalog_search_engine() -> CatalogSearchEngine:
+    """Return the singleton catalog search engine, initializing on first use."""
+    global _CATALOG_SEARCH_ENGINE
+    if _CATALOG_SEARCH_ENGINE is None:
+        _CATALOG_SEARCH_ENGINE = CatalogSearchEngine(
+            cache_path=_CATALOG_CACHE_PATH,
+            char_budget=_CONTEXT_CHAR_BUDGET,
+        )
+    return _CATALOG_SEARCH_ENGINE
+
+
+def _get_optimized_catalog_context(user_query: str) -> str:
+    """Return a token-optimized catalog context snippet for the user query."""
+    try:
+        return _get_catalog_search_engine().get_optimized_context(user_query)
+    except RuntimeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc),
+        ) from exc
 
 
 def _parse_cors_origins() -> list[str]:
@@ -81,6 +327,12 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def _startup_load_catalog_search_engine() -> None:
+    """Warm the in-memory catalog search engine during API startup."""
+    _get_catalog_search_engine()
 
 
 class ChatRequest(BaseModel):
@@ -249,6 +501,8 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "- Use dense markdown bullet structures for course maps.\n"
         "- Format all courses as: **CODE**: Title (Credits).\n"
         "- Strict zero-temperature simulation: Do not vary terminology.\n"
+        "- You have been provided a highly filtered context snippet matching the student's topical intent. "
+        "If the precise answer is missing from this slice, guide them to specify which degree plan or certificate pathway they want to inspect.\n"
         "\n"
         "[GUARDRAIL TRIGGER ACTIONS]:\n"
         "- If the user requests courses/tracks not explicitly keyed in <context>, emit exactly:\n"
@@ -558,13 +812,7 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
     Raises:
         HTTPException: If catalog loading fails or all providers fail.
     """
-    try:
-        catalog_payload: str = _load_catalog_prompt_payload()
-    except RuntimeError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(exc),
-        ) from exc
+    catalog_payload: str = _get_optimized_catalog_context(message)
 
     async with httpx.AsyncClient(timeout=_HTTP_TIMEOUT_SECONDS) as client:
         groq_response: ChatResponse | None = await _request_groq_reply(
