@@ -18,7 +18,7 @@
 (() => {
   "use strict";
 
-  const API_URL = "https://success-coach-chatbot.vercel.app/api/chat";
+  const API_URL = "https://success-coach-chatbot.onrender.com/api/chat";
   const MAX_MESSAGE_LENGTH = 1000;
   const ROOT_ID = "dc-chatbot-root";
   const CHAT_HISTORY_KEY = "dc_chatbot_history";
