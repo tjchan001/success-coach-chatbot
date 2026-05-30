@@ -1308,22 +1308,22 @@ def _build_system_prompt(catalog_payload: str) -> str:
 
 
 def _load_groq_api_keys() -> list[str]:
-    """Return the configured Groq API keys.
+    """Return the configured Groq API keys, supporting plural or singular variables.
 
     Returns:
-        Groq API keys loaded from ``GROQ_API_KEYS``.
+        Groq API keys loaded from environment variables.
     """
-    raw_keys: str = os.environ.get("GROQ_API_KEYS", "")
+    raw_keys: str = os.environ.get("GROQ_API_KEYS") or os.environ.get("GROQ_API_KEY") or ""
     return [key.strip() for key in raw_keys.split(",") if key.strip()]
 
 
 def _load_gemini_api_keys() -> list[str]:
-    """Return the configured Gemini API keys.
+    """Return the configured Gemini API keys, supporting plural or singular variables.
 
     Returns:
-        Gemini API keys loaded from ``GEMINI_API_KEYS``.
+        Gemini API keys loaded from environment variables.
     """
-    raw_keys: str = os.environ.get("GEMINI_API_KEYS", "")
+    raw_keys: str = os.environ.get("GEMINI_API_KEYS") or os.environ.get("GEMINI_API_KEY") or ""
     return [key.strip() for key in raw_keys.split(",") if key.strip()]
 
 
@@ -1644,21 +1644,6 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
         triggered_guardrail=False,
     )
 
-    if httpx is None:
-        _LOG.error(
-            "Search route exception: httpx dependency unavailable during provider request path. %s",
-            _HTTPX_IMPORT_ERROR,
-        )
-        return ChatResponse(
-            reply=(
-                "I encountered an optimization bottleneck reading the catalog data structure "
-                "for that topic. Please try asking about a specific course code (e.g., WLDG "
-                "or AERM) while I refine my indexing rules!"
-            ),
-            model="System-Fallback-Shield",
-            progress_cards=[],
-        )
-
     async with httpx.AsyncClient(timeout=_HTTP_TIMEOUT_SECONDS) as client:
         groq_response: ChatResponse | None = await _request_groq_reply(
             client=client,
@@ -1704,14 +1689,18 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     try:
         return await _generate_chat_reply(message=request.message)
-    except Exception as e:  # noqa: BLE001
-        logging.error(f"Search route exception: {str(e)}")
+    except HTTPException as http_exc:
+        # Pass meaningful upstream service/provider errors straight to the client
+        logging.error(f"Upstream provider connection error: {http_exc.detail}")
         return ChatResponse(
-            reply=(
-                "I encountered an optimization bottleneck reading the catalog data "
-                "structure for that topic. Please try asking about a specific course "
-                "code (e.g., WLDG or AERM) while I refine my indexing rules!"
-            ),
+            reply=f"System Connection Failure: {http_exc.detail} Please check your live environment credentials.",
+            model="System-Error-Shield",
+            progress_cards=[],
+        )
+    except Exception as e:  # noqa: BLE001
+        logging.critical(f"Unhandled operational backend panic: {str(e)}", exc_info=True)
+        return ChatResponse(
+            reply="The server encountered an operational anomaly parsing this catalog slice. Please try your request again shortly.",
             model="System-Fallback-Shield",
             progress_cards=[],
         )
