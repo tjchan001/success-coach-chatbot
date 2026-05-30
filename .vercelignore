@@ -1,0 +1,7 @@
+# Ignore the Python backend environment and heavy AI dependencies
+api/
+.venv/
+tests/
+requirements.txt
+__pycache__/
+*.py
