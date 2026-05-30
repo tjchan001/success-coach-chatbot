@@ -108,16 +108,7 @@ CAREER_CLUSTER_MAP: dict[str, list[str]] = {
 
 
 def expand_user_query(query_text: str) -> list[str]:
-    """Expand a user query with cluster-derived search targets.
-
-    Architectural Intent:
-        Keep search expansion centralized and lightweight so query routing can
-        match catalog prefixes without injecting a heavy synonym engine.
-
-    Security Rationale:
-        Expansion is deterministic, local-only, and bounded to static cluster
-        values, preventing untrusted dynamic prompt growth.
-    """
+    """Expand a user query with cluster-derived search targets."""
     normalized_query: str = query_text.lower().strip()
     if not normalized_query:
         return []
@@ -139,26 +130,9 @@ def expand_user_query(query_text: str) -> list[str]:
 
 
 class CatalogSearchEngine:
-    """In-memory catalog indexer and context slicer for token-efficient prompts.
-
-    Architectural Intent:
-        Prevents token bloat by routing each user query to a tightly scoped
-        context slice. Program-specific queries receive one pathway payload,
-        while broad queries receive a compact index map only.
-
-    Security Rationale:
-        The engine reads only from the local cache file and returns bounded
-        strings under an explicit character budget to reduce prompt-surface
-        risk and downstream request size.
-    """
+    """In-memory catalog indexer and context slicer for token-efficient prompts."""
 
     def __init__(self, cache_path: Path, char_budget: int = _CONTEXT_CHAR_BUDGET) -> None:
-        """Initialize and load catalog data into memory.
-
-        Args:
-            cache_path: Local catalog cache file path.
-            char_budget: Maximum character budget for returned context strings.
-        """
         self.cache_path: Path = cache_path
         self.char_budget: int = char_budget
         self._catalog_payload: dict[str, object] = self._load_catalog_payload()
@@ -233,7 +207,6 @@ class CatalogSearchEngine:
         )
 
     def _load_catalog_payload(self) -> dict[str, object]:
-        """Load the local catalog cache into a dictionary."""
         if not self.cache_path.exists():
             raise RuntimeError(f"Catalog cache not found at '{self.cache_path}'.")
 
@@ -248,7 +221,6 @@ class CatalogSearchEngine:
         return payload
 
     def _programs(self) -> list[dict[str, object]]:
-        """Return the normalized list of program objects from cache payload."""
         if self._programs_cache is not None:
             return self._programs_cache
 
@@ -269,7 +241,6 @@ class CatalogSearchEngine:
         return self._programs_cache
 
     def _classify_program_intent(self, user_query: str) -> str | None:
-        """Map query keywords to a specific program ID when confidence is high."""
         lowered_query: str = user_query.lower()
         for program_id, keywords in self._intent_map.items():
             if any(keyword in lowered_query for keyword in keywords):
@@ -277,7 +248,6 @@ class CatalogSearchEngine:
         return None
 
     def classify_intent(self, user_query: str) -> str:
-        """Classify query intent for routing, guardrails, and analytics."""
         if self.is_out_of_bounds_query(user_query):
             return "OUT_OF_BOUNDS"
         if self._is_degree_layout_request(user_query):
@@ -287,7 +257,6 @@ class CatalogSearchEngine:
         return "GENERIC_CATALOG"
 
     def get_matched_keywords(self, user_query: str) -> list[str]:
-        """Return matched routing keywords for anonymized analytics logging."""
         lowered_query: str = user_query.lower()
         matched: set[str] = set()
 
@@ -310,7 +279,6 @@ class CatalogSearchEngine:
         return sorted(matched)
 
     def is_out_of_bounds_query(self, user_query: str) -> bool:
-        """Return True when a query falls outside academic advising scope."""
         lowered_query: str = user_query.lower().strip()
         if not lowered_query:
             return True
@@ -331,23 +299,19 @@ class CatalogSearchEngine:
         return not has_academic_signal
 
     def _is_degree_layout_request(self, user_query: str) -> bool:
-        """Return True when the user asks for degree-plan structure output."""
         lowered_query: str = user_query.lower()
         return any(keyword in lowered_query for keyword in self._degree_layout_keywords)
 
     def _extract_course_codes(self, raw_text: str) -> list[str]:
-        """Normalize and extract course codes from arbitrary prerequisite strings."""
         normalized_codes: list[str] = []
         for rubric, number in _COURSE_CODE_PATTERN.findall(raw_text):
             normalized_codes.append(f"{rubric.upper()} {number}")
         return normalized_codes
 
     def _extract_course_headers_from_query(self, user_query: str) -> list[str]:
-        """Extract normalized course-header patterns (e.g., CHEM 1411) from query text."""
         return self._extract_course_codes(user_query)
 
     def _lookup_program_titles_from_query(self, user_query: str) -> list[str]:
-        """Return program titles that are directly referenced in the query text."""
         lowered_query: str = user_query.lower()
         matched_titles: list[str] = []
         seen_titles: set[str] = set()
@@ -363,7 +327,6 @@ class CatalogSearchEngine:
         return matched_titles
 
     def _build_course_catalog_url(self, course_code: str) -> str:
-        """Return a direct Dallas College catalog lookup URL for a course code."""
         normalized_course_code: str = re.sub(r"\s+", " ", course_code).strip()
         encoded_course_code: str = normalized_course_code.replace(" ", "+")
         return (
@@ -372,7 +335,6 @@ class CatalogSearchEngine:
         )
 
     def _build_program_catalog_url(self, program_title: str) -> str:
-        """Return a direct Dallas College program lookup URL for a program title."""
         normalized_program_title: str = re.sub(r"\s+", " ", program_title).strip()
         encoded_program_title: str = normalized_program_title.replace(" ", "+")
         return (
@@ -381,7 +343,6 @@ class CatalogSearchEngine:
         )
 
     def _collect_valid_course_codes(self, programs: list[dict[str, object]]) -> list[str]:
-        """Collect unique valid course-code strings from program records."""
         valid_codes: set[str] = set()
         for program in programs:
             if not isinstance(program, dict):
@@ -422,7 +383,6 @@ class CatalogSearchEngine:
         return sorted(valid_codes)
 
     def _append_verified_whitelist_line(self, context_chunk: str, valid_codes: list[str]) -> str:
-        """Append strict course whitelist line while keeping output under char budget."""
         whitelist_line: str = (
             "\nVERIFIED COURSE CODE WHITELIST (STRICT COMPLIANCE REQUIRED): "
             f"{valid_codes}"
@@ -436,11 +396,9 @@ class CatalogSearchEngine:
         return whitelist_line[: self.char_budget]
 
     def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
-        """Extract completed course codes from user text as best-effort context."""
         return self._extract_course_codes(user_query)
 
     def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:
-        """Parse prerequisite logic strings and return prerequisite course codes."""
         prerequisite_sources: list[str] = []
         for field_name in ("prerequisite", "prerequisites", "notes", "description"):
             value: object = course.get(field_name)
@@ -460,7 +418,6 @@ class CatalogSearchEngine:
         return sorted(prerequisite_codes)
 
     def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:
-        """Build directed prerequisite relationships per program."""
         index: dict[str, dict[str, list[str]]] = {}
         for program in self._programs():
             try:
@@ -491,7 +448,6 @@ class CatalogSearchEngine:
         return index
 
     def _get_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:
-        """Return lazily-built prerequisite index, caching after first build."""
         if self._prerequisite_index_cache is None:
             self._prerequisite_index_cache = self._build_prerequisite_index()
         return self._prerequisite_index_cache
@@ -501,7 +457,6 @@ class CatalogSearchEngine:
         completed_courses: list[str],
         target_program: str,
     ) -> dict[str, list[str]]:
-        """Return advanced courses that remain locked by missing prerequisites."""
         completed_set: set[str] = {code.upper().strip() for code in completed_courses}
         program_dependencies: dict[str, list[str]] = self._get_prerequisite_index().get(
             target_program,
@@ -519,7 +474,6 @@ class CatalogSearchEngine:
         return missing_map
 
     def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:
-        """Return flattened degree-plan checklist cards for explicit layout requests."""
         if not self._is_degree_layout_request(user_query):
             return []
 
@@ -568,7 +522,6 @@ class CatalogSearchEngine:
         return []
 
     def get_degree_prerequisite_tree(self, user_query: str) -> dict[str, list[str]]:
-        """Return missing prerequisite dependency tree for a degree-layout query."""
         if not self._is_degree_layout_request(user_query):
             return {}
 
@@ -580,7 +533,6 @@ class CatalogSearchEngine:
         return self.get_missing_prerequisites(completed_courses, program_id)
 
     def _json_within_budget(self, payload: dict[str, object]) -> str:
-        """Serialize payload and enforce the configured character budget."""
         serialized: str = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
         if len(serialized) <= self.char_budget:
             return serialized
@@ -601,7 +553,6 @@ class CatalogSearchEngine:
         return overflow_serialized[: self.char_budget]
 
     def _resolve_program_catalog_source_url(self, program: dict[str, object]) -> str:
-        """Return canonical source URL for a program or generate a safe catalog fallback."""
         for key in ("source_url", "catalog_url", "source", "url", "link"):
             raw_value: object = program.get(key)
             if isinstance(raw_value, str) and raw_value.strip().startswith("http"):
@@ -617,7 +568,6 @@ class CatalogSearchEngine:
         return self._build_program_catalog_url(program_title)
 
     def _append_catalog_source_token(self, chunk_text: str, source_url: str) -> str:
-        """Append the catalog source verification token while preserving context budget."""
         token: str = f"\n[Catalog Source Verification Link: {source_url}]"
         if len(chunk_text) + len(token) <= self.char_budget:
             return f"{chunk_text}{token}"
@@ -633,7 +583,6 @@ class CatalogSearchEngine:
         program_id: str,
         source_url: str,
     ) -> str:
-        """Build a bounded targeted context payload for one matched program."""
         targeted_payload: dict[str, object] = {
             "mode": "targeted_program",
             "program_id": program_id,
@@ -744,7 +693,6 @@ class CatalogSearchEngine:
         return self._append_catalog_source_token(serialized, source_url)
 
     def _build_generic_index_context(self) -> str:
-        """Build a compressed token-signature map for broad user queries."""
         index_payload: dict[str, object] = {"mode": "catalog_index_signature", "signature": ""}
         signature_entries: list[str] = []
         if not isinstance(index_payload.get("signature"), str):
@@ -827,14 +775,6 @@ class CatalogSearchEngine:
         return self._json_within_budget(index_payload)
 
     def get_optimized_context(self, user_query: str) -> str:
-        """Return a query-scoped, budget-limited context snippet for prompting.
-
-        Args:
-            user_query: End-user message used for intent-aware context slicing.
-
-        Returns:
-            A compact JSON string limited by ``char_budget``.
-        """
         matched_program_id: str | None = self._classify_program_intent(user_query)
         if matched_program_id is not None:
             for program in self._programs():
@@ -978,7 +918,6 @@ _CATALOG_SEARCH_ENGINE: CatalogSearchEngine | None = None
 
 
 def _get_catalog_search_engine() -> CatalogSearchEngine:
-    """Return the singleton catalog search engine, initializing on first use."""
     global _CATALOG_SEARCH_ENGINE
     if _CATALOG_SEARCH_ENGINE is None:
         _CATALOG_SEARCH_ENGINE = CatalogSearchEngine(
@@ -989,7 +928,6 @@ def _get_catalog_search_engine() -> CatalogSearchEngine:
 
 
 def _get_optimized_catalog_context(user_query: str) -> str:
-    """Return a token-optimized catalog context snippet for the user query."""
     try:
         return _get_catalog_search_engine().get_optimized_context(user_query)
     except RuntimeError as exc:
@@ -1000,22 +938,18 @@ def _get_optimized_catalog_context(user_query: str) -> str:
 
 
 def _is_out_of_bounds_query(user_query: str) -> bool:
-    """Return True when the query falls outside advising scope."""
     return _get_catalog_search_engine().is_out_of_bounds_query(user_query)
 
 
 def _get_degree_progress_cards(user_query: str) -> list[dict[str, object]]:
-    """Return checklist card payloads for explicit degree-layout requests."""
     return _get_catalog_search_engine().get_degree_progress_cards(user_query)
 
 
 def _get_degree_prerequisite_tree(user_query: str) -> dict[str, list[str]]:
-    """Return prerequisite dependency tree for explicit degree-layout requests."""
     return _get_catalog_search_engine().get_degree_prerequisite_tree(user_query)
 
 
 def _write_analytics_entry_sync(entry: dict[str, object], output_path: Path) -> None:
-    """Append analytics entry to local cache file synchronously."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     existing_entries: list[dict[str, object]] = []
@@ -1035,12 +969,6 @@ def _write_analytics_entry_sync(entry: dict[str, object], output_path: Path) -> 
 
 
 async def log_analytics_event(query: str, intent: str, triggered_guardrail: bool) -> None:
-    """Write anonymized analytics metadata to a local JSON cache file.
-
-    Privacy Design:
-        Stores no raw query text. Persists only intent metadata, matched
-        keywords, and guardrail trigger state.
-    """
     if os.environ.get("PYTEST_CURRENT_TEST"):
         return
 
@@ -1056,11 +984,6 @@ async def log_analytics_event(query: str, intent: str, triggered_guardrail: bool
 
 
 def _parse_cors_origins() -> list[str]:
-    """Return the configured CORS origin list from the environment.
-
-    Returns:
-        A list of origin strings suitable for FastAPI's CORS middleware.
-    """
     raw_origins: str = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
     origins: list[str] = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
     return origins or ["*"]
@@ -1068,7 +991,6 @@ def _parse_cors_origins() -> list[str]:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Yield ASGI lifespan context without forcing heavy startup initialization."""
     yield
 
 
@@ -1087,12 +1009,6 @@ app.add_middleware(
 
 
 class ChatRequest(BaseModel):
-    """Validated inbound chat message from the floating widget.
-
-    Args:
-        message: End-user question constrained to 1-1000 characters.
-    """
-
     model_config = ConfigDict(frozen=True)
 
     message: Annotated[str, Field(min_length=1, max_length=1000)] = Field(
@@ -1102,15 +1018,6 @@ class ChatRequest(BaseModel):
 
 
 class ChatResponse(BaseModel):
-    """Validated outbound assistant reply.
-
-    Args:
-        reply: Plain-text grounded response returned to the widget.
-        model: Provider/model pair used to generate the response.
-        progress_cards: Optional structured progress card payload for UI rendering.
-        prerequisite_tree: Optional prerequisite dependency map by course code.
-    """
-
     model_config = ConfigDict(frozen=True)
 
     reply: str = Field(..., description="Plain-text grounded response returned to the widget.")
@@ -1126,42 +1033,18 @@ class ChatResponse(BaseModel):
 
 
 class GeminiPart(BaseModel):
-    """A single Gemini content part.
-
-    Args:
-        text: Text payload for the Gemini API part.
-    """
-
     model_config = ConfigDict(frozen=True)
-
     text: str = Field(..., description="Text payload for the Gemini API part.")
 
 
 class GeminiContent(BaseModel):
-    """A Gemini content block for a single role.
-
-    Args:
-        role: Gemini role label such as ``user``.
-        parts: Ordered text parts attached to the role.
-    """
-
     model_config = ConfigDict(frozen=True)
-
     role: str = Field(..., description="Gemini role label such as 'user'.")
     parts: list[GeminiPart] = Field(..., description="Ordered text parts attached to the role.")
 
 
 class GeminiRequest(BaseModel):
-    """HTTP payload sent to Gemini 1.5 Flash.
-
-    Args:
-        system_instruction: Shared system-level instruction block.
-        contents: User message content blocks.
-        generation_config: Deterministic generation configuration.
-    """
-
     model_config = ConfigDict(frozen=True)
-
     system_instruction: GeminiContent = Field(
         ...,
         description="Shared system-level instruction block.",
@@ -1177,33 +1060,13 @@ class GeminiRequest(BaseModel):
 
 
 class GroqMessage(BaseModel):
-    """One OpenAI-compatible chat message for Groq.
-
-    Args:
-        role: Chat role such as ``system`` or ``user``.
-        content: Plain-text message content.
-    """
-
     model_config = ConfigDict(frozen=True)
-
     role: str = Field(..., description="Chat role such as 'system' or 'user'.")
     content: str = Field(..., description="Plain-text message content.")
 
 
 class GroqRequest(BaseModel):
-    """HTTP payload sent to Groq's chat completions endpoint.
-
-    Args:
-        model: Groq-hosted model name.
-        messages: Ordered OpenAI-compatible chat messages.
-        temperature: Deterministic sampling temperature.
-        top_p: Top-p setting paired with temperature 0.0.
-        frequency_penalty: Penalty applied to repeated token patterns.
-        presence_penalty: Penalty applied to already-present topic reuse.
-    """
-
     model_config = ConfigDict(frozen=True)
-
     model: str = Field(..., description="Groq-hosted model name.")
     messages: list[GroqMessage] = Field(
         ...,
@@ -1216,14 +1079,6 @@ class GroqRequest(BaseModel):
 
 
 def _load_catalog_prompt_payload() -> str:
-    """Load the local catalog cache and serialize it into a compact prompt string.
-
-    Returns:
-        Minified JSON string representation of the catalog cache.
-
-    Raises:
-        RuntimeError: If the catalog cache file is missing or unreadable.
-    """
     if not _CATALOG_CACHE_PATH.exists():
         raise RuntimeError(f"Catalog cache not found at '{_CATALOG_CACHE_PATH}'.")
 
@@ -1236,14 +1091,6 @@ def _load_catalog_prompt_payload() -> str:
 
 
 def _build_system_prompt(catalog_payload: str) -> str:
-    """Build the shared catalog-grounded system prompt for both providers.
-
-    Args:
-        catalog_payload: Compact serialized catalog cache.
-
-    Returns:
-        A strict instruction string that constrains the model to local data.
-    """
     return (
         "[ROLE]: Sovereign Automated AI Academic Advisor for Dallas College Computer Science/IT.\n"
         "[CONSTRAINTS]: Strict zero-tolerance hallucination lock. Strict token/request optimization.\n"
@@ -1269,9 +1116,9 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "- If no valid aligned context slices remain after prefix cross-checking, respond honestly that no official matching course was found in the sandbox catalog cache.\n"
         "\n"
         "[OUTPUT FORMAT RULES]:\n"
-        "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes or course numbers (e.g., ITN, BPA). Every single course code you display MUST be an exact string match from the provided text context chunk.\n"
-        "- If a course code is not explicitly written in the context data layer, you must never include it in your recommendations.\n"
-        "- You are strictly prohibited from writing any course code that is not explicitly listed in the VERIFIED COURSE CODE WHITELIST. If a course is missing from the whitelist, it does not exist for this request.\n"
+        "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes, course numbers, OR course titles. Every single course code and corresponding title you display MUST be an exact match from the provided text context chunk.\n"
+        "- If a course code (e.g., ARTC 2317) appears in the context, but its full descriptive name is not explicitly typed out right next to it in the text layers, you must output ONLY the code followed by '(Official title not in context fragment)'. Never guess or attach a name like 'Art Appreciation' to an unverified code prefix.\n"
+        "- If a student asks about a specific topic (like pottery or ceramics) and a matched context row contains multiple unrelated or generic codes, only present and expand on the course code that explicitly fulfills their topical intent.\n"
         "\n"
         "[RESPONSE COMPRESSION PROTOCOL]:\n"
         "- No conversational pleasantries.\n"
@@ -1308,35 +1155,16 @@ def _build_system_prompt(catalog_payload: str) -> str:
 
 
 def _load_groq_api_keys() -> list[str]:
-    """Return the configured Groq API keys, supporting plural or singular variables.
-
-    Returns:
-        Groq API keys loaded from environment variables.
-    """
     raw_keys: str = os.environ.get("GROQ_API_KEYS") or os.environ.get("GROQ_API_KEY") or ""
     return [key.strip() for key in raw_keys.split(",") if key.strip()]
 
 
 def _load_gemini_api_keys() -> list[str]:
-    """Return the configured Gemini API keys, supporting plural or singular variables.
-
-    Returns:
-        Gemini API keys loaded from environment variables.
-    """
     raw_keys: str = os.environ.get("GEMINI_API_KEYS") or os.environ.get("GEMINI_API_KEY") or ""
     return [key.strip() for key in raw_keys.split(",") if key.strip()]
 
 
 def _build_gemini_request(message: str, catalog_payload: str) -> GeminiRequest:
-    """Create the typed Gemini request body.
-
-    Args:
-        message: User message to send.
-        catalog_payload: Compact serialized catalog cache.
-
-    Returns:
-        A fully typed Gemini request model.
-    """
     return GeminiRequest(
         system_instruction=GeminiContent(
             role="system",
@@ -1359,15 +1187,6 @@ def _build_gemini_request(message: str, catalog_payload: str) -> GeminiRequest:
 
 
 def _build_groq_request(message: str, catalog_payload: str) -> GroqRequest:
-    """Create the typed Groq chat request body.
-
-    Args:
-        message: User message to send.
-        catalog_payload: Compact serialized catalog cache.
-
-    Returns:
-        A fully typed Groq request model.
-    """
     return GroqRequest(
         model=_GROQ_MODEL_NAME,
         messages=[
@@ -1382,17 +1201,6 @@ def _build_groq_request(message: str, catalog_payload: str) -> GroqRequest:
 
 
 def _extract_gemini_text(response_payload: dict[str, object]) -> str:
-    """Extract plain text from a Gemini API response payload.
-
-    Args:
-        response_payload: Parsed JSON response from Gemini.
-
-    Returns:
-        The first available text part emitted by the model.
-
-    Raises:
-        RuntimeError: If the payload does not contain a text candidate.
-    """
     candidates: object = response_payload.get("candidates")
     if not isinstance(candidates, list):
         raise RuntimeError("Gemini response did not include candidates.")
@@ -1417,17 +1225,6 @@ def _extract_gemini_text(response_payload: dict[str, object]) -> str:
 
 
 def _extract_groq_text(response_payload: dict[str, object]) -> str:
-    """Extract plain text from a Groq chat-completions response payload.
-
-    Args:
-        response_payload: Parsed JSON response from Groq.
-
-    Returns:
-        The first available message content emitted by the model.
-
-    Raises:
-        RuntimeError: If the payload does not contain a text choice.
-    """
     choices: object = response_payload.get("choices")
     if not isinstance(choices, list):
         raise RuntimeError("Groq response did not include choices.")
@@ -1450,20 +1247,6 @@ async def _request_groq_reply(
     message: str,
     catalog_payload: str,
 ) -> ChatResponse | None:
-    """Attempt Groq generation with API-key rotation.
-
-    Args:
-        client: Shared async HTTP client.
-        message: Validated user message.
-        catalog_payload: Compact serialized catalog cache.
-
-    Returns:
-        A chat response if Groq succeeds, otherwise ``None`` so the caller can
-        fall back to Gemini.
-
-    Raises:
-        HTTPException: If Groq returns a non-recoverable upstream error.
-    """
     api_keys: list[str] = _load_groq_api_keys()
     if not api_keys:
         return None
@@ -1527,19 +1310,6 @@ async def _request_gemini_reply(
     message: str,
     catalog_payload: str,
 ) -> ChatResponse:
-    """Attempt Gemini generation with API-key rotation.
-
-    Args:
-        client: Shared async HTTP client.
-        message: Validated user message.
-        catalog_payload: Compact serialized catalog cache.
-
-    Returns:
-        A chat response if Gemini succeeds.
-
-    Raises:
-        HTTPException: If Gemini configuration is missing or upstream calls fail.
-    """
     api_keys: list[str] = _load_gemini_api_keys()
     if not api_keys:
         raise HTTPException(
@@ -1593,17 +1363,6 @@ async def _request_gemini_reply(
 
 
 async def _generate_chat_reply(message: str) -> ChatResponse:
-    """Generate a grounded chat reply using Groq first and Gemini second.
-
-    Args:
-        message: Validated user message.
-
-    Returns:
-        Typed chat response containing the provider reply.
-
-    Raises:
-        HTTPException: If catalog loading fails or all providers fail.
-    """
     intent: str = _get_catalog_search_engine().classify_intent(message)
 
     if intent == "OUT_OF_BOUNDS":
@@ -1662,35 +1421,20 @@ async def _generate_chat_reply(message: str) -> ChatResponse:
 
 @app.get("/api/health", status_code=status.HTTP_200_OK)
 async def health_check() -> dict[str, str]:
-    """Return a liveness response for local development and uptime probes.
-
-    Returns:
-        A small status payload for health checks.
-    """
     return {"status": "ok"}
 
 
 @app.get("/api/test-routing", status_code=status.HTTP_200_OK)
 async def test_routing() -> dict[str, str]:
-    """Return a static probe to confirm uvicorn is serving this module."""
     return {"message": "Uvicorn is successfully serving api/chat.py"}
 
 
 @app.post("/api/chat/", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 @app.post("/api/chat", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 async def chat(request: ChatRequest) -> ChatResponse:
-    """Handle a widget message through the hybrid Groq-to-Gemini cascade.
-
-    Args:
-        request: Validated incoming chat request.
-
-    Returns:
-        A grounded assistant reply generated from the local catalog payload.
-    """
     try:
         return await _generate_chat_reply(message=request.message)
     except HTTPException as http_exc:
-        # Pass meaningful upstream service/provider errors straight to the client
         logging.error(f"Upstream provider connection error: {http_exc.detail}")
         return ChatResponse(
             reply=f"System Connection Failure: {http_exc.detail} Please check your live environment credentials.",
