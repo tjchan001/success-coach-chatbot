@@ -39,7 +39,7 @@ def test_load_catalog_prompt_payload_minifies_json(
 
 
 def test_shared_prompt_and_requests_are_deterministic() -> None:
-    """Both provider payloads must share the same strict prompt and temperature 0.0."""
+    """Both provider payloads must share the same strict prompt and tuned generation settings."""
     # Arrange
     catalog_payload: str = '{"programs":[{"title":"AAS"}]}'
 
@@ -66,15 +66,20 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     assert "labeled with an incremented index like [1], [2]" in system_prompt
     assert "CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes or course numbers" in system_prompt
     assert "If a course code is not explicitly written in the context data layer, you must never include it in your recommendations." in system_prompt
+    assert "You are strictly prohibited from writing any course code that is not explicitly listed in the VERIFIED COURSE CODE WHITELIST." in system_prompt
     assert "draw out a clear, structured sequence flow using text connectors (──>)" in system_prompt
     assert "Strict zero-tolerance hallucination lock" in system_prompt
     assert "Academic catalog context unavailable. Connection terminal error." in system_prompt
     assert "I cannot confirm that selection based on the current catalog data." in system_prompt
     assert catalog_payload in system_prompt
-    assert groq_request.temperature == 0.0
+    assert groq_request.temperature == 0.3
     assert groq_request.top_p == 1.0
+    assert groq_request.frequency_penalty == 0.7
+    assert groq_request.presence_penalty == 0.5
     assert groq_request.messages[0].content == system_prompt
-    assert gemini_request.generation_config["temperature"] == 0.0
+    assert gemini_request.generation_config["temperature"] == 0.3
+    assert gemini_request.generation_config["frequencyPenalty"] == 0.7
+    assert gemini_request.generation_config["presencePenalty"] == 0.5
     assert gemini_request.generation_config["topP"] == 1.0
     assert gemini_request.system_instruction.parts[0].text == system_prompt
 
@@ -114,7 +119,9 @@ async def test_generate_chat_reply_uses_groq_first(monkeypatch: pytest.MonkeyPat
             if url == chat._GROQ_CHAT_URL:
                 assert headers is not None
                 assert headers["Authorization"] == "Bearer groq-key-one"
-                assert json["temperature"] == 0.0
+                assert json["temperature"] == 0.3
+                assert json["frequency_penalty"] == 0.7
+                assert json["presence_penalty"] == 0.5
                 return httpx.Response(
                     status_code=200,
                     request=httpx.Request("POST", url),
@@ -184,7 +191,9 @@ async def test_generate_chat_reply_falls_back_to_gemini_after_groq_429s(
 
             assert url.startswith(chat._GEMINI_GENERATE_URL)
             assert json["generation_config"] == {
-                "temperature": 0.0,
+                "temperature": 0.3,
+                "frequencyPenalty": 0.7,
+                "presencePenalty": 0.5,
                 "topP": 1.0,
                 "maxOutputTokens": 512,
             }
@@ -410,6 +419,7 @@ def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:
     assert "ITSE 1301" in context
     assert "Cybersecurity_AAS" not in context
     assert "ITNW 1358" not in context
+    assert "VERIFIED COURSE CODE WHITELIST (STRICT COMPLIANCE REQUIRED):" in context
 
 
 def test_expand_user_query_appends_cluster_targets() -> None:
@@ -534,6 +544,7 @@ def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:
     # Assert
     assert "[Catalog Source Verification Link: https://catalog.example.edu/program/web]" in context
     assert "[Course Verification Link for ITSE 1301:" in context
+    assert "VERIFIED COURSE CODE WHITELIST (STRICT COMPLIANCE REQUIRED): ['ITSE 1301']" in context
 
 
 def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:

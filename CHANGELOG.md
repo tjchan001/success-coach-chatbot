@@ -4,7 +4,34 @@ All notable changes to this project are documented in this file.
 
 ## 2026-05-29
 
+### Added
+- Added [sql/local_embedding_setup.sql](sql/local_embedding_setup.sql) with local-embedding DB migration steps: drop/recreate `match_pathways`, reset `public.program_pathways.embedding` to `vector(384)`, and rebuild cosine-similarity retrieval RPC signatures for 384-d vectors.
+- Added [sql/native_embedding_setup.sql](sql/native_embedding_setup.sql) for native Supabase embedding initialization (`vector`, `vault`, `ai` extensions), automatic trigger-based `content` embedding writes on `public.program_pathways`, and the `public.match_pathways(query_embedding vector, match_threshold float, match_count int)` RPC for cosine-similarity retrieval.
+- Added [rag_search.py](rag_search.py), a lightweight Groq + Supabase runtime that computes query vectors via native Supabase RPC, pulls top-3 semantic pathway matches, injects retrieval context into a system prompt window, and streams Groq responses in the terminal.
+- Added [tests/test_rag_search.py](tests/test_rag_search.py) with mocked coverage for Supabase RPC vector retrieval, match RPC payload parsing, system context synthesis, Groq stream chunk handling, and end-to-end query orchestration.
+- Added [embed_pathways.py](embed_pathways.py), a production embedding backfill pipeline that reads `program_pathways` rows missing vectors, generates 1536-d vectors with OpenAI `text-embedding-3-small` in 100-row batches, and writes vectors back to the `embedding` column with retry/error handling.
+- Added [sql/match_pathways.sql](sql/match_pathways.sql) with pgvector setup (`create extension if not exists vector;`), `embedding vector(1536)` column definition, and the `public.match_pathways` cosine-similarity RPC function.
+- Added [tests/test_embed_pathways.py](tests/test_embed_pathways.py) with mocked OpenAI/Supabase coverage for pending-row fetch, embedding generation, row updates, and batch-loop completion logic.
+
 ### Changed
+- Rewrote [embed_pathways.py](embed_pathways.py) to remove OpenAI API usage and generate local 384-d vectors with sentence-transformers (`all-MiniLM-L6-v2`) before streaming updates to Supabase over HTTPS.
+- Reworked [rag_search.py](rag_search.py) to embed inbound student prompts locally with sentence-transformers (`all-MiniLM-L6-v2`) and send the resulting 384-d query vector to `match_pathways`.
+- Updated [tests/test_embed_pathways.py](tests/test_embed_pathways.py) and [tests/test_rag_search.py](tests/test_rag_search.py) to mock local sentence-transformers behavior and 384-dimensional outputs.
+- Replaced `openai` with `sentence-transformers` and `torch` in [requirements.txt](requirements.txt) for the offline embedding runtime.
+- Added `groq` runtime dependency in [requirements.txt](requirements.txt) for the new local RAG execution interface.
+- Updated [seed_supabase.py](seed_supabase.py) `official_courses` payload rows to include only existing production columns (`course_code`, `title`, `credits`) and removed non-existent prerequisites/requisites fields.
+- Synchronized [seed_supabase.py](seed_supabase.py) payloads to exact production column contracts: `official_courses` rows now emit `course_code`, `title`, `prerequisites`, and `credits`; `program_pathways` rows now emit `program_name`, `semester_name`, and text `content`.
+- Aligned [seed_supabase.py](seed_supabase.py) `official_courses` payload keys to canonical REST schema conventions (`course_code`, `title`, `prerequisites`, `credits`) and added environment-variable overrides for live column-name differences (for example `name` vs `title`).
+- Rewrote [seed_supabase.py](seed_supabase.py) to abandon direct PostgreSQL connectivity and seed Supabase over HTTPS with the official client, 200-row REST upsert batches, and live progress logging while preserving the crawler's `programs -> semesters -> courses` parsing path.
+- Replaced `psycopg2-binary` with `supabase` in [requirements.txt](requirements.txt) for the HTTPS ingest path.
+- Updated [tests/test_seed_supabase.py](tests/test_seed_supabase.py) to validate dictionary-based course extraction, semester pathway payload generation, and 200-row batching behavior.
+- Added [crawl_dallas_college.py](crawl_dallas_college.py), a production-oriented live catalog crawler utility that discovers directory/program links from Dallas College navigation, extracts program/semester/course structures with 1.5-second courteous delays, logs each mapped course, and writes schema-compatible output to [data/catalog_mvp.json](data/catalog_mvp.json).
+- Added crawler runtime dependencies (`requests`, `beautifulsoup4`) to [requirements.txt](requirements.txt).
+- Injected an explicit verified course-code whitelist line into optimized prompt context payloads in [api/chat.py](api/chat.py): `VERIFIED COURSE CODE WHITELIST (STRICT COMPLIANCE REQUIRED): [...]`.
+- Added strict whitelist-only course-code generation rule in [api/chat.py](api/chat.py) system prompt output constraints to prohibit codes not present in the verified whitelist.
+- Updated prompt/context assertions in [tests/test_chat.py](tests/test_chat.py) to lock whitelist rule text and whitelist line injection behavior.
+- Tuned inference settings in [api/chat.py](api/chat.py) to reduce sequence repetition loops by setting `temperature=0.3`, `frequency_penalty=0.7`, and `presence_penalty=0.5` in provider request payloads.
+- Updated request contract assertions in [tests/test_chat.py](tests/test_chat.py) to validate the new penalty and temperature settings for both Groq and Gemini payload builders.
 - Automated system-wide deep linking in [api/chat.py](api/chat.py) by adding query-time course-header and program-title extraction, dynamic program preview links (`preview_program.php?m=Programs&keyword=...`), and explicit per-course verification footprints in context payload arrays.
 - Updated deep-link regression coverage in [tests/test_chat.py](tests/test_chat.py) for program fallback URLs and course-header-driven program targeting.
 - Added strict exact-record template compliance guardrails in [api/chat.py](api/chat.py) output format rules to forbid invented course prefixes/numbers and require every displayed code to be an exact context match.

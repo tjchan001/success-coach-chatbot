@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-29T13:28:51-05:00",
+  "generated": "2026-05-29T22:30:48-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -15,7 +15,7 @@
     "node_modules",
     "dist"
   ],
-  "fileCount": 16,
+  "fileCount": 23,
   "files": [
     {
       "path": "CODING_STANDARDS.md",
@@ -107,6 +107,8 @@
         "def _lookup_program_titles_from_query(self, user_query: str) -> list[str]:",
         "def _build_course_catalog_url(self, course_code: str) -> str:",
         "def _build_program_catalog_url(self, program_title: str) -> str:",
+        "def _collect_valid_course_codes(self, programs: list[dict[str, object]]) -> list[str]:",
+        "def _append_verified_whitelist_line(self, context_chunk: str, valid_codes: list[str]) -> str:",
         "def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:",
         "def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:",
         "def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
@@ -172,6 +174,49 @@
       "routes": []
     },
     {
+      "path": "crawl_dallas_college.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [
+        "class CrawlConfig:"
+      ],
+      "functions": [
+        "def _configure_logging() -> None:",
+        "def _is_allowed_catalog_url(url: str) -> bool:",
+        "def _normalize_url(base_url: str, href: str) -> str:",
+        "def _discover_program_directory_links(soup: BeautifulSoup, base_url: str) -> list[str]:",
+        "def _collect_program_links_from_page(soup: BeautifulSoup, page_url: str) -> set[str]:",
+        "def _extract_total_hours(soup: BeautifulSoup) -> int:",
+        "def _slugify_program_id(title: str) -> str:",
+        "def _infer_degree_code(title: str) -> str:",
+        "def _extract_courses_from_container(container: Tag) -> list[dict[str, str]]:",
+        "def _extract_semesters(soup: BeautifulSoup) -> list[dict[str, object]]:",
+        "def _extract_program_name(soup: BeautifulSoup, page_url: str) -> str:",
+        "def _load_existing_ce_tracks(output_path: Path) -> list[dict[str, object]]:",
+        "def _write_payload_atomic(payload: dict[str, object], output_path: Path) -> None:",
+        "def crawl_catalog(config: CrawlConfig) -> dict[str, object]:",
+        "def main() -> int:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import json",
+        "import logging",
+        "import re",
+        "import time",
+        "from dataclasses import dataclass",
+        "from pathlib import Path",
+        "from typing import Iterable",
+        "import requests",
+        "from bs4 import BeautifulSoup, Tag"
+      ],
+      "routes": [
+        "def _build_session() -> requests.Session:",
+        "def _fetch_html(session: requests.Session, url: str) -> BeautifulSoup:",
+        "def discover_all_program_links(session: requests.Session, base_url: str) -> list[str]:",
+        "def _map_program(session: requests.Session, program_url: str, index: int, total: int) -> dict[str, object] | None:"
+      ]
+    },
+    {
       "path": "data/analytics_logs.json",
       "isPinned": false,
       "extension": ".json",
@@ -187,6 +232,30 @@
       "classes": [],
       "functions": [],
       "imports": [],
+      "routes": []
+    },
+    {
+      "path": "embed_pathways.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def _require_env_var(name: str) -> str:",
+        "def create_supabase_client() -> Client:",
+        "def create_embedding_model() -> SentenceTransformer:",
+        "def fetch_pending_pathways(supabase: Client, batch_size: int) -> list[dict[str, object]]:",
+        "def run_embedding_pipeline(batch_size: int = BATCH_SIZE) -> int:",
+        "def main() -> int:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import os",
+        "import sys",
+        "import time",
+        "from typing import Any",
+        "from sentence_transformers import SentenceTransformer",
+        "from supabase import Client, create_client"
+      ],
       "routes": []
     },
     {
@@ -232,6 +301,32 @@
       ]
     },
     {
+      "path": "rag_search.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def _require_env_var(name: str) -> str:",
+        "def create_supabase_client() -> Client:",
+        "def create_groq_client() -> Groq:",
+        "def create_embedding_model() -> SentenceTransformer:",
+        "def embed_query_text(model: SentenceTransformer, student_prompt: str) -> list[float]:",
+        "def build_system_prompt_context(rows: list[dict[str, object]]) -> str:",
+        "def execute_rag_query(student_prompt: str) -> str:",
+        "def main() -> int:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import os",
+        "import sys",
+        "from typing import Any",
+        "from groq import Groq",
+        "from sentence_transformers import SentenceTransformer",
+        "from supabase import Client, create_client"
+      ],
+      "routes": []
+    },
+    {
       "path": "scripts/scraper.py",
       "isPinned": false,
       "extension": ".py",
@@ -266,6 +361,28 @@
         "import httpx",
         "from bs4 import BeautifulSoup, NavigableString, Tag",
         "from models import Course, DegreePlan, Semester"
+      ],
+      "routes": []
+    },
+    {
+      "path": "seed_supabase.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def load_catalog_payload(catalog_path: Path = CATALOG_PATH) -> dict[str, object]:",
+        "def extract_unique_courses(payload: dict[str, object]) -> dict[str, dict[str, object]]:",
+        "def build_program_pathways(payload: dict[str, object]) -> list[dict[str, object]]:",
+        "def upload_batches(client: Client, table_name: str, rows: list[dict[str, object]]) -> None:",
+        "def main() -> int:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "import json",
+        "import os",
+        "import sys",
+        "from pathlib import Path",
+        "from supabase import Client, create_client"
       ],
       "routes": []
     },
@@ -323,6 +440,47 @@
       ]
     },
     {
+      "path": "tests/test_embed_pathways.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def _mock_select_chain(rows: list[dict[str, object]]) -> tuple[MagicMock, MagicMock]:",
+        "def test_fetch_pending_pathways_filters_blank_content() -> None:",
+        "def test_generate_embeddings_returns_vectors() -> None:",
+        "def test_process_batch_updates_each_row(monkeypatch) -> None:  # type: ignore[no-untyped-def]",
+        "def _fake_generate(_client: object, _texts: list[str]) -> list[list[float]]:",
+        "def _fake_update(_supabase: object, row_id: object, vector: list[float]) -> None:",
+        "def test_run_embedding_pipeline_processes_until_empty(monkeypatch) -> None:  # type: ignore[no-untyped-def]",
+        "def _fake_fetch(_supabase: object, batch_size: int) -> list[dict[str, object]]:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "from types import SimpleNamespace",
+        "import embed_pathways"
+      ],
+      "routes": []
+    },
+    {
+      "path": "tests/test_rag_search.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def test_embed_query_text_uses_local_sentence_transformer() -> None:",
+        "def test_fetch_matching_pathways_reads_rpc_rows() -> None:",
+        "def test_build_system_prompt_context_formats_rows() -> None:",
+        "def test_stream_groq_response_collects_streamed_text() -> None:",
+        "def test_execute_rag_query_runs_end_to_end(monkeypatch: object) -> None:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "from types import SimpleNamespace",
+        "import rag_search"
+      ],
+      "routes": []
+    },
+    {
       "path": "tests/test_scraper.py",
       "isPinned": false,
       "extension": ".py",
@@ -352,6 +510,22 @@
         "from pydantic import ValidationError",
         "from models import Course, DegreePlan, Semester",
         "from scripts import scraper"
+      ],
+      "routes": []
+    },
+    {
+      "path": "tests/test_seed_supabase.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def test_extract_unique_courses_deduplicates_across_programs() -> None:",
+        "def test_build_program_pathways_preserves_exact_schema_keys() -> None:",
+        "def test_chunk_rows_splits_into_200_row_batches() -> None:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "from seed_supabase import build_program_pathways, chunk_rows, extract_unique_courses"
       ],
       "routes": []
     }

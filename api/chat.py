@@ -373,6 +373,61 @@ class CatalogSearchEngine:
             f"keyword={encoded_program_title}"
         )
 
+    def _collect_valid_course_codes(self, programs: list[dict[str, object]]) -> list[str]:
+        """Collect unique valid course-code strings from program records."""
+        valid_codes: set[str] = set()
+        for program in programs:
+            if not isinstance(program, dict):
+                continue
+
+            semesters: object = program.get("semesters")
+            if isinstance(semesters, list):
+                for semester in semesters:
+                    if not isinstance(semester, dict):
+                        continue
+                    courses: object = semester.get("courses")
+                    if not isinstance(courses, list):
+                        continue
+                    for course in courses:
+                        if not isinstance(course, dict):
+                            continue
+                        raw_code: object = course.get("code", "")
+                        course_code: str = raw_code.strip() if isinstance(raw_code, str) else ""
+                        if course_code:
+                            valid_codes.add(course_code)
+
+            tracks: object = program.get("tracks")
+            if isinstance(tracks, list):
+                for track in tracks:
+                    if not isinstance(track, dict):
+                        continue
+                    courses = track.get("courses")
+                    if not isinstance(courses, list):
+                        continue
+                    for course in courses:
+                        if not isinstance(course, dict):
+                            continue
+                        raw_code = course.get("code", "")
+                        course_code = raw_code.strip() if isinstance(raw_code, str) else ""
+                        if course_code:
+                            valid_codes.add(course_code)
+
+        return sorted(valid_codes)
+
+    def _append_verified_whitelist_line(self, context_chunk: str, valid_codes: list[str]) -> str:
+        """Append strict course whitelist line while keeping output under char budget."""
+        whitelist_line: str = (
+            "\nVERIFIED COURSE CODE WHITELIST (STRICT COMPLIANCE REQUIRED): "
+            f"{valid_codes}"
+        )
+        if len(context_chunk) + len(whitelist_line) <= self.char_budget:
+            return f"{context_chunk}{whitelist_line}"
+
+        remaining_budget: int = self.char_budget - len(whitelist_line)
+        if remaining_budget > 0:
+            return f"{context_chunk[:remaining_budget]}{whitelist_line}"
+        return whitelist_line[: self.char_budget]
+
     def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
         """Extract completed course codes from user text as best-effort context."""
         return self._extract_course_codes(user_query)
@@ -780,11 +835,13 @@ class CatalogSearchEngine:
                     current_program_title: str = str(program.get("title", matched_program_id)).strip()
                     current_source_url: str = self._resolve_program_catalog_source_url(program)
                     _ = (current_program_title, current_source_url)
-                    return self._build_targeted_program_context(
+                    context_chunk: str = self._build_targeted_program_context(
                         program,
                         matched_program_id,
                         current_source_url,
                     )
+                    valid_codes: list[str] = self._collect_valid_course_codes([program])
+                    return self._append_verified_whitelist_line(context_chunk, valid_codes)
 
         query_course_headers: list[str] = self._extract_course_headers_from_query(user_query)
         if query_course_headers:
@@ -812,11 +869,13 @@ class CatalogSearchEngine:
                             )
                             if normalized_course_code in query_course_codes:
                                 current_source_url: str = self._resolve_program_catalog_source_url(program)
-                                return self._build_targeted_program_context(
+                                context_chunk = self._build_targeted_program_context(
                                     program,
                                     program_id,
                                     current_source_url,
                                 )
+                                valid_codes = self._collect_valid_course_codes([program])
+                                return self._append_verified_whitelist_line(context_chunk, valid_codes)
                 except Exception as exc:  # noqa: BLE001
                     _LOG.warning("Skipping malformed program in course-header lookup: %s", exc)
                     continue
@@ -830,11 +889,13 @@ class CatalogSearchEngine:
                 if program_title.lower() in matched_program_title_set:
                     program_id = str(program.get("program_id", "")).strip()
                     current_source_url: str = self._resolve_program_catalog_source_url(program)
-                    return self._build_targeted_program_context(
+                    context_chunk = self._build_targeted_program_context(
                         program,
                         program_id,
                         current_source_url,
                     )
+                    valid_codes = self._collect_valid_course_codes([program])
+                    return self._append_verified_whitelist_line(context_chunk, valid_codes)
 
         expanded_terms: list[str] = expand_user_query(user_query)
         for program in self._programs():
@@ -851,11 +912,13 @@ class CatalogSearchEngine:
                     current_program_title: str = program_title
                     current_source_url: str = self._resolve_program_catalog_source_url(program)
                     _ = (current_program_title, current_source_url)
-                    return self._build_targeted_program_context(
+                    context_chunk = self._build_targeted_program_context(
                         program,
                         program_id,
                         current_source_url,
                     )
+                    valid_codes = self._collect_valid_course_codes([program])
+                    return self._append_verified_whitelist_line(context_chunk, valid_codes)
 
                 semesters: object = program.get("semesters")
                 if isinstance(semesters, list):
@@ -879,10 +942,15 @@ class CatalogSearchEngine:
                                     current_program_title = program_title
                                     current_source_url = self._resolve_program_catalog_source_url(program)
                                     _ = (current_program_title, current_source_url)
-                                    return self._build_targeted_program_context(
+                                    context_chunk = self._build_targeted_program_context(
                                         program,
                                         program_id,
                                         current_source_url,
+                                    )
+                                    valid_codes = self._collect_valid_course_codes([program])
+                                    return self._append_verified_whitelist_line(
+                                        context_chunk,
+                                        valid_codes,
                                     )
                         except Exception as exc:  # noqa: BLE001
                             _LOG.warning(
@@ -894,7 +962,9 @@ class CatalogSearchEngine:
                 _LOG.warning("Skipping malformed program in expanded match loop: %s", exc)
                 continue
 
-        return self._build_generic_index_context()
+        context_chunk = self._build_generic_index_context()
+        valid_codes = self._collect_valid_course_codes(self._programs())
+        return self._append_verified_whitelist_line(context_chunk, valid_codes)
 
 
 _CATALOG_SEARCH_ENGINE: CatalogSearchEngine | None = None
@@ -1121,6 +1191,8 @@ class GroqRequest(BaseModel):
         messages: Ordered OpenAI-compatible chat messages.
         temperature: Deterministic sampling temperature.
         top_p: Top-p setting paired with temperature 0.0.
+        frequency_penalty: Penalty applied to repeated token patterns.
+        presence_penalty: Penalty applied to already-present topic reuse.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -1132,6 +1204,8 @@ class GroqRequest(BaseModel):
     )
     temperature: float = Field(..., description="Deterministic sampling temperature.")
     top_p: float = Field(..., description="Top-p setting paired with temperature 0.0.")
+    frequency_penalty: float = Field(..., description="Penalty applied to repeated token patterns.")
+    presence_penalty: float = Field(..., description="Penalty applied to already-present topic reuse.")
 
 
 def _load_catalog_prompt_payload() -> str:
@@ -1183,6 +1257,7 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "[OUTPUT FORMAT RULES]:\n"
         "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes or course numbers (e.g., ITN, BPA). Every single course code you display MUST be an exact string match from the provided text context chunk.\n"
         "- If a course code is not explicitly written in the context data layer, you must never include it in your recommendations.\n"
+        "- You are strictly prohibited from writing any course code that is not explicitly listed in the VERIFIED COURSE CODE WHITELIST. If a course is missing from the whitelist, it does not exist for this request.\n"
         "\n"
         "[RESPONSE COMPRESSION PROTOCOL]:\n"
         "- No conversational pleasantries.\n"
@@ -1256,7 +1331,9 @@ def _build_gemini_request(message: str, catalog_payload: str) -> GeminiRequest:
             )
         ],
         generation_config={
-            "temperature": 0.0,
+            "temperature": 0.3,
+            "frequencyPenalty": 0.7,
+            "presencePenalty": 0.5,
             "topP": 1.0,
             "maxOutputTokens": 512,
         },
@@ -1279,8 +1356,10 @@ def _build_groq_request(message: str, catalog_payload: str) -> GroqRequest:
             GroqMessage(role="system", content=_build_system_prompt(catalog_payload)),
             GroqMessage(role="user", content=message),
         ],
-        temperature=0.0,
+        temperature=0.3,
         top_p=1.0,
+        frequency_penalty=0.7,
+        presence_penalty=0.5,
     )
 
 
