@@ -10,7 +10,7 @@
  * - User input remains text-only; markdown rendering is applied only to
  * backend reply strings after local HTML escaping.
  * - No third-party markdown library is used; formatting is constrained to
- * bold and bullet transformations with deterministic regex rules.
+ * bold, bullet, and inline footnote link transformations with deterministic regex rules.
  * - Network calls target a fixed local API endpoint and never include
  * user-controlled URLs.
  */
@@ -76,6 +76,7 @@
    * Supported rules:
    * - **bold** -> <strong>
    * - - bullet -> <li>, grouped into <ul>
+   * - [text](url) -> <a href="url" target="_blank">text</a> (Enables footnote hyperlinks)
    *
    * @param {string} text
    * @returns {string}
@@ -88,7 +89,12 @@
       /(?:<li>.*?<\/li>\s*)+/gs,
       (match) => `<ul style="margin: 0.4em 0; padding-left: 1.2em;">${match}</ul>`,
     );
-    return groupedLists.replace(/\n/g, "<br>");
+    // Automatically parse inline Markdown links (e.g., footnote citations) safely
+    const withLinks = groupedLists.replace(
+      /\[(.+?)\]\((https?:\/\/.+?)\)/g,
+      '<a href="$2" target="_blank" style="color: #0057d9; font-weight: 600; text-decoration: underline;">$1</a>'
+    );
+    return withLinks.replace(/\n/g, "<br>");
   }
 
   /**
@@ -206,13 +212,14 @@
       }
 
       #${ROOT_ID} .dc-message {
-        max-width: 88%;
+        max-width: 85%;              /* Restricts maximum expansion */
         padding: 12px 14px;
         border-radius: 18px;
         font-size: 14px;
         line-height: 1.45;
-        white-space: pre-wrap;
-        word-break: break-word;
+        white-space: pre-line;       /* Hard-enforces and honors prompt linebreaks */
+        word-wrap: break-word;       /* Breaks long continuous text strings */
+        overflow-wrap: anywhere;     /* Double fallback shield preventing UI clipping */
       }
 
       #${ROOT_ID} .dc-message-user {
