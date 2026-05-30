@@ -93,6 +93,31 @@ _OUT_OF_BOUNDS_REPLY: str = (
     "I can only assist with Dallas College academic advising topics. "
     "Please ask about degree plans, certificates, pathways, or course requirements."
 )
+_EMERGENCY_KEYWORDS: tuple[str, ...] = (
+    "emergency",
+    "active shooter",
+    "911",
+    "fire",
+    "ambulance",
+    "call police",
+    "campus police phone",
+    "reporting a crime",
+    "assault",
+    "suicide",
+    "crisis",
+    "bleeding",
+    "hurt",
+)
+
+_EMERGENCY_REPLY: str = (
+    "⚠️ **DALLAS COLLEGE EMERGENCY REACTION PROTOCOL** ⚠️\n\n"
+    "If you are experiencing an immediate life-threatening emergency on campus, "
+    "**dial 911** or contact the **Dallas College Police Department Dispatch** instantly:\n"
+    "- **Phone (All Campuses):** 972-860-4290\n"
+    "- **From Campus Phones:** Dial 911\n\n"
+    "Please stay safe, follow institutional building evacuation markers, or shelter in place "
+    "depending on your situation. (This automated advisory sandbox cannot route emergency services.)"
+)
 _COURSE_CODE_PATTERN: re.Pattern[str] = re.compile(r"\b([A-Z]{4})\s*(\d{4})\b", re.IGNORECASE)
 
 CAREER_CLUSTER_MAP: dict[str, list[str]] = {
@@ -104,6 +129,9 @@ CAREER_CLUSTER_MAP: dict[str, list[str]] = {
     "business": ["bcis", "business", "applications"],
     "real estate": ["real estate", "rele", "business", "busi", "bmgt"],
     "realestate": ["real estate", "rele", "business", "busi", "bmgt"],
+    "police": ["crij", "criminal justice", "law enforcement"],
+    "officer": ["crij", "criminal justice", "law enforcement"],
+    "cop": ["crij", "criminal justice", "law enforcement"],
 }
 
 
@@ -1118,7 +1146,7 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "[OUTPUT FORMAT RULES]:\n"
         "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes, course numbers, OR course titles. Every single course code and corresponding title you display MUST be an exact match from the provided text context chunk.\n"
         "- If a course code (e.g., ARTC 2317) appears in the context, but its full descriptive name is not explicitly typed out right next to it in the text layers, you must output ONLY the code followed by '(Official title not in context fragment)'. Never guess or attach a name like 'Art Appreciation' to an unverified code prefix.\n"
-        "- If a student asks about a specific topic (like pottery or ceramics) and a matched context row contains multiple unrelated or generic codes, only present and expand on the course code that explicitly fulfills their topical intent.\n"
+        "- Format all courses cleanly as: **CODE**: Title (Credits). You must take the verification URL from the context and hide it directly inside the course code using standard markdown syntax, like this: [CODE](URL). Never output 'Course Verification Link' as plain text on a new line.\n"
         "\n"
         "[RESPONSE COMPRESSION PROTOCOL]:\n"
         "- No conversational pleasantries.\n"
@@ -1363,6 +1391,15 @@ async def _request_gemini_reply(
 
 
 async def _generate_chat_reply(message: str) -> ChatResponse:
+    normalized_message = message.lower().strip()
+    if any(keyword in normalized_message for keyword in _EMERGENCY_KEYWORDS):
+        return ChatResponse(
+            reply=_EMERGENCY_REPLY,
+            model="guardrail/emergency",
+            progress_cards=None,
+            prerequisite_tree=None,
+        )
+
     intent: str = _get_catalog_search_engine().classify_intent(message)
 
     if intent == "OUT_OF_BOUNDS":
