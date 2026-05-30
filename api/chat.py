@@ -82,6 +82,13 @@ _MANDATORY_SANDBOX_DISCLAIMER_NOTICE: str = (
     "with a human advisor at the Official Dallas College Support Directory: "
     "https://www.dallascollege.edu/contact).*"
 )
+_MANDATORY_RESPONSE_PREFIX: str = (
+    "> *Greetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox "
+    "Engine. (This application is a student-led AI Club sandbox demo and is not an officially "
+    "sanctioned tool of Dallas College. For binding degree planning and institutional support, "
+    "connect directly with a human advisor at the Official Dallas College Support Directory: "
+    "https://www.dallascollege.edu/contact.)*"
+)
 _OUT_OF_BOUNDS_REPLY: str = (
     "I can only assist with Dallas College academic advising topics. "
     "Please ask about degree plans, certificates, pathways, or course requirements."
@@ -1245,8 +1252,8 @@ def _build_system_prompt(catalog_payload: str) -> str:
         f"If data is absent, emit exact fallback string: \"{_EMPTY_CONTEXT_FALLBACK}\".\n"
         "\n"
         "[MANDATORY GOVERNANCE GREETING PROTOCOL]:\n"
-        f"- Every initial interaction must begin exactly with: \"{_MANDATORY_GOVERNANCE_GREETING}\" followed immediately by a dense layout of the requested data.\n"
-        f"- Directly below the greeting, append this markdown italicized bracket notice exactly: \"{_MANDATORY_SANDBOX_DISCLAIMER_NOTICE}\"\n"
+        f"- Every single response MUST begin exactly with this markdown line (word-for-word): \"{_MANDATORY_RESPONSE_PREFIX}\"\n"
+        "- Immediately insert one blank line after that blockquoted italicized line, then continue with the requested answer.\n"
         "- For exact guardrail/fallback outputs, emit the required string exactly with no prefix or suffix.\n"
         "\n"
         "[DETERMINISTIC CONTEXT FILTER RULES]:\n"
@@ -1272,7 +1279,11 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "\n"
         "[SOURCE CITATION VERIFICATION RULES]:\n"
         "- When rendering a program data card, look for the '[Catalog Source Verification Link: ...]' token embedded inside the provided text context chunk.\n"
-        "- Extract that specific URL and present it cleanly as an official markdown footer citation link labeled with an incremented index like [1], [2] to verify the source catalog.\n"
+        "- Never show raw token text or raw verification URLs in normal paragraph/bullet prose.\n"
+        "- Use compact inline footnote hyperlinks only: attach sequential clickable references directly beside the related program/path term as [1](URL), [2](URL), etc.\n"
+        "- CRITICAL FORMAT RULE: Footnote references must use exact markdown link syntax with no spaces or extra characters between the bracket and parentheses: [1](URL). Never emit '[1] URL'.\n"
+        "- Do not output a bottom 'Sources' or 'References' section; keep citations inline only to save widget scroll space.\n"
+        "- Keep response copy dense and direct with no introductory fluff.\n"
         "\n"
         "[GUARDRAIL TRIGGER ACTIONS]:\n"
         "- If the user requests courses/tracks not explicitly keyed in <context>, emit exactly:\n"

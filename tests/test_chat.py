@@ -58,12 +58,16 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     assert "[ROLE]: Sovereign Automated AI Academic Advisor for Dallas College Computer Science/IT." in system_prompt
     assert "[AI GOVERNANCE]: You MUST state that you are an automated AI system in the initial response." in system_prompt
     assert "[MANDATORY GOVERNANCE GREETING PROTOCOL]:" in system_prompt
-    assert "Greetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox Engine." in system_prompt
-    assert "Directly below the greeting, append this markdown italicized bracket notice exactly:" in system_prompt
-    assert "*(This application is a student-led AI Club sandbox demo and is not an officially sanctioned tool of Dallas College." in system_prompt
+    assert "Every single response MUST begin exactly with this markdown line (word-for-word):" in system_prompt
+    assert "> *Greetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox Engine." in system_prompt
+    assert "(This application is a student-led AI Club sandbox demo and is not an officially sanctioned tool of Dallas College." in system_prompt
+    assert "Immediately insert one blank line after that blockquoted italicized line" in system_prompt
     assert "[SOURCE CITATION VERIFICATION RULES]:" in system_prompt
     assert "When rendering a program data card, look for the '[Catalog Source Verification Link: ...]' token" in system_prompt
-    assert "labeled with an incremented index like [1], [2]" in system_prompt
+    assert "Never show raw token text or raw verification URLs in normal paragraph/bullet prose." in system_prompt
+    assert "attach sequential clickable references directly beside the related program/path term as [1](URL), [2](URL)" in system_prompt
+    assert "Footnote references must use exact markdown link syntax with no spaces or extra characters between the bracket and parentheses: [1](URL). Never emit '[1] URL'." in system_prompt
+    assert "Do not output a bottom 'Sources' or 'References' section" in system_prompt
     assert "CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes or course numbers" in system_prompt
     assert "If a course code is not explicitly written in the context data layer, you must never include it in your recommendations." in system_prompt
     assert "You are strictly prohibited from writing any course code that is not explicitly listed in the VERIFIED COURSE CODE WHITELIST." in system_prompt

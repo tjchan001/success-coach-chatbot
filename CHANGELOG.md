@@ -14,6 +14,11 @@ All notable changes to this project are documented in this file.
 - Added [tests/test_embed_pathways.py](tests/test_embed_pathways.py) with mocked OpenAI/Supabase coverage for pending-row fetch, embedding generation, row updates, and batch-loop completion logic.
 
 ### Changed
+- Tightened [api/chat.py](api/chat.py) citation formatting rules to enforce exact inline markdown footnote syntax `[n](URL)` with no spaces or extra characters between brackets and parentheses, and explicitly prohibit `[n] URL` output.
+- Updated [tests/test_chat.py](tests/test_chat.py) prompt contract assertions to lock the exact `[1](URL)` no-space citation requirement.
+- Hardened [api/chat.py](api/chat.py) system prompt governance to require every response to begin with the exact Dallas College AI Club sandbox disclaimer as an italicized markdown blockquote line, followed by a blank line before answer content.
+- Updated [api/chat.py](api/chat.py) source-link formatting rules to forbid raw verification URL/token output in body prose and require compact inline numbered markdown hyperlinks like [1](URL) adjacent to referenced programs/paths with no bottom source list.
+- Updated prompt contract assertions in [tests/test_chat.py](tests/test_chat.py) to lock the new mandatory blockquote disclaimer prefix and inline footnote-link citation policy.
 - Rewrote [embed_pathways.py](embed_pathways.py) to remove OpenAI API usage and generate local 384-d vectors with sentence-transformers (`all-MiniLM-L6-v2`) before streaming updates to Supabase over HTTPS.
 - Reworked [rag_search.py](rag_search.py) to embed inbound student prompts locally with sentence-transformers (`all-MiniLM-L6-v2`) and send the resulting 384-d query vector to `match_pathways`.
 - Updated [tests/test_embed_pathways.py](tests/test_embed_pathways.py) and [tests/test_rag_search.py](tests/test_rag_search.py) to mock local sentence-transformers behavior and 384-dimensional outputs.
