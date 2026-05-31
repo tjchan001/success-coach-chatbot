@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.3] - 2026-05-31
 
+### Added
+- Added [api/deterministic_search.py](api/deterministic_search.py) with a deterministic `search()` pipeline implementing canonical alias resolution, single-word ambiguity handling, strict phrase gating with anti-terms, boundary-safe lexical matching, validated token fallback, and explicit score/rank/top-k selection.
+- Added [tests/test_deterministic_search.py](tests/test_deterministic_search.py) with seven assertions covering alias mapping, ambiguity routing, anti-term rejection, substring-bleed prevention, controlled fallback activation, deterministic top-k ranking, and JSON-serializable output.
+
 ### Fixed
 - Updated supplemental semantic program matching in [api/chat.py](api/chat.py) to allow partial-title resolution (for example, `Veterinary Technology` now correctly matches `Veterinary Technology A.A.S.` and related title variants).
 - Hardened course keyword retrieval in [api/chat.py](api/chat.py) with strict multi-word phrase filtering so intents like `video editing` and `audio engineering` do not bleed into unrelated departments.

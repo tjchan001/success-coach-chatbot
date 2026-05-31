@@ -893,3 +893,99 @@ async def test_degree_layout_response_includes_prerequisite_tree(
     # Assert
     assert response_model.model == "catalog/local"
     assert response_model.prerequisite_tree == {"ITSE 2302": ["ITSE 1401"]}
+
+
+def test_semantic_supplemental_matches_program_title_substring(tmp_path: Path) -> None:
+    """Supplemental semantic hints must match catalog titles by partial string."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Veterinary_Technology_A_A_S",
+                        "title": "Veterinary Technology A.A.S.",
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "VETT 1101",
+                                        "title": "Introduction to Veterinary Technology",
+                                        "credits": "1",
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("animal medicine pathways")
+
+    # Assert
+    assert "Veterinary_Technology_A_A_S" in context
+    assert "VETT 1101" in context
+
+
+def test_multiword_video_phrase_does_not_bleed_to_unrelated_department(tmp_path: Path) -> None:
+    """Video-editing intent must not map to unrelated subjects like biotechnology gene editing."""
+    # Arrange
+    cache_path: Path = tmp_path / "catalog_mvp.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "program_id": "Biotechnology_AAS",
+                        "title": "Biotechnology AAS",
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "BITC 1400",
+                                        "title": "Introduction to Gene Editing",
+                                        "description": "Lab process focused on gene editing workflows.",
+                                        "credits": "4",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "program_id": "Film_and_Video_Certificate",
+                        "title": "Film and Video Certificate",
+                        "semesters": [
+                            {
+                                "name": "Semester 1",
+                                "courses": [
+                                    {
+                                        "code": "FLMC 1341",
+                                        "title": "Video Editing Fundamentals",
+                                        "description": "Hands-on nonlinear video editing projects.",
+                                        "credits": "3",
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    search_engine: chat.CatalogSearchEngine = chat.CatalogSearchEngine(cache_path=cache_path)
+
+    # Act
+    context: str = search_engine.get_optimized_context("video editing classes")
+
+    # Assert
+    assert "FLMC 1341" in context
+    assert "BITC 1400" not in context
