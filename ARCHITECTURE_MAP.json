@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-31T08:12:53-05:00",
+  "generated": "2026-05-31T08:52:01-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -15,7 +15,7 @@
     "node_modules",
     "dist"
   ],
-  "fileCount": 28,
+  "fileCount": 29,
   "files": [
     {
       "path": "CODING_STANDARDS.md",
@@ -134,6 +134,8 @@
         "def _parse_cors_origins() -> list[str]:",
         "def _load_catalog_prompt_payload() -> str:",
         "def _build_system_prompt(catalog_payload: str) -> str:",
+        "def extract_locations(text: str) -> list[str]:",
+        "def build_location_guardrail_message(text: str) -> str:",
         "def _load_groq_api_keys() -> list[str]:",
         "def _load_gemini_api_keys() -> list[str]:",
         "def _build_gemini_request(message: str, catalog_payload: str) -> GeminiRequest:",
@@ -549,7 +551,12 @@
         "def test_boundary_matching_blocks_substring_bleed() -> None:",
         "def test_validated_fallback_accepts_allowed_prefix_when_exact_phrase_missing() -> None:",
         "def test_scoring_ranking_and_top_k_are_deterministic() -> None:",
-        "def test_output_is_json_serializable() -> None:"
+        "def test_output_is_json_serializable() -> None:",
+        "def test_phrase_mutations_canonicalize_to_video_editing() -> None:",
+        "def test_mixed_domain_contamination_keeps_video_results_and_excludes_biotech() -> None:",
+        "def test_ambiguous_borderline_query_requires_clarification() -> None:",
+        "def test_anti_term_evasion_does_not_leak_gene_editing() -> None:",
+        "def test_prefix_spoofing_does_not_select_biotech_course() -> None:"
       ],
       "imports": [
         "from __future__ import annotations",
@@ -577,6 +584,23 @@
         "from __future__ import annotations",
         "from types import SimpleNamespace",
         "import embed_pathways"
+      ],
+      "routes": []
+    },
+    {
+      "path": "tests/test_location_guardrail.py",
+      "isPinned": false,
+      "extension": ".py",
+      "classes": [],
+      "functions": [
+        "def test_no_inferred_delivery_mode() -> None:",
+        "def test_correct_campus_extraction() -> None:",
+        "def test_missing_location_handling() -> None:",
+        "def test_anti_inference_enforcement() -> None:"
+      ],
+      "imports": [
+        "from __future__ import annotations",
+        "from api import chat"
       ],
       "routes": []
     },
@@ -640,6 +664,7 @@
       "functions": [
         "def test_extract_unique_courses_deduplicates_across_programs() -> None:",
         "def test_build_program_pathways_preserves_exact_schema_keys() -> None:",
+        "def test_build_program_pathways_no_enrichment_strings() -> None:",
         "def test_chunk_rows_splits_into_200_row_batches() -> None:"
       ],
       "imports": [

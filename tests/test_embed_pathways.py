@@ -32,6 +32,7 @@ def test_fetch_pending_pathways_filters_blank_content() -> None:
     rows = embed_pathways.fetch_pending_pathways(supabase, batch_size=100)
 
     assert rows == [{"id": 1, "content": "Pathway content"}]
+    assert set(rows[0].keys()) == {"id", "content"}
     query.limit.assert_called_once_with(100)
 
 

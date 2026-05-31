@@ -18,6 +18,8 @@ from dataclasses import dataclass
 
 _CANONICAL_ALIAS_MAP: dict[str, str] = {
     "film editing": "video editing",
+    "editing of video": "video editing",
+    "video edit": "video editing",
     "video post production": "video editing",
     "video post-production": "video editing",
 }
@@ -169,6 +171,33 @@ def is_ambiguous_single_word(query_state: dict[str, object], canonical_phrases: 
     """Return True for under-specified single-token intents with no canonical resolution."""
     is_single_word: bool = bool(query_state.get("is_single_word", False))
     return is_single_word and not canonical_phrases
+
+
+def _should_clarify_noncanonical_query(
+    query_state: dict[str, object],
+    canonical_phrases: list[str],
+) -> bool:
+    """Return True when a multi-word query remains too vague for safe retrieval."""
+    if canonical_phrases:
+        return False
+
+    tokens_obj: object = query_state.get("tokens", [])
+    if not isinstance(tokens_obj, list):
+        return False
+
+    tokens: set[str] = {str(token).lower() for token in tokens_obj if str(token).strip()}
+    weak_intent_tokens: set[str] = {
+        "edit",
+        "editing",
+        "course",
+        "class",
+        "classes",
+    }
+
+    if tokens.intersection(weak_intent_tokens):
+        return True
+
+    return False
 
 
 def _extract_prefix(course_code: str) -> str:
@@ -365,6 +394,21 @@ def search(
                 {
                     "event": "ambiguity_gate",
                     "reason": "single_word_query_without_canonical_phrase",
+                }
+            ],
+        }
+
+    needs_clarification: bool = _should_clarify_noncanonical_query(query_state, canonical_phrases)
+    if needs_clarification:
+        return {
+            "status": "needs_clarification",
+            "query": query_state,
+            "canonical_resolution": canonical_resolution,
+            "results": [],
+            "trace": [
+                {
+                    "event": "borderline_query_gate",
+                    "reason": "noncanonical_query_requires_clarification",
                 }
             ],
         }

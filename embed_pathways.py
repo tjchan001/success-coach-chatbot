@@ -120,11 +120,10 @@ def fetch_pending_pathways(supabase: Client, batch_size: int) -> list[dict[str, 
         if not isinstance(row, dict):
             continue
         row_id: object = row.get("id")
-        program_name: str = str(row.get("program_name", "")).strip()
         content: str = str(row.get("content", "")).strip()
         if row_id is None or not content:
             continue
-        filtered_rows.append({"id": row_id, "program_name": program_name, "content": content})
+        filtered_rows.append({"id": row_id, "content": content})
 
     return filtered_rows
 

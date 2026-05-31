@@ -105,3 +105,52 @@ def test_output_is_json_serializable() -> None:
     payload: str = json.dumps(result)
 
     assert isinstance(payload, str)
+
+
+def test_phrase_mutations_canonicalize_to_video_editing() -> None:
+    for query in ("editing of video", "video edit"):
+        result: dict[str, object] = deterministic_search.search(query, _catalog_fixture(), top_k=5)
+        codes: list[str] = [str(row.get("code", "")) for row in result["results"]]
+
+        assert result["status"] == "ok"
+        assert "video editing" in result["canonical_resolution"]["canonical_phrases"]
+        assert any(code.startswith(("RTVB", "COMM", "FLMC")) for code in codes)
+        assert "BITC 2431" not in codes
+
+
+def test_mixed_domain_contamination_keeps_video_results_and_excludes_biotech() -> None:
+    result: dict[str, object] = deterministic_search.search(
+        "video editing with CRISPR",
+        _catalog_fixture(),
+        top_k=5,
+    )
+    codes: list[str] = [str(row.get("code", "")) for row in result["results"]]
+
+    assert result["status"] == "ok"
+    assert "video editing" in result["canonical_resolution"]["canonical_phrases"]
+    assert any(code.startswith(("RTVB", "COMM", "FLMC")) for code in codes)
+    assert "BITC 2431" not in codes
+
+
+def test_ambiguous_borderline_query_requires_clarification() -> None:
+    result: dict[str, object] = deterministic_search.search("editing course", _catalog_fixture())
+
+    assert result["status"] == "needs_clarification"
+    assert result["results"] == []
+
+
+def test_anti_term_evasion_does_not_leak_gene_editing() -> None:
+    result: dict[str, object] = deterministic_search.search("media gene editing", _catalog_fixture())
+    codes: list[str] = [str(row.get("code", "")) for row in result["results"]]
+
+    assert result["status"] == "needs_clarification"
+    assert "BITC 2431" not in codes
+
+
+def test_prefix_spoofing_does_not_select_biotech_course() -> None:
+    result: dict[str, object] = deterministic_search.search("BITC video class", _catalog_fixture())
+    codes: list[str] = [str(row.get("code", "")) for row in result["results"]]
+
+    assert result["status"] == "needs_clarification"
+    assert "BITC 2431" not in codes
+    assert codes == []

@@ -79,9 +79,41 @@ def test_build_program_pathways_preserves_exact_schema_keys() -> None:
 
     # Assert
     assert len(pathway_rows) == 1
+    assert set(pathway_rows[0].keys()) == {"program_name", "semester_name", "content"}
     assert pathway_rows[0]["program_name"] == "Program A"
     assert pathway_rows[0]["semester_name"] == "Semester 1"
     assert pathway_rows[0]["content"] == "ENGL 1301, MATH 1314"
+
+
+def test_build_program_pathways_no_enrichment_strings() -> None:
+    """Pathway content must remain code-only and exclude narrative enrichment."""
+    payload: dict[str, object] = {
+        "programs": [
+            {
+                "program_id": "Program_A",
+                "title": "Program A",
+                "campuses": ["CVC"],
+                "semesters": [
+                    {
+                        "name": "Semester 1",
+                        "courses": [
+                            {"code": "ENGL 1301", "title": "Composition I", "credits": "3"},
+                            {"code": "MATH 1314", "title": "College Algebra", "credits": "3"},
+                        ],
+                    }
+                ],
+            }
+        ]
+    }
+
+    rows = build_program_pathways(payload)
+
+    text = rows[0]["content"]
+
+    assert "Program:" not in text
+    assert "Semester:" not in text
+    assert "Campus" not in text
+    assert text == "ENGL 1301, MATH 1314"
 
 
 def test_chunk_rows_splits_into_200_row_batches() -> None:

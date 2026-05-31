@@ -1426,6 +1426,7 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes, course numbers, OR course titles.\n"
         "- If a course code is not explicitly written in the context data layer, you must never include it in your recommendations.\n"
         "- You are strictly prohibited from writing any course code that is not explicitly listed in the VERIFIED COURSE CODE WHITELIST.\n"
+        "- LOCATION GUARDRAIL: You must only state campus locations or delivery modes (such as online, in-person, or hybrid) if they are explicitly written in the context data. You are strictly forbidden from inferring, assuming, or generalizing delivery formats. If the context provides campus locations (e.g., \"Campus Location: CVC, RLC\"), you must report those exact campuses. If no location or delivery format is provided, you must explicitly state that location information is not available in the current catalog fragment.\n"
         "\n"
         "[RESPONSE COMPRESSION PROTOCOL]:\n"
         "- No conversational pleasantries.\n"
@@ -1459,6 +1460,37 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "\n"
         "[USER QUERY]: Provided in the user message."
     )
+
+
+def extract_locations(text: str) -> list[str]:
+    """Extract explicit campus or delivery-location tokens from catalog text."""
+    if not isinstance(text, str) or not text.strip():
+        return []
+
+    locations: list[str] = []
+    seen_locations: set[str] = set()
+    for match in re.finditer(
+        r"(?:Campus Location|CAMPUSES)\s*:\s*([^\n\r]+)",
+        text,
+        flags=re.IGNORECASE,
+    ):
+        raw_locations: str = match.group(1)
+        for location in re.split(r"\s*(?:,|;|\band\b)\s*", raw_locations, flags=re.IGNORECASE):
+            cleaned_location: str = location.strip().rstrip(".:")
+            if not cleaned_location or cleaned_location in seen_locations:
+                continue
+            locations.append(cleaned_location)
+            seen_locations.add(cleaned_location)
+
+    return locations
+
+
+def build_location_guardrail_message(text: str) -> str:
+    """Build a deterministic location-only response from explicit catalog text."""
+    locations: list[str] = extract_locations(text)
+    if locations:
+        return f"Campus locations: {', '.join(locations)}"
+    return "location information is not available in the current catalog fragment"
 
 
 def _load_groq_api_keys() -> list[str]:
