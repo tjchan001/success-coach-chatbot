@@ -230,6 +230,16 @@ class CatalogSearchEngine:
             "horoscope",
             "game",
         )
+        self._geographic_keywords: tuple[str, ...] = (
+            "campus",
+            "campuses",
+            "location",
+            "locations",
+            "where is",
+            "where are",
+            "offered at",
+            "where can i take",
+        )
         self._degree_layout_keywords: tuple[str, ...] = (
             "degree plan",
             "show my degree",
@@ -318,6 +328,12 @@ class CatalogSearchEngine:
             return True
 
         if re.search(r"\b[a-z]{4}\s*\d{4}\b", lowered_query):
+            return False
+
+        has_geographic_signal: bool = any(
+            keyword in lowered_query for keyword in self._geographic_keywords
+        )
+        if has_geographic_signal:
             return False
 
         has_academic_signal: bool = any(
