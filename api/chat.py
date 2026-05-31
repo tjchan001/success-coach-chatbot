@@ -452,6 +452,36 @@ class CatalogSearchEngine:
             return f"{context_chunk[:remaining_budget]}{whitelist_line}"
         return whitelist_line[: self.char_budget]
 
+    def _normalize_campuses(self, program: dict[str, object]) -> list[str]:
+        """Normalize campus metadata from a program row into a clean list."""
+        campuses_obj: object = program.get("campuses", [])
+        if not isinstance(campuses_obj, list):
+            return []
+
+        campuses: list[str] = []
+        seen_campuses: set[str] = set()
+        for campus in campuses_obj:
+            campus_name: str = str(campus).strip()
+            if not campus_name or campus_name in seen_campuses:
+                continue
+            campuses.append(campus_name)
+            seen_campuses.add(campus_name)
+        return campuses
+
+    def _build_fragment_header(self, program: dict[str, object], fragment_text: str) -> str:
+        """Prefix a context fragment with explicit program and campus metadata."""
+        program_title: str = str(program.get("title", "")).strip() or str(
+            program.get("program_id", "")
+        ).strip()
+        campuses: list[str] = self._normalize_campuses(program)
+        campus_string: str = ", ".join(campuses) if campuses else "Online / General Catalog"
+        return (
+            f"PROGRAM: {program_title}\n"
+            f"CAMPUSES: {campus_string}\n"
+            f"CONTEXT FRAGMENT: {fragment_text}\n"
+            "---\n"
+        )
+
     def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
         return self._extract_course_codes(user_query)
 
@@ -713,6 +743,14 @@ class CatalogSearchEngine:
                                 "title": course.get("title"),
                                 "credits": course.get("credits"),
                             }
+                            compact_course["context_fragment"] = self._build_fragment_header(
+                                program,
+                                (
+                                    f"Program: {str(program.get('title', program_id)).strip()} ({program_id}). "
+                                    f"Offered at Campuses: {', '.join(self._normalize_campuses(program)) or 'Online / General Catalog'}. "
+                                    f"Semester: {semester.get('name')}. Course: {course.get('code')} - {course.get('title')}"
+                                ),
+                            )
                             course_code: str = str(compact_course.get("code", "")).strip()
                             if course_code:
                                 course_lookup_url: str = self._build_course_catalog_url(course_code)
@@ -811,8 +849,15 @@ class CatalogSearchEngine:
                                 normalized_title: str = re.sub(r"\s+", " ", title).strip()
                                 course_lookup_url: str = self._build_course_catalog_url(code)
                                 signature_entries.append(
-                                    f"{program_id}|{code}|{normalized_title}|{credits}|"
-                                    f"[Course Verification Link for {code}: {course_lookup_url}]"
+                                    self._build_fragment_header(
+                                        program,
+                                        (
+                                            f"Program: {title} ({program_id}). "
+                                            f"Offered at Campuses: {', '.join(self._normalize_campuses(program)) or 'Online / General Catalog'}. "
+                                            f"Course Code: {code}. Title: {normalized_title}. Credits: {credits}. "
+                                            f"Verification: [Course Verification Link for {code}: {course_lookup_url}]"
+                                        ),
+                                    ).rstrip()
                                 )
                                 index_payload["signature"] = ";".join(signature_entries)
 
