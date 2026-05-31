@@ -62,6 +62,12 @@ def test_shared_prompt_and_requests_are_deterministic() -> None:
     assert "> *Greetings, I am the automated AI Advisor running on the Dallas College AI Club Sandbox Engine." in system_prompt
     assert "(This application is a student-led AI Club sandbox demo and is not an officially sanctioned tool of Dallas College." in system_prompt
     assert "Immediately insert one blank line after that blockquoted italicized line" in system_prompt
+    assert "[ANTI-HALLUCINATION GUARD: PREFIX CROSS-CHECKING]:" in system_prompt
+    assert "perform a strict semantic cross-reference check between retrieved context slices and the user's academic intent" in system_prompt
+    assert "Pay strict attention to alphabetical course prefixes" in system_prompt
+    assert "BITC content for an operating-systems/computer-science query" in system_prompt
+    assert "Never alter or fabricate a catalog course title to force a mismatched prefix slice to fit the question." in system_prompt
+    assert "no official matching course was found in the sandbox catalog cache" in system_prompt
     assert "[SOURCE CITATION VERIFICATION RULES]:" in system_prompt
     assert "When rendering a program data card, look for the '[Catalog Source Verification Link: ...]' token" in system_prompt
     assert "Never show raw token text or raw verification URLs in normal paragraph/bullet prose." in system_prompt

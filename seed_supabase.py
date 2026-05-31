@@ -21,7 +21,7 @@ from pathlib import Path
 from supabase import Client, create_client
 
 PROJECT_ROOT: Path = Path(__file__).resolve().parent
-CATALOG_PATH: Path = PROJECT_ROOT / "data" / "catalog_mvp.json"
+CATALOG_PATH: Path = PROJECT_ROOT / "data" / "catalog_with_locations.json"
 BATCH_SIZE: int = 200
 DEFAULT_SUPABASE_URL: str = "https://plieuwxjqkcltvpcoavh.supabase.co"
 
@@ -133,11 +133,20 @@ def build_program_pathways(payload: dict[str, object]) -> list[dict[str, object]
                     if course_code:
                         course_codes.append(course_code)
 
+            campus_string: str = ", ".join(
+                str(campus).strip()
+                for campus in program.get("campuses", ["Location data unavailable"])
+                if str(campus).strip()
+            )
+
             program_pathways.append(
                 {
                     "program_name": program_name,
                     "semester_name": semester_name,
-                    "content": ", ".join(course_codes),
+                    "content": (
+                        f"Program: {program_name}. Offered at Campuses: {campus_string}. "
+                        f"Courses: {', '.join(course_codes)}"
+                    ),
                 }
             )
 

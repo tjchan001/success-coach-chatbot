@@ -27,7 +27,7 @@ from datetime import datetime, timezone
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, TYPE_CHECKING
 
 try:
     import httpx
@@ -36,6 +36,12 @@ except ImportError as exc:  # pragma: no cover
     _HTTPX_IMPORT_ERROR: ImportError | None = exc
 else:
     _HTTPX_IMPORT_ERROR = None
+if TYPE_CHECKING:
+    from httpx import AsyncClient as HttpxAsyncClient
+    from httpx import Response as HttpxResponse
+else:
+    HttpxAsyncClient = object
+    HttpxResponse = object
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
@@ -1147,6 +1153,7 @@ def _build_system_prompt(catalog_payload: str) -> str:
         "- CRITICAL GUARDRAIL: You are strictly forbidden from inventing, hallucinating, or predicting course prefixes, course numbers, OR course titles. Every single course code and corresponding title you display MUST be an exact match from the provided text context chunk.\n"
         "- If a course code (e.g., ARTC 2317) appears in the context, but its full descriptive name is not explicitly typed out right next to it in the text layers, you must output ONLY the code followed by '(Official title not in context fragment)'. Never guess or attach a name like 'Art Appreciation' to an unverified code prefix.\n"
         "- Format all courses cleanly as: **CODE**: Title (Credits). You must take the verification URL from the context and hide it directly inside the course code using standard markdown syntax, like this: [CODE](URL). Never output 'Course Verification Link' as plain text on a new line.\n"
+        "- If a student asks about campus locations, geographic availability, or where a program is offered, parse the provided text context chunk for 'Offered at Campuses:'. Extract those exact physical campus locations and explicitly state them in your reply. If the context chunk does not list any campuses for that program, politely state that location availability is missing from the current fragment.\n"
         "\n"
         "[RESPONSE COMPRESSION PROTOCOL]:\n"
         "- No conversational pleasantries.\n"
@@ -1271,7 +1278,7 @@ def _extract_groq_text(response_payload: dict[str, object]) -> str:
 
 
 async def _request_groq_reply(
-    client: httpx.AsyncClient,
+    client: HttpxAsyncClient,
     message: str,
     catalog_payload: str,
 ) -> ChatResponse | None:
@@ -1285,7 +1292,7 @@ async def _request_groq_reply(
     )
 
     for key_index, api_key in enumerate(api_keys, start=1):
-        response: httpx.Response = await client.post(
+        response: HttpxResponse = await client.post(
             _GROQ_CHAT_URL,
             headers={
                 "Authorization": f"Bearer {api_key}",
@@ -1334,7 +1341,7 @@ async def _request_groq_reply(
 
 
 async def _request_gemini_reply(
-    client: httpx.AsyncClient,
+    client: HttpxAsyncClient,
     message: str,
     catalog_payload: str,
 ) -> ChatResponse:
@@ -1352,7 +1359,7 @@ async def _request_gemini_reply(
 
     for key_index, api_key in enumerate(api_keys, start=1):
         request_url: str = f"{_GEMINI_GENERATE_URL}?key={api_key}"
-        response: httpx.Response = await client.post(
+        response: HttpxResponse = await client.post(
             request_url,
             json=request_payload.model_dump(mode="json"),
         )

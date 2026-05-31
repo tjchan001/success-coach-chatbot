@@ -1,533 +1,649 @@
 ﻿{
-  "generated": "2026-05-29T22:30:48-05:00",
-  "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
-  "pinnedFiles": [
-    "models.py",
-    "CODING_STANDARDS.md",
-    ".github/copilot-instructions.md"
-  ],
-  "excludeDirs": [
-    ".git",
-    ".github",
-    "__pycache__",
-    ".pytest_cache",
-    ".venv",
-    "node_modules",
-    "dist"
-  ],
-  "fileCount": 23,
-  "files": [
-    {
-      "path": "CODING_STANDARDS.md",
-      "isPinned": true,
-      "extension": ".md",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "models.py",
-      "isPinned": true,
-      "extension": ".py",
-      "classes": [
-        "class Course(BaseModel):",
-        "class Semester(BaseModel):",
-        "class DegreePlan(BaseModel):"
-      ],
-      "functions": [],
-      "imports": [
-        "from __future__ import annotations",
-        "from pydantic import BaseModel, ConfigDict, Field"
-      ],
-      "routes": []
-    },
-    {
-      "path": ".vercel/project.json",
-      "isPinned": false,
-      "extension": ".json",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "api/__init__.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "api/chat.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [
-        "class CatalogSearchEngine:",
-        "class ChatRequest(BaseModel):",
-        "class ChatResponse(BaseModel):",
-        "class GeminiPart(BaseModel):",
-        "class GeminiContent(BaseModel):",
-        "class GeminiRequest(BaseModel):",
-        "class GroqMessage(BaseModel):",
-        "class GroqRequest(BaseModel):"
-      ],
-      "functions": [],
-      "imports": [
-        "from __future__ import annotations",
-        "import asyncio",
-        "import json",
-        "import logging",
-        "import os",
-        "import re",
-        "import tempfile",
-        "from datetime import datetime, timezone",
-        "from contextlib import asynccontextmanager",
-        "from pathlib import Path",
-        "from typing import Annotated",
-        "import httpx",
-        "from fastapi import FastAPI, HTTPException, status",
-        "from pydantic import BaseModel, ConfigDict, Field"
-      ],
-      "routes": [
-        "def _resolve_analytics_log_path() -> Path:",
-        "def expand_user_query(query_text: str) -> list[str]:",
-        "def __init__(self, cache_path: Path, char_budget: int = _CONTEXT_CHAR_BUDGET) -> None:",
-        "def _load_catalog_payload(self) -> dict[str, object]:",
-        "def _programs(self) -> list[dict[str, object]]:",
-        "def _classify_program_intent(self, user_query: str) -> str | None:",
-        "def classify_intent(self, user_query: str) -> str:",
-        "def get_matched_keywords(self, user_query: str) -> list[str]:",
-        "def is_out_of_bounds_query(self, user_query: str) -> bool:",
-        "def _is_degree_layout_request(self, user_query: str) -> bool:",
-        "def _extract_course_codes(self, raw_text: str) -> list[str]:",
-        "def _extract_course_headers_from_query(self, user_query: str) -> list[str]:",
-        "def _lookup_program_titles_from_query(self, user_query: str) -> list[str]:",
-        "def _build_course_catalog_url(self, course_code: str) -> str:",
-        "def _build_program_catalog_url(self, program_title: str) -> str:",
-        "def _collect_valid_course_codes(self, programs: list[dict[str, object]]) -> list[str]:",
-        "def _append_verified_whitelist_line(self, context_chunk: str, valid_codes: list[str]) -> str:",
-        "def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:",
-        "def _extract_prerequisite_codes(self, course: dict[str, object]) -> list[str]:",
-        "def _build_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
-        "def _get_prerequisite_index(self) -> dict[str, dict[str, list[str]]]:",
-        "def get_degree_progress_cards(self, user_query: str) -> list[dict[str, object]]:",
-        "def get_degree_prerequisite_tree(self, user_query: str) -> dict[str, list[str]]:",
-        "def _json_within_budget(self, payload: dict[str, object]) -> str:",
-        "def _resolve_program_catalog_source_url(self, program: dict[str, object]) -> str:",
-        "def _append_catalog_source_token(self, chunk_text: str, source_url: str) -> str:",
-        "def _build_generic_index_context(self) -> str:",
-        "def get_optimized_context(self, user_query: str) -> str:",
-        "def _get_catalog_search_engine() -> CatalogSearchEngine:",
-        "def _get_optimized_catalog_context(user_query: str) -> str:",
-        "def _is_out_of_bounds_query(user_query: str) -> bool:",
-        "def _get_degree_progress_cards(user_query: str) -> list[dict[str, object]]:",
-        "def _get_degree_prerequisite_tree(user_query: str) -> dict[str, list[str]]:",
-        "def _write_analytics_entry_sync(entry: dict[str, object], output_path: Path) -> None:",
-        "def _parse_cors_origins() -> list[str]:",
-        "def _load_catalog_prompt_payload() -> str:",
-        "def _build_system_prompt(catalog_payload: str) -> str:",
-        "def _load_groq_api_keys() -> list[str]:",
-        "def _load_gemini_api_keys() -> list[str]:",
-        "def _build_gemini_request(message: str, catalog_payload: str) -> GeminiRequest:",
-        "def _build_groq_request(message: str, catalog_payload: str) -> GroqRequest:",
-        "def _extract_gemini_text(response_payload: dict[str, object]) -> str:",
-        "def _extract_groq_text(response_payload: dict[str, object]) -> str:"
-      ]
-    },
-    {
-      "path": "api/helper_reranker.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [],
-      "imports": [
-        "from __future__ import annotations",
-        "import math",
-        "import re",
-        "from collections import Counter"
-      ],
-      "routes": [
-        "def rerank_chunks(query: str, chunks: list[str], top_k: int = 5) -> list[str]:",
-        "def _tokenise(text: str) -> list[str]:",
-        "def _score_chunk(query: str, chunk: str) -> float:"
-      ]
-    },
-    {
-      "path": "ARCHITECTURE_REPORT.md",
-      "isPinned": false,
-      "extension": ".md",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "CHANGELOG.md",
-      "isPinned": false,
-      "extension": ".md",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "crawl_dallas_college.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [
-        "class CrawlConfig:"
-      ],
-      "functions": [
-        "def _configure_logging() -> None:",
-        "def _is_allowed_catalog_url(url: str) -> bool:",
-        "def _normalize_url(base_url: str, href: str) -> str:",
-        "def _discover_program_directory_links(soup: BeautifulSoup, base_url: str) -> list[str]:",
-        "def _collect_program_links_from_page(soup: BeautifulSoup, page_url: str) -> set[str]:",
-        "def _extract_total_hours(soup: BeautifulSoup) -> int:",
-        "def _slugify_program_id(title: str) -> str:",
-        "def _infer_degree_code(title: str) -> str:",
-        "def _extract_courses_from_container(container: Tag) -> list[dict[str, str]]:",
-        "def _extract_semesters(soup: BeautifulSoup) -> list[dict[str, object]]:",
-        "def _extract_program_name(soup: BeautifulSoup, page_url: str) -> str:",
-        "def _load_existing_ce_tracks(output_path: Path) -> list[dict[str, object]]:",
-        "def _write_payload_atomic(payload: dict[str, object], output_path: Path) -> None:",
-        "def crawl_catalog(config: CrawlConfig) -> dict[str, object]:",
-        "def main() -> int:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import json",
-        "import logging",
-        "import re",
-        "import time",
-        "from dataclasses import dataclass",
-        "from pathlib import Path",
-        "from typing import Iterable",
-        "import requests",
-        "from bs4 import BeautifulSoup, Tag"
-      ],
-      "routes": [
-        "def _build_session() -> requests.Session:",
-        "def _fetch_html(session: requests.Session, url: str) -> BeautifulSoup:",
-        "def discover_all_program_links(session: requests.Session, base_url: str) -> list[str]:",
-        "def _map_program(session: requests.Session, program_url: str, index: int, total: int) -> dict[str, object] | None:"
-      ]
-    },
-    {
-      "path": "data/analytics_logs.json",
-      "isPinned": false,
-      "extension": ".json",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "data/catalog_mvp.json",
-      "isPinned": false,
-      "extension": ".json",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "embed_pathways.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def _require_env_var(name: str) -> str:",
-        "def create_supabase_client() -> Client:",
-        "def create_embedding_model() -> SentenceTransformer:",
-        "def fetch_pending_pathways(supabase: Client, batch_size: int) -> list[dict[str, object]]:",
-        "def run_embedding_pipeline(batch_size: int = BATCH_SIZE) -> int:",
-        "def main() -> int:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import os",
-        "import sys",
-        "import time",
-        "from typing import Any",
-        "from sentence_transformers import SentenceTransformer",
-        "from supabase import Client, create_client"
-      ],
-      "routes": []
-    },
-    {
-      "path": "public/index.html",
-      "isPinned": false,
-      "extension": ".html",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "public/widget.js",
-      "isPinned": false,
-      "extension": ".js",
-      "classes": [],
-      "functions": [
-        "function createElement(tagName, className) {",
-        "function setSafeText(element, text) {",
-        "function escapeHtml(text) {",
-        "function formatMarkdown(text) {",
-        "function mountStyles() {",
-        "function saveChatHistory() {",
-        "function loadChatHistory() {",
-        "function scrollToBottom() {",
-        "function appendMessage(text, role, useMarkdown = false, shouldPersist = true) {",
-        "function appendProgressCardMessage(",
-        "const missing = required.filter((neededCode) => !completed.has(neededCode));",
-        "function setInteractiveState(enabled) {",
-        "function setPanelOpen(open) {",
-        "function setStatus(text) {",
-        "function setTypingIndicator(visible) {",
-        "function readValidatedMessage() {"
-      ],
-      "imports": [],
-      "routes": [
-        "checkbox.addEventListener(\"change\", () => {",
-        "const response = await fetch(API_URL, {",
-        "launcher.addEventListener(\"click\", () => {",
-        "sendButton.addEventListener(\"click\", (event) => {",
-        "input.addEventListener(\"keydown\", (event) => {",
-        "clearButton.addEventListener(\"click\", () => {"
-      ]
-    },
-    {
-      "path": "rag_search.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def _require_env_var(name: str) -> str:",
-        "def create_supabase_client() -> Client:",
-        "def create_groq_client() -> Groq:",
-        "def create_embedding_model() -> SentenceTransformer:",
-        "def embed_query_text(model: SentenceTransformer, student_prompt: str) -> list[float]:",
-        "def build_system_prompt_context(rows: list[dict[str, object]]) -> str:",
-        "def execute_rag_query(student_prompt: str) -> str:",
-        "def main() -> int:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import os",
-        "import sys",
-        "from typing import Any",
-        "from groq import Groq",
-        "from sentence_transformers import SentenceTransformer",
-        "from supabase import Client, create_client"
-      ],
-      "routes": []
-    },
-    {
-      "path": "scripts/scraper.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def _validate_catalog_url(url: str) -> None:",
-        "def _extract_total_hours(soup: BeautifulSoup) -> int:",
-        "def _parse_course_row(element: Tag) -> Course | None:",
-        "def _infer_degree_code(url: str, title: str) -> str | None:",
-        "def _extract_semesters_from_courseleaf_table(table: Tag) -> list[Semester]:",
-        "def _extract_semesters_by_section_scan(soup: BeautifulSoup) -> list[Semester]:",
-        "def _extract_flat_certificate_requirements(soup: BeautifulSoup) -> list[Semester]:",
-        "def _build_course_from_text(raw_text: str) -> Course | None:",
-        "def _extract_semesters_by_regex_sweep(soup: BeautifulSoup) -> list[Semester]:",
-        "def _parse_courseleaf_course_item(item: Tag) -> Course | None:",
-        "def _extract_semesters_from_courseleaf_program_list(soup: BeautifulSoup) -> list[Semester]:",
-        "def discover_all_program_pathways() -> dict[str, str]:",
-        "def parse_degree_page(url: str) -> DegreePlan:",
-        "def _build_catalog_payload(pathways: dict[str, str]) -> dict[str, list[dict[str, object]]]:",
-        "def _write_json_atomic(payload: dict[str, object], destination_path: Path) -> None:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import json",
-        "import logging",
-        "import os",
-        "import re",
-        "import sys",
-        "import tempfile",
-        "import time",
-        "from pathlib import Path",
-        "import httpx",
-        "from bs4 import BeautifulSoup, NavigableString, Tag",
-        "from models import Course, DegreePlan, Semester"
-      ],
-      "routes": []
-    },
-    {
-      "path": "seed_supabase.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def load_catalog_payload(catalog_path: Path = CATALOG_PATH) -> dict[str, object]:",
-        "def extract_unique_courses(payload: dict[str, object]) -> dict[str, dict[str, object]]:",
-        "def build_program_pathways(payload: dict[str, object]) -> list[dict[str, object]]:",
-        "def upload_batches(client: Client, table_name: str, rows: list[dict[str, object]]) -> None:",
-        "def main() -> int:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import json",
-        "import os",
-        "import sys",
-        "from pathlib import Path",
-        "from supabase import Client, create_client"
-      ],
-      "routes": []
-    },
-    {
-      "path": "tests/__init__.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
-    },
-    {
-      "path": "tests/test_chat.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [
-        "class DummyAsyncClient:",
-        "class DummyAsyncClient:",
-        "class DummyAsyncClient:",
-        "class DummyAsyncClient:",
-        "class DummySearchEngine:"
-      ],
-      "functions": [
-        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
-        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
-        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
-        "def __init__(self, *_args: object, **_kwargs: object) -> None:",
-        "def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -> None:",
-        "def test_expand_user_query_appends_cluster_targets() -> None:",
-        "def test_expand_user_query_supports_real_estate_aliases() -> None:",
-        "def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Path) -> None:",
-        "def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -> None:",
-        "def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -> None:",
-        "def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_path: Path) -> None:",
-        "def test_context_slicer_matches_by_course_header_lookup(tmp_path: Path) -> None:",
-        "def test_matched_keywords_include_direct_course_lookup_url() -> None:",
-        "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -> None:",
-        "def test_programs_include_continuing_education_container(tmp_path: Path) -> None:",
-        "def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -> None:",
-        "def classify_intent(self, _user_query: str) -> str:",
-        "def get_matched_keywords(self, _user_query: str) -> list[str]:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import json",
-        "from pathlib import Path",
-        "import httpx",
-        "import pytest",
-        "from fastapi import HTTPException",
-        "from api import chat"
-      ],
-      "routes": [
-        "def test_shared_prompt_and_requests_are_deterministic() -> None:"
-      ]
-    },
-    {
-      "path": "tests/test_embed_pathways.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def _mock_select_chain(rows: list[dict[str, object]]) -> tuple[MagicMock, MagicMock]:",
-        "def test_fetch_pending_pathways_filters_blank_content() -> None:",
-        "def test_generate_embeddings_returns_vectors() -> None:",
-        "def test_process_batch_updates_each_row(monkeypatch) -> None:  # type: ignore[no-untyped-def]",
-        "def _fake_generate(_client: object, _texts: list[str]) -> list[list[float]]:",
-        "def _fake_update(_supabase: object, row_id: object, vector: list[float]) -> None:",
-        "def test_run_embedding_pipeline_processes_until_empty(monkeypatch) -> None:  # type: ignore[no-untyped-def]",
-        "def _fake_fetch(_supabase: object, batch_size: int) -> list[dict[str, object]]:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "from types import SimpleNamespace",
-        "import embed_pathways"
-      ],
-      "routes": []
-    },
-    {
-      "path": "tests/test_rag_search.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def test_embed_query_text_uses_local_sentence_transformer() -> None:",
-        "def test_fetch_matching_pathways_reads_rpc_rows() -> None:",
-        "def test_build_system_prompt_context_formats_rows() -> None:",
-        "def test_stream_groq_response_collects_streamed_text() -> None:",
-        "def test_execute_rag_query_runs_end_to_end(monkeypatch: object) -> None:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "from types import SimpleNamespace",
-        "import rag_search"
-      ],
-      "routes": []
-    },
-    {
-      "path": "tests/test_scraper.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [
-        "class TestCourseInitialisation:",
-        "class TestCourseValidationErrors:",
-        "class TestDegreePlanNestedStructure:"
-      ],
-      "functions": [
-        "def test_course_initialises_with_string_credits(self) -> None:",
-        "def test_missing_code_raises_validation_error(self) -> None:",
-        "def test_missing_total_hours_raises_validation_error(self) -> None:",
-        "def test_degree_plan_nests_semesters_and_courses(self) -> None:",
-        "def test_degree_plan_without_degree_code_defaults_to_none(self) -> None:",
-        "def test_course_is_immutable(self) -> None:",
-        "def _fake_parse_degree_page(_url: str) -> DegreePlan:",
-        "def test_write_json_atomic_writes_complete_payload(tmp_path: Path) -> None:",
-        "def test_extract_flat_certificate_requirements_returns_synthetic_semester() -> None:",
-        "def test_extract_flat_certificate_requirements_reads_nested_anchor_text() -> None:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "import json",
-        "from pathlib import Path",
-        "import pytest",
-        "from bs4 import BeautifulSoup",
-        "from pydantic import ValidationError",
-        "from models import Course, DegreePlan, Semester",
-        "from scripts import scraper"
-      ],
-      "routes": []
-    },
-    {
-      "path": "tests/test_seed_supabase.py",
-      "isPinned": false,
-      "extension": ".py",
-      "classes": [],
-      "functions": [
-        "def test_extract_unique_courses_deduplicates_across_programs() -> None:",
-        "def test_build_program_pathways_preserves_exact_schema_keys() -> None:",
-        "def test_chunk_rows_splits_into_200_row_batches() -> None:"
-      ],
-      "imports": [
-        "from __future__ import annotations",
-        "from seed_supabase import build_program_pathways, chunk_rows, extract_unique_courses"
-      ],
-      "routes": []
-    }
-  ]
+    "generated":  "2026-05-30T00:42:37-05:00",
+    "tool":  "update_map.ps1 v2026.05 (Python/Widget Edition)",
+    "pinnedFiles":  [
+                        "models.py",
+                        "CODING_STANDARDS.md",
+                        ".github/copilot-instructions.md"
+                    ],
+    "excludeDirs":  [
+                        ".git",
+                        ".github",
+                        "__pycache__",
+                        ".pytest_cache",
+                        ".venv",
+                        "node_modules",
+                        "dist"
+                    ],
+    "fileCount":  23,
+    "files":  [
+                  {
+                      "path":  "CODING_STANDARDS.md",
+                      "isPinned":  true,
+                      "extension":  ".md",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "models.py",
+                      "isPinned":  true,
+                      "extension":  ".py",
+                      "classes":  [
+                                      "class Course(BaseModel):",
+                                      "class Semester(BaseModel):",
+                                      "class DegreePlan(BaseModel):"
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "from pydantic import BaseModel, ConfigDict, Field"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  ".vercel/project.json",
+                      "isPinned":  false,
+                      "extension":  ".json",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "api/__init__.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "api/chat.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+                                      "class CatalogSearchEngine:",
+                                      "class ChatRequest(BaseModel):",
+                                      "class ChatResponse(BaseModel):",
+                                      "class GeminiPart(BaseModel):",
+                                      "class GeminiContent(BaseModel):",
+                                      "class GeminiRequest(BaseModel):",
+                                      "class GroqMessage(BaseModel):",
+                                      "class GroqRequest(BaseModel):"
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import asyncio",
+                                      "import json",
+                                      "import logging",
+                                      "import os",
+                                      "import re",
+                                      "import tempfile",
+                                      "from datetime import datetime, timezone",
+                                      "from contextlib import asynccontextmanager",
+                                      "from pathlib import Path",
+                                      "from typing import Annotated",
+                                      "import httpx",
+                                      "from fastapi import FastAPI, HTTPException, status",
+                                      "from pydantic import BaseModel, ConfigDict, Field"
+                                  ],
+                      "routes":  [
+                                     "def _resolve_analytics_log_path() -\u003e Path:",
+                                     "def expand_user_query(query_text: str) -\u003e list[str]:",
+                                     "def __init__(self, cache_path: Path, char_budget: int = _CONTEXT_CHAR_BUDGET) -\u003e None:",
+                                     "def _load_catalog_payload(self) -\u003e dict[str, object]:",
+                                     "def _programs(self) -\u003e list[dict[str, object]]:",
+                                     "def _classify_program_intent(self, user_query: str) -\u003e str | None:",
+                                     "def classify_intent(self, user_query: str) -\u003e str:",
+                                     "def get_matched_keywords(self, user_query: str) -\u003e list[str]:",
+                                     "def is_out_of_bounds_query(self, user_query: str) -\u003e bool:",
+                                     "def _is_degree_layout_request(self, user_query: str) -\u003e bool:",
+                                     "def _extract_course_codes(self, raw_text: str) -\u003e list[str]:",
+                                     "def _extract_course_headers_from_query(self, user_query: str) -\u003e list[str]:",
+                                     "def _lookup_program_titles_from_query(self, user_query: str) -\u003e list[str]:",
+                                     "def _build_course_catalog_url(self, course_code: str) -\u003e str:",
+                                     "def _build_program_catalog_url(self, program_title: str) -\u003e str:",
+                                     "def _collect_valid_course_codes(self, programs: list[dict[str, object]]) -\u003e list[str]:",
+                                     "def _append_verified_whitelist_line(self, context_chunk: str, valid_codes: list[str]) -\u003e str:",
+                                     "def _extract_completed_courses_from_query(self, user_query: str) -\u003e list[str]:",
+                                     "def _extract_prerequisite_codes(self, course: dict[str, object]) -\u003e list[str]:",
+                                     "def _build_prerequisite_index(self) -\u003e dict[str, dict[str, list[str]]]:",
+                                     "def _get_prerequisite_index(self) -\u003e dict[str, dict[str, list[str]]]:",
+                                     "def get_degree_progress_cards(self, user_query: str) -\u003e list[dict[str, object]]:",
+                                     "def get_degree_prerequisite_tree(self, user_query: str) -\u003e dict[str, list[str]]:",
+                                     "def _json_within_budget(self, payload: dict[str, object]) -\u003e str:",
+                                     "def _resolve_program_catalog_source_url(self, program: dict[str, object]) -\u003e str:",
+                                     "def _append_catalog_source_token(self, chunk_text: str, source_url: str) -\u003e str:",
+                                     "def _build_generic_index_context(self) -\u003e str:",
+                                     "def get_optimized_context(self, user_query: str) -\u003e str:",
+                                     "def _get_catalog_search_engine() -\u003e CatalogSearchEngine:",
+                                     "def _get_optimized_catalog_context(user_query: str) -\u003e str:",
+                                     "def _is_out_of_bounds_query(user_query: str) -\u003e bool:",
+                                     "def _get_degree_progress_cards(user_query: str) -\u003e list[dict[str, object]]:",
+                                     "def _get_degree_prerequisite_tree(user_query: str) -\u003e dict[str, list[str]]:",
+                                     "def _write_analytics_entry_sync(entry: dict[str, object], output_path: Path) -\u003e None:",
+                                     "def _parse_cors_origins() -\u003e list[str]:",
+                                     "def _load_catalog_prompt_payload() -\u003e str:",
+                                     "def _build_system_prompt(catalog_payload: str) -\u003e str:",
+                                     "def _load_groq_api_keys() -\u003e list[str]:",
+                                     "def _load_gemini_api_keys() -\u003e list[str]:",
+                                     "def _build_gemini_request(message: str, catalog_payload: str) -\u003e GeminiRequest:",
+                                     "def _build_groq_request(message: str, catalog_payload: str) -\u003e GroqRequest:",
+                                     "def _extract_gemini_text(response_payload: dict[str, object]) -\u003e str:",
+                                     "def _extract_groq_text(response_payload: dict[str, object]) -\u003e str:"
+                                 ]
+                  },
+                  {
+                      "path":  "api/helper_reranker.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import math",
+                                      "import re",
+                                      "from collections import Counter"
+                                  ],
+                      "routes":  [
+                                     "def rerank_chunks(query: str, chunks: list[str], top_k: int = 5) -\u003e list[str]:",
+                                     "def _tokenise(text: str) -\u003e list[str]:",
+                                     "def _score_chunk(query: str, chunk: str) -\u003e float:"
+                                 ]
+                  },
+                  {
+                      "path":  "ARCHITECTURE_REPORT.md",
+                      "isPinned":  false,
+                      "extension":  ".md",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "CHANGELOG.md",
+                      "isPinned":  false,
+                      "extension":  ".md",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "crawl_dallas_college.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+                                      "class CrawlConfig:"
+                                  ],
+                      "functions":  [
+                                        "def _configure_logging() -\u003e None:",
+                                        "def _is_allowed_catalog_url(url: str) -\u003e bool:",
+                                        "def _normalize_url(base_url: str, href: str) -\u003e str:",
+                                        "def _discover_program_directory_links(soup: BeautifulSoup, base_url: str) -\u003e list[str]:",
+                                        "def _collect_program_links_from_page(soup: BeautifulSoup, page_url: str) -\u003e set[str]:",
+                                        "def _extract_total_hours(soup: BeautifulSoup) -\u003e int:",
+                                        "def _slugify_program_id(title: str) -\u003e str:",
+                                        "def _infer_degree_code(title: str) -\u003e str:",
+                                        "def _extract_courses_from_container(container: Tag) -\u003e list[dict[str, str]]:",
+                                        "def _extract_semesters(soup: BeautifulSoup) -\u003e list[dict[str, object]]:",
+                                        "def _extract_program_name(soup: BeautifulSoup, page_url: str) -\u003e str:",
+                                        "def _load_existing_ce_tracks(output_path: Path) -\u003e list[dict[str, object]]:",
+                                        "def _write_payload_atomic(payload: dict[str, object], output_path: Path) -\u003e None:",
+                                        "def crawl_catalog(config: CrawlConfig) -\u003e dict[str, object]:",
+                                        "def main() -\u003e int:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import json",
+                                      "import logging",
+                                      "import re",
+                                      "import time",
+                                      "from dataclasses import dataclass",
+                                      "from pathlib import Path",
+                                      "from typing import Iterable",
+                                      "import requests",
+                                      "from bs4 import BeautifulSoup, Tag"
+                                  ],
+                      "routes":  [
+                                     "def _build_session() -\u003e requests.Session:",
+                                     "def _fetch_html(session: requests.Session, url: str) -\u003e BeautifulSoup:",
+                                     "def discover_all_program_links(session: requests.Session, base_url: str) -\u003e list[str]:",
+                                     "def _map_program(session: requests.Session, program_url: str, index: int, total: int) -\u003e dict[str, object] | None:"
+                                 ]
+                  },
+                  {
+                      "path":  "data/analytics_logs.json",
+                      "isPinned":  false,
+                      "extension":  ".json",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "data/catalog_mvp.json",
+                      "isPinned":  false,
+                      "extension":  ".json",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "embed_pathways.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def _require_env_var(name: str) -\u003e str:",
+                                        "def create_supabase_client() -\u003e Client:",
+                                        "def create_embedding_model() -\u003e SentenceTransformer:",
+                                        "def fetch_pending_pathways(supabase: Client, batch_size: int) -\u003e list[dict[str, object]]:",
+                                        "def run_embedding_pipeline(batch_size: int = BATCH_SIZE) -\u003e int:",
+                                        "def main() -\u003e int:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import os",
+                                      "import sys",
+                                      "import time",
+                                      "from typing import Any",
+                                      "from sentence_transformers import SentenceTransformer",
+                                      "from supabase import Client, create_client"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "public/index.html",
+                      "isPinned":  false,
+                      "extension":  ".html",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "public/widget.js",
+                      "isPinned":  false,
+                      "extension":  ".js",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "function createElement(tagName, className) {",
+                                        "function setSafeText(element, text) {",
+                                        "function escapeHtml(text) {",
+                                        "function formatMarkdown(text) {",
+                                        "function mountStyles() {",
+                                        "function saveChatHistory() {",
+                                        "function loadChatHistory() {",
+                                        "function scrollToBottom() {",
+                                        "function appendMessage(text, role, useMarkdown = false, shouldPersist = true) {",
+                                        "function appendProgressCardMessage(",
+                                        "const missing = required.filter((neededCode) =\u003e !completed.has(neededCode));",
+                                        "function setInteractiveState(enabled) {",
+                                        "function setPanelOpen(open) {",
+                                        "function setStatus(text) {",
+                                        "function setTypingIndicator(visible) {",
+                                        "function readValidatedMessage() {"
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+                                     "checkbox.addEventListener(\"change\", () =\u003e {",
+                                     "const response = await fetch(API_URL, {",
+                                     "launcher.addEventListener(\"click\", () =\u003e {",
+                                     "sendButton.addEventListener(\"click\", (event) =\u003e {",
+                                     "input.addEventListener(\"keydown\", (event) =\u003e {",
+                                     "clearButton.addEventListener(\"click\", () =\u003e {"
+                                 ]
+                  },
+                  {
+                      "path":  "rag_search.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def _require_env_var(name: str) -\u003e str:",
+                                        "def create_supabase_client() -\u003e Client:",
+                                        "def create_groq_client() -\u003e Groq:",
+                                        "def create_embedding_model() -\u003e SentenceTransformer:",
+                                        "def embed_query_text(model: SentenceTransformer, student_prompt: str) -\u003e list[float]:",
+                                        "def build_system_prompt_context(rows: list[dict[str, object]]) -\u003e str:",
+                                        "def execute_rag_query(student_prompt: str) -\u003e str:",
+                                        "def main() -\u003e int:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import os",
+                                      "import sys",
+                                      "from typing import Any",
+                                      "from groq import Groq",
+                                      "from sentence_transformers import SentenceTransformer",
+                                      "from supabase import Client, create_client"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "scripts/scraper.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def _validate_catalog_url(url: str) -\u003e None:",
+                                        "def _extract_total_hours(soup: BeautifulSoup) -\u003e int:",
+                                        "def _parse_course_row(element: Tag) -\u003e Course | None:",
+                                        "def _infer_degree_code(url: str, title: str) -\u003e str | None:",
+                                        "def _extract_semesters_from_courseleaf_table(table: Tag) -\u003e list[Semester]:",
+                                        "def _extract_semesters_by_section_scan(soup: BeautifulSoup) -\u003e list[Semester]:",
+                                        "def _extract_flat_certificate_requirements(soup: BeautifulSoup) -\u003e list[Semester]:",
+                                        "def _build_course_from_text(raw_text: str) -\u003e Course | None:",
+                                        "def _extract_semesters_by_regex_sweep(soup: BeautifulSoup) -\u003e list[Semester]:",
+                                        "def _parse_courseleaf_course_item(item: Tag) -\u003e Course | None:",
+                                        "def _extract_semesters_from_courseleaf_program_list(soup: BeautifulSoup) -\u003e list[Semester]:",
+                                        "def discover_all_program_pathways() -\u003e dict[str, str]:",
+                                        "def parse_degree_page(url: str) -\u003e DegreePlan:",
+                                        "def _build_catalog_payload(pathways: dict[str, str]) -\u003e dict[str, list[dict[str, object]]]:",
+                                        "def _write_json_atomic(payload: dict[str, object], destination_path: Path) -\u003e None:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import json",
+                                      "import logging",
+                                      "import os",
+                                      "import re",
+                                      "import sys",
+                                      "import tempfile",
+                                      "import time",
+                                      "from pathlib import Path",
+                                      "import httpx",
+                                      "from bs4 import BeautifulSoup, NavigableString, Tag",
+                                      "from models import Course, DegreePlan, Semester"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "seed_supabase.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def load_catalog_payload(catalog_path: Path = CATALOG_PATH) -\u003e dict[str, object]:",
+                                        "def extract_unique_courses(payload: dict[str, object]) -\u003e dict[str, dict[str, object]]:",
+                                        "def build_program_pathways(payload: dict[str, object]) -\u003e list[dict[str, object]]:",
+                                        "def upload_batches(client: Client, table_name: str, rows: list[dict[str, object]]) -\u003e None:",
+                                        "def main() -\u003e int:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import json",
+                                      "import os",
+                                      "import sys",
+                                      "from pathlib import Path",
+                                      "from supabase import Client, create_client"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "tests/__init__.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+
+                                    ],
+                      "imports":  [
+
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "tests/test_chat.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+                                      "class DummyAsyncClient:",
+                                      "class DummyAsyncClient:",
+                                      "class DummyAsyncClient:",
+                                      "class DummyAsyncClient:",
+                                      "class DummySearchEngine:"
+                                  ],
+                      "functions":  [
+                                        "def __init__(self, *_args: object, **_kwargs: object) -\u003e None:",
+                                        "def __init__(self, *_args: object, **_kwargs: object) -\u003e None:",
+                                        "def __init__(self, *_args: object, **_kwargs: object) -\u003e None:",
+                                        "def __init__(self, *_args: object, **_kwargs: object) -\u003e None:",
+                                        "def test_context_slicer_isolates_program_by_keyword(tmp_path: Path) -\u003e None:",
+                                        "def test_expand_user_query_appends_cluster_targets() -\u003e None:",
+                                        "def test_expand_user_query_supports_real_estate_aliases() -\u003e None:",
+                                        "def test_context_slicer_matches_program_via_expanded_course_prefix(tmp_path: Path) -\u003e None:",
+                                        "def test_targeted_context_uses_program_source_url_token(tmp_path: Path) -\u003e None:",
+                                        "def test_targeted_context_generates_fallback_source_url_token(tmp_path: Path) -\u003e None:",
+                                        "def test_targeted_context_generates_real_estate_fallback_source_url_token(tmp_path: Path) -\u003e None:",
+                                        "def test_context_slicer_matches_by_course_header_lookup(tmp_path: Path) -\u003e None:",
+                                        "def test_matched_keywords_include_direct_course_lookup_url() -\u003e None:",
+                                        "def test_context_slicer_bounds_token_budget_on_generic_queries(tmp_path: Path) -\u003e None:",
+                                        "def test_programs_include_continuing_education_container(tmp_path: Path) -\u003e None:",
+                                        "def test_prerequisite_index_reports_missing_dependencies(tmp_path: Path) -\u003e None:",
+                                        "def classify_intent(self, _user_query: str) -\u003e str:",
+                                        "def get_matched_keywords(self, _user_query: str) -\u003e list[str]:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import json",
+                                      "from pathlib import Path",
+                                      "import httpx",
+                                      "import pytest",
+                                      "from fastapi import HTTPException",
+                                      "from api import chat"
+                                  ],
+                      "routes":  [
+                                     "def test_shared_prompt_and_requests_are_deterministic() -\u003e None:"
+                                 ]
+                  },
+                  {
+                      "path":  "tests/test_embed_pathways.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def _mock_select_chain(rows: list[dict[str, object]]) -\u003e tuple[MagicMock, MagicMock]:",
+                                        "def test_fetch_pending_pathways_filters_blank_content() -\u003e None:",
+                                        "def test_generate_embeddings_returns_vectors() -\u003e None:",
+                                        "def test_process_batch_updates_each_row(monkeypatch) -\u003e None:  # type: ignore[no-untyped-def]",
+                                        "def _fake_generate(_client: object, _texts: list[str]) -\u003e list[list[float]]:",
+                                        "def _fake_update(_supabase: object, row_id: object, vector: list[float]) -\u003e None:",
+                                        "def test_run_embedding_pipeline_processes_until_empty(monkeypatch) -\u003e None:  # type: ignore[no-untyped-def]",
+                                        "def _fake_fetch(_supabase: object, batch_size: int) -\u003e list[dict[str, object]]:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "from types import SimpleNamespace",
+                                      "import embed_pathways"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "tests/test_rag_search.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def test_embed_query_text_uses_local_sentence_transformer() -\u003e None:",
+                                        "def test_fetch_matching_pathways_reads_rpc_rows() -\u003e None:",
+                                        "def test_build_system_prompt_context_formats_rows() -\u003e None:",
+                                        "def test_stream_groq_response_collects_streamed_text() -\u003e None:",
+                                        "def test_execute_rag_query_runs_end_to_end(monkeypatch: object) -\u003e None:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "from types import SimpleNamespace",
+                                      "import rag_search"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "tests/test_scraper.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+                                      "class TestCourseInitialisation:",
+                                      "class TestCourseValidationErrors:",
+                                      "class TestDegreePlanNestedStructure:"
+                                  ],
+                      "functions":  [
+                                        "def test_course_initialises_with_string_credits(self) -\u003e None:",
+                                        "def test_missing_code_raises_validation_error(self) -\u003e None:",
+                                        "def test_missing_total_hours_raises_validation_error(self) -\u003e None:",
+                                        "def test_degree_plan_nests_semesters_and_courses(self) -\u003e None:",
+                                        "def test_degree_plan_without_degree_code_defaults_to_none(self) -\u003e None:",
+                                        "def test_course_is_immutable(self) -\u003e None:",
+                                        "def _fake_parse_degree_page(_url: str) -\u003e DegreePlan:",
+                                        "def test_write_json_atomic_writes_complete_payload(tmp_path: Path) -\u003e None:",
+                                        "def test_extract_flat_certificate_requirements_returns_synthetic_semester() -\u003e None:",
+                                        "def test_extract_flat_certificate_requirements_reads_nested_anchor_text() -\u003e None:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "import json",
+                                      "from pathlib import Path",
+                                      "import pytest",
+                                      "from bs4 import BeautifulSoup",
+                                      "from pydantic import ValidationError",
+                                      "from models import Course, DegreePlan, Semester",
+                                      "from scripts import scraper"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  },
+                  {
+                      "path":  "tests/test_seed_supabase.py",
+                      "isPinned":  false,
+                      "extension":  ".py",
+                      "classes":  [
+
+                                  ],
+                      "functions":  [
+                                        "def test_extract_unique_courses_deduplicates_across_programs() -\u003e None:",
+                                        "def test_build_program_pathways_preserves_exact_schema_keys() -\u003e None:",
+                                        "def test_chunk_rows_splits_into_200_row_batches() -\u003e None:"
+                                    ],
+                      "imports":  [
+                                      "from __future__ import annotations",
+                                      "from seed_supabase import build_program_pathways, chunk_rows, extract_unique_courses"
+                                  ],
+                      "routes":  [
+
+                                 ]
+                  }
+              ]
 }
