@@ -832,6 +832,40 @@ class CatalogSearchEngine:
         return self._json_within_budget(index_payload)
 
     def get_optimized_context(self, user_query: str) -> str:
+        query_lower: str = user_query.lower()
+        if "nurse" in query_lower or "nursing" in query_lower:
+            for program in self._programs():
+                program_id: str = str(program.get("program_id", "")).strip()
+                program_title: str = str(program.get("title", "")).strip()
+                if program_id != "Associate_Degree_Nursing_A_A_S" and "associate degree nursing" not in program_title.lower():
+                    continue
+
+                current_source_url: str = self._resolve_program_catalog_source_url(program)
+                campuses_raw: object = program.get("campuses", [])
+                campuses: list[str] = [
+                    str(campus).strip()
+                    for campus in campuses_raw
+                    if isinstance(campuses_raw, list) and str(campus).strip()
+                ] if isinstance(campuses_raw, list) else []
+                campus_string: str = ", ".join(campuses) if campuses else "Location data unavailable"
+                direct_location_context: str = self._json_within_budget(
+                    {
+                        "mode": "program_location_direct",
+                        "program_id": program_id,
+                        "title": program_title,
+                        "Offered at Campuses": campus_string,
+                        "source_url": current_source_url,
+                    }
+                )
+                vector_context: str = self._build_targeted_program_context(
+                    program,
+                    program_id,
+                    current_source_url,
+                )
+                combined_context: str = f"{direct_location_context}\n{vector_context}"
+                valid_codes: list[str] = self._collect_valid_course_codes([program])
+                return self._append_verified_whitelist_line(combined_context, valid_codes)
+
         matched_program_id: str | None = self._classify_program_intent(user_query)
         if matched_program_id is not None:
             for program in self._programs():
