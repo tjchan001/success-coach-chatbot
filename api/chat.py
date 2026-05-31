@@ -482,6 +482,134 @@ class CatalogSearchEngine:
             "---\n"
         )
 
+    def _resolve_semantic_program_titles(self, user_query: str) -> list[str]:
+        """Map broader skill phrases to veterinary program titles."""
+        lowered_query: str = user_query.lower()
+        semantic_signals: tuple[str, ...] = ("animal medicine", "animal care", "vet")
+        if not any(signal in lowered_query for signal in semantic_signals):
+            return []
+
+        matched_titles: list[str] = []
+        seen_titles: set[str] = set()
+        for program in self._programs():
+            raw_title: object = program.get("title", "")
+            program_title: str = raw_title.strip() if isinstance(raw_title, str) else ""
+            program_id: str = str(program.get("program_id", "")).strip()
+            lowered_title: str = program_title.lower()
+            lowered_program_id: str = program_id.lower()
+            if "veterinary" not in lowered_title and "veterinary" not in lowered_program_id:
+                continue
+            if lowered_title in seen_titles:
+                continue
+            seen_titles.add(lowered_title)
+            matched_titles.append(program_title)
+
+        return matched_titles
+
+    def _find_program_course_matches(
+        self,
+        course_codes: set[str],
+    ) -> list[dict[str, object]]:
+        """Locate parent program rows for the requested course codes."""
+        matched_rows: list[dict[str, object]] = []
+        seen_matches: set[tuple[str, str, str]] = set()
+
+        for program in self._programs():
+            if not isinstance(program, dict):
+                continue
+
+            program_id: str = str(program.get("program_id", "")).strip()
+            semesters: object = program.get("semesters")
+            if isinstance(semesters, list):
+                for semester in semesters:
+                    if not isinstance(semester, dict):
+                        continue
+                    semester_name: str = str(semester.get("name", "Requirements")).strip() or "Requirements"
+                    courses: object = semester.get("courses")
+                    if not isinstance(courses, list):
+                        continue
+                    for course in courses:
+                        if not isinstance(course, dict):
+                            continue
+                        raw_code: object = course.get("code", "")
+                        course_code: str = raw_code.strip() if isinstance(raw_code, str) else ""
+                        if not course_code or course_code.lower() not in course_codes:
+                            continue
+                        match_key: tuple[str, str, str] = (program_id, course_code.lower(), semester_name)
+                        if match_key in seen_matches:
+                            continue
+                        seen_matches.add(match_key)
+                        matched_rows.append(
+                            {
+                                "program": program,
+                                "semester_name": semester_name,
+                                "course": course,
+                            }
+                        )
+
+            tracks: object = program.get("tracks")
+            if isinstance(tracks, list):
+                for track in tracks:
+                    if not isinstance(track, dict):
+                        continue
+                    track_name: str = str(track.get("name", "Requirements")).strip() or "Requirements"
+                    courses: object = track.get("courses")
+                    if not isinstance(courses, list):
+                        continue
+                    for course in courses:
+                        if not isinstance(course, dict):
+                            continue
+                        raw_code = course.get("code", "")
+                        course_code = raw_code.strip() if isinstance(raw_code, str) else ""
+                        if not course_code or course_code.lower() not in course_codes:
+                            continue
+                        match_key = (program_id, course_code.lower(), track_name)
+                        if match_key in seen_matches:
+                            continue
+                        seen_matches.add(match_key)
+                        matched_rows.append(
+                            {
+                                "program": program,
+                                "semester_name": track_name,
+                                "course": course,
+                            }
+                        )
+
+        return matched_rows
+
+    def _build_rehydrated_course_fragment(
+        self,
+        program: dict[str, object],
+        semester_name: str,
+        course: dict[str, object],
+    ) -> str:
+        """Build a course fragment with parent program and campus metadata."""
+        parent_program_title: str = str(program.get("title", "")).strip() or str(
+            program.get("program_id", "")
+        ).strip()
+        campuses: list[str] = self._normalize_campuses(program)
+        parent_campuses: str = ", ".join(campuses) if campuses else "Online / General Catalog"
+
+        course_code: str = str(course.get("code", "")).strip()
+        course_title: str = str(course.get("title", "")).strip()
+        credits: str = str(course.get("credits", "")).strip()
+        verification_url: str = self._build_course_catalog_url(course_code) if course_code else ""
+        course_content: str = (
+            f"Semester: {semester_name}. Course Code: {course_code}. "
+            f"Title: {course_title}. Credits: {credits}."
+        )
+        if verification_url:
+            course_content = (
+                f"{course_content} Verification: [Course Verification Link for {course_code}: {verification_url}]"
+            )
+
+        return (
+            f"PROGRAM: {parent_program_title}\n"
+            f"CAMPUSES: {parent_campuses}\n"
+            f"COURSE DETAILS: {course_content}\n"
+            "---\n"
+        )
+
     def _extract_completed_courses_from_query(self, user_query: str) -> list[str]:
         return self._extract_course_codes(user_query)
 
@@ -878,6 +1006,7 @@ class CatalogSearchEngine:
 
     def get_optimized_context(self, user_query: str) -> str:
         query_lower: str = user_query.lower()
+        supplemental_program_titles: list[str] = self._resolve_semantic_program_titles(user_query)
         if "nurse" in query_lower or "nursing" in query_lower:
             for program in self._programs():
                 program_id: str = str(program.get("program_id", "")).strip()
@@ -929,41 +1058,42 @@ class CatalogSearchEngine:
         query_course_headers: list[str] = self._extract_course_headers_from_query(user_query)
         if query_course_headers:
             query_course_codes: set[str] = {header.lower() for header in query_course_headers}
-            for program in self._programs():
-                try:
-                    program_id: str = str(program.get("program_id", "")).strip()
-                    semesters: object = program.get("semesters")
-                    if not isinstance(semesters, list):
+            course_matches: list[dict[str, object]] = self._find_program_course_matches(query_course_codes)
+            if course_matches:
+                fragments: list[str] = []
+                matched_programs: list[dict[str, object]] = []
+                seen_program_ids: set[str] = set()
+
+                for match in course_matches:
+                    program_obj: object = match.get("program")
+                    course_obj: object = match.get("course")
+                    semester_name: str = str(match.get("semester_name", "Requirements")).strip() or "Requirements"
+                    if not isinstance(program_obj, dict) or not isinstance(course_obj, dict):
                         continue
-                    for semester in semesters:
-                        if not isinstance(semester, dict):
-                            continue
-                        courses: object = semester.get("courses")
-                        if not isinstance(courses, list):
-                            continue
-                        for course in courses:
-                            if not isinstance(course, dict):
-                                continue
-                            raw_course_code: object = course.get("code", "")
-                            normalized_course_code: str = (
-                                raw_course_code.lower().strip()
-                                if isinstance(raw_course_code, str)
-                                else ""
-                            )
-                            if normalized_course_code in query_course_codes:
-                                current_source_url: str = self._resolve_program_catalog_source_url(program)
-                                context_chunk = self._build_targeted_program_context(
-                                    program,
-                                    program_id,
-                                    current_source_url,
-                                )
-                                valid_codes = self._collect_valid_course_codes([program])
-                                return self._append_verified_whitelist_line(context_chunk, valid_codes)
-                except Exception as exc:  # noqa: BLE001
-                    _LOG.warning("Skipping malformed program in course-header lookup: %s", exc)
-                    continue
+
+                    fragments.append(
+                        self._build_rehydrated_course_fragment(
+                            program=program_obj,
+                            semester_name=semester_name,
+                            course=course_obj,
+                        )
+                    )
+
+                    program_id: str = str(program_obj.get("program_id", "")).strip()
+                    if program_id and program_id not in seen_program_ids:
+                        seen_program_ids.add(program_id)
+                        matched_programs.append(program_obj)
+
+                if fragments:
+                    context_chunk = "".join(fragments)
+                    valid_codes = self._collect_valid_course_codes(matched_programs)
+                    return self._append_verified_whitelist_line(context_chunk, valid_codes)
 
         matched_program_titles: list[str] = self._lookup_program_titles_from_query(user_query)
+        if supplemental_program_titles:
+            matched_program_titles = list(
+                dict.fromkeys(matched_program_titles + supplemental_program_titles)
+            )
         if matched_program_titles:
             matched_program_title_set: set[str] = {title.lower() for title in matched_program_titles}
             for program in self._programs():
@@ -1022,13 +1152,11 @@ class CatalogSearchEngine:
                                     else ""
                                 )
                                 if any(term in normalized_course_code for term in expanded_terms):
-                                    current_program_title = program_title
-                                    current_source_url = self._resolve_program_catalog_source_url(program)
-                                    _ = (current_program_title, current_source_url)
-                                    context_chunk = self._build_targeted_program_context(
-                                        program,
-                                        program_id,
-                                        current_source_url,
+                                    context_chunk = self._build_rehydrated_course_fragment(
+                                        program=program,
+                                        semester_name=str(semester.get("name", "Requirements")).strip()
+                                        or "Requirements",
+                                        course=course,
                                     )
                                     valid_codes = self._collect_valid_course_codes([program])
                                     return self._append_verified_whitelist_line(
