@@ -24,6 +24,7 @@ PROJECT_ROOT: Path = Path(__file__).resolve().parent
 CATALOG_PATH: Path = PROJECT_ROOT / "data" / "catalog_with_locations.json"
 BATCH_SIZE: int = 200
 DEFAULT_SUPABASE_URL: str = "https://plieuwxjqkcltvpcoavh.supabase.co"
+LOCATION_FALLBACK_TEXT: str = "Online / General Catalog"
 
 
 def load_catalog_payload(catalog_path: Path = CATALOG_PATH) -> dict[str, object]:
@@ -94,6 +95,35 @@ def extract_unique_courses(payload: dict[str, object]) -> dict[str, dict[str, ob
     return unique_courses
 
 
+def _normalize_campuses(program: dict[str, object]) -> list[str]:
+    """Normalize campus values into a non-empty string list."""
+    campuses_obj: object = program.get("campuses", [])
+    if not isinstance(campuses_obj, list):
+        return []
+
+    normalized_campuses: list[str] = [
+        str(campus).strip()
+        for campus in campuses_obj
+        if str(campus).strip()
+    ]
+    return normalized_campuses
+
+
+def _build_pathway_content(
+    program_name: str,
+    semester_name: str,
+    campuses: list[str],
+    course_codes: list[str],
+) -> str:
+    """Build the embedded pathway text with campus metadata baked in."""
+    campus_string: str = ", ".join(campuses) if campuses else LOCATION_FALLBACK_TEXT
+    course_string: str = ", ".join(course_codes) if course_codes else "None explicitly stated"
+    return (
+        f"Program: {program_name}. Semester: {semester_name}. "
+        f"Offered at Campuses: {campus_string}. Required Path Requirements: {course_string}"
+    )
+
+
 def build_program_pathways(payload: dict[str, object]) -> list[dict[str, object]]:
     """Build structural semester rows for pathway uploads.
 
@@ -118,6 +148,8 @@ def build_program_pathways(payload: dict[str, object]) -> list[dict[str, object]
         if not isinstance(semesters_obj, list):
             continue
 
+        campuses: list[str] = _normalize_campuses(program)
+
         for semester in semesters_obj:
             if not isinstance(semester, dict):
                 continue
@@ -133,19 +165,15 @@ def build_program_pathways(payload: dict[str, object]) -> list[dict[str, object]
                     if course_code:
                         course_codes.append(course_code)
 
-            campus_string: str = ", ".join(
-                str(campus).strip()
-                for campus in program.get("campuses", ["Location data unavailable"])
-                if str(campus).strip()
-            )
-
             program_pathways.append(
                 {
                     "program_name": program_name,
                     "semester_name": semester_name,
-                    "content": (
-                        f"Program: {program_name}. Offered at Campuses: {campus_string}. "
-                        f"Courses: {', '.join(course_codes)}"
+                    "content": _build_pathway_content(
+                        program_name=program_name,
+                        semester_name=semester_name,
+                        campuses=campuses,
+                        course_codes=course_codes,
                     ),
                 }
             )

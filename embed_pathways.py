@@ -12,9 +12,11 @@ Security Rationale:
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 import time
+from pathlib import Path
 from typing import Any
 
 from sentence_transformers import SentenceTransformer
@@ -26,6 +28,9 @@ BATCH_SIZE: int = 100
 MAX_RETRIES: int = 5
 RETRY_DELAY_SECONDS: float = 1.5
 DEFAULT_SUPABASE_URL: str = "https://plieuwxjqkcltvpcoavh.supabase.co"
+PROJECT_ROOT: Path = Path(__file__).resolve().parent
+CATALOG_WITH_LOCATIONS_PATH: Path = PROJECT_ROOT / "data" / "catalog_with_locations.json"
+LOCATION_FALLBACK_TEXT: str = "Online / General Catalog"
 
 
 def _require_env_var(name: str) -> str:
@@ -48,11 +53,60 @@ def create_embedding_model() -> SentenceTransformer:
     return SentenceTransformer(EMBEDDING_MODEL)
 
 
+def load_campus_lookup() -> dict[str, str]:
+    """Load program title to campus-string mappings from the enriched catalog."""
+    if not CATALOG_WITH_LOCATIONS_PATH.exists():
+        return {}
+
+    payload: object = json.loads(CATALOG_WITH_LOCATIONS_PATH.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        return {}
+
+    programs_obj: object = payload.get("programs")
+    if not isinstance(programs_obj, list):
+        return {}
+
+    campus_lookup: dict[str, str] = {}
+    for program in programs_obj:
+        if not isinstance(program, dict):
+            continue
+
+        title: str = str(program.get("title", "")).strip()
+        if not title:
+            continue
+
+        campuses_obj: object = program.get("campuses", [])
+        campuses: list[str] = []
+        if isinstance(campuses_obj, list):
+            campuses = [str(campus).strip() for campus in campuses_obj if str(campus).strip()]
+
+        campus_lookup[title.lower()] = ", ".join(campuses) if campuses else LOCATION_FALLBACK_TEXT
+
+    return campus_lookup
+
+
+def enrich_content_with_campuses(
+    content: str,
+    program_name: str,
+    campus_lookup: dict[str, str],
+) -> str:
+    """Ensure campus geography is part of the embedding text."""
+    normalized_content: str = content.strip()
+    if "Offered at Campuses:" in normalized_content:
+        return normalized_content
+
+    campus_string: str = campus_lookup.get(program_name.lower(), LOCATION_FALLBACK_TEXT)
+    return (
+        f"Program: {program_name}. Offered at Campuses: {campus_string}. "
+        f"Required Path Requirements: {normalized_content}"
+    ).strip()
+
+
 def fetch_pending_pathways(supabase: Client, batch_size: int) -> list[dict[str, object]]:
     """Fetch pathways that still need embedding vectors."""
     response: Any = (
         supabase.table("program_pathways")
-        .select("id,content")
+        .select("id,program_name,content")
         .is_("embedding", "null")
         .limit(batch_size)
         .execute()
@@ -66,10 +120,11 @@ def fetch_pending_pathways(supabase: Client, batch_size: int) -> list[dict[str, 
         if not isinstance(row, dict):
             continue
         row_id: object = row.get("id")
+        program_name: str = str(row.get("program_name", "")).strip()
         content: str = str(row.get("content", "")).strip()
         if row_id is None or not content:
             continue
-        filtered_rows.append({"id": row_id, "content": content})
+        filtered_rows.append({"id": row_id, "program_name": program_name, "content": content})
 
     return filtered_rows
 
@@ -135,7 +190,15 @@ def process_batch(
     rows: list[dict[str, object]],
 ) -> tuple[int, int]:
     """Generate and store embeddings for one fetched batch."""
-    texts: list[str] = [str(row["content"]) for row in rows]
+    campus_lookup: dict[str, str] = load_campus_lookup()
+    texts: list[str] = [
+        enrich_content_with_campuses(
+            content=str(row["content"]),
+            program_name=str(row.get("program_name", "")),
+            campus_lookup=campus_lookup,
+        )
+        for row in rows
+    ]
     vectors: list[list[float]] = generate_embeddings(model, texts)
 
     success_count: int = 0
