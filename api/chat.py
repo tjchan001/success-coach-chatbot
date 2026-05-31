@@ -46,6 +46,8 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
+from api import deterministic_search
+
 _LOG: logging.Logger = logging.getLogger(__name__)
 
 _APP_TITLE: str = "Dallas College Chatbot API"
@@ -504,24 +506,9 @@ class CatalogSearchEngine:
         notes: str = str(course.get("notes", "")).strip().lower()
         searchable_text: str = " ".join(part for part in (title, description, notes) if part).strip()
 
-        strict_phrase_prefixes: dict[str, set[str]] = {
-            "video editing": {"FLMC", "RTVB", "COMM"},
-            "audio engineering": {"MUSC"},
-        }
-        lowered_query: str = user_query.lower()
-        for phrase, allowed_prefixes in strict_phrase_prefixes.items():
-            if phrase not in lowered_query:
-                continue
-
-            if phrase in searchable_text:
-                return True
-
-            course_prefix: str = code[:4].upper()
-            phrase_parts: list[str] = [part for part in phrase.split() if part]
-            if course_prefix in allowed_prefixes and any(part in searchable_text for part in phrase_parts):
-                return True
-
-            return False
+        canonical_phrase, _ = deterministic_search.resolve_canonical_phrase(user_query)
+        if canonical_phrase is not None:
+            return deterministic_search.phrase_gate(course, user_query)
 
         if any(term in code for term in expanded_terms):
             return True

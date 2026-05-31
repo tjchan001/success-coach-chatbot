@@ -1,0 +1,45 @@
+{
+  "video editing": {
+    "aliases": [
+      "video editing"
+    ],
+    "allowed_prefixes": [
+      "FLMC",
+      "RTVB",
+      "COMM"
+    ],
+    "anti_terms": [
+      "gene",
+      "dna",
+      "biotech"
+    ]
+  },
+  "video production": {
+    "aliases": [
+      "video production",
+      "film production",
+      "media production",
+      "television production",
+      "tv production"
+    ],
+    "allowed_prefixes": [
+      "FLMC",
+      "RTVB",
+      "COMM"
+    ],
+    "anti_terms": [
+      "gene",
+      "dna",
+      "biotech"
+    ]
+  },
+  "audio engineering": {
+    "aliases": [
+      "audio engineering"
+    ],
+    "allowed_prefixes": [
+      "MUSC"
+    ],
+    "anti_terms": []
+  }
+}

@@ -13,8 +13,50 @@ Security Rationale:
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
+from pathlib import Path
+
+CONFIG_PATH: Path = Path(__file__).resolve().parent.parent / "config" / "phrase_rules.json"
+
+
+def load_phrase_rules() -> dict[str, object]:
+    """Load phrase-rule configuration from disk."""
+    with open(CONFIG_PATH, "r", encoding="utf-8") as file:
+        payload: object = json.load(file)
+    if not isinstance(payload, dict):
+        raise RuntimeError("phrase_rules.json root must be a JSON object")
+    return payload
+
+
+def _normalize_rules(raw_rules: dict[str, object]) -> dict[str, dict[str, set[str]]]:
+    """Normalize phrase-rule config values into deterministic set-based runtime types."""
+    normalized: dict[str, dict[str, set[str]]] = {}
+    for canonical_phrase, rule_obj in raw_rules.items():
+        if not isinstance(canonical_phrase, str) or not isinstance(rule_obj, dict):
+            continue
+
+        aliases_obj: object = rule_obj.get("aliases", [])
+        allowed_prefixes_obj: object = rule_obj.get("allowed_prefixes", [])
+        anti_terms_obj: object = rule_obj.get("anti_terms", [])
+
+        aliases_list: list[object] = aliases_obj if isinstance(aliases_obj, list) else []
+        prefixes_list: list[object] = allowed_prefixes_obj if isinstance(allowed_prefixes_obj, list) else []
+        anti_terms_list: list[object] = anti_terms_obj if isinstance(anti_terms_obj, list) else []
+
+        normalized[canonical_phrase] = {
+            "aliases": {str(alias) for alias in aliases_list if str(alias).strip()},
+            "allowed_prefixes": {str(prefix) for prefix in prefixes_list if str(prefix).strip()},
+            "anti_terms": {str(term) for term in anti_terms_list if str(term).strip()},
+        }
+    return normalized
+
+
+try:
+    PHRASE_RULES: dict[str, dict[str, set[str]]] = _normalize_rules(load_phrase_rules())
+except Exception:  # noqa: BLE001
+    PHRASE_RULES = {}
 
 _CANONICAL_ALIAS_MAP: dict[str, str] = {
     "film editing": "video editing",
@@ -38,7 +80,27 @@ _DOMAIN_POLICIES: dict[str, dict[str, object]] = {
         },
         "fallback_tokens": {"video", "editing", "film", "post", "production"},
         "min_fallback_token_hits": 2,
-    }
+    },
+    "video production": {
+        "allowed_prefixes": {"FLMC", "RTVB", "COMM"},
+        "anti_terms": {
+            "gene editing",
+            "genome",
+            "genetic",
+            "molecular biology",
+            "cell culture",
+            "biotechnology",
+            "crispr",
+        },
+        "fallback_tokens": {"video", "production", "film", "media", "television", "tv"},
+        "min_fallback_token_hits": 2,
+    },
+    "audio engineering": {
+        "allowed_prefixes": {"MUSC"},
+        "anti_terms": set(),
+        "fallback_tokens": {"audio", "engineering"},
+        "min_fallback_token_hits": 1,
+    },
 }
 
 
@@ -110,6 +172,21 @@ def _has_word_boundary(text: str, token: str) -> bool:
     return re.search(rf"\b{re.escape(normalized_token)}\b", text) is not None
 
 
+def resolve_canonical_phrase(query: str) -> tuple[str | None, dict[str, object] | None]:
+    """Resolve one canonical phrase rule from user query text."""
+    lowered: str = query.lower()
+    for canonical, rule in PHRASE_RULES.items():
+        aliases_obj: object = rule.get("aliases", set())
+        aliases: set[str] = (
+            {str(alias).lower() for alias in aliases_obj}
+            if isinstance(aliases_obj, set)
+            else set()
+        )
+        if any(alias in lowered for alias in aliases):
+            return canonical, rule
+    return None, None
+
+
 def normalize_query(query: str) -> dict[str, object]:
     """Normalize raw query text into a deterministic query state dictionary."""
     normalized_text: str = _normalize_text(query)
@@ -148,6 +225,10 @@ def resolve_canonical_phrases(
     for canonical in _DOMAIN_POLICIES:
         if _has_phrase_boundary(normalized_query, canonical):
             canonical_hits.append(canonical)
+
+    canonical_phrase, _ = resolve_canonical_phrase(normalized_query)
+    if canonical_phrase is not None:
+        canonical_hits.append(canonical_phrase)
 
     unique_canonical: list[str] = []
     seen_canonical: set[str] = set()
@@ -213,6 +294,35 @@ def _course_searchable_text(course: dict[str, object]) -> str:
     fields: tuple[str, ...] = ("title", "description", "notes")
     parts: list[str] = [_normalize_text(course.get(field_name, "")) for field_name in fields]
     return " ".join(part for part in parts if part).strip()
+
+
+def phrase_gate(course: dict[str, object], query: str) -> bool:
+    """Apply canonical phrase gate for media/audio domain phrase protection."""
+    canonical, rule = resolve_canonical_phrase(query)
+
+    if not canonical or not isinstance(rule, dict):
+        return True
+
+    searchable_text: str = _course_searchable_text(course)
+    prefix: str = _extract_prefix(str(course.get("code", "")))
+
+    # exact match
+    if _has_phrase_boundary(searchable_text, canonical):
+        return True
+
+    # controlled fallback
+    allowed_prefixes_obj: object = rule.get("allowed_prefixes", set())
+    allowed_prefixes: set[str] = (
+        {str(item).upper() for item in allowed_prefixes_obj}
+        if isinstance(allowed_prefixes_obj, set)
+        else set()
+    )
+    if prefix in allowed_prefixes:
+        parts: list[str] = canonical.split()
+        if any(_has_word_boundary(searchable_text, part) for part in parts):
+            return True
+
+    return False
 
 
 def flatten_catalog_courses(payload: dict[str, object]) -> list[dict[str, object]]:
@@ -418,6 +528,18 @@ def search(
     rejected_trace: list[dict[str, object]] = []
 
     for candidate in candidates:
+        course_obj: object = candidate.get("course", {})
+        course: dict[str, object] = course_obj if isinstance(course_obj, dict) else {}
+        if not phrase_gate(course, query):
+            rejected_trace.append(
+                {
+                    "course_code": candidate.get("course_code", ""),
+                    "accepted": False,
+                    "reasons": ["phrase_gate_blocked"],
+                }
+            )
+            continue
+
         if not canonical_phrases:
             rejected_trace.append(
                 {
@@ -444,8 +566,6 @@ def search(
             continue
 
         code: str = str(candidate.get("course_code", "")).strip()
-        course_obj: object = candidate.get("course", {})
-        course: dict[str, object] = course_obj if isinstance(course_obj, dict) else {}
 
         if best_decision.accepted:
             accepted_rows.append(
@@ -488,6 +608,9 @@ __all__: list[str] = [
     "flatten_catalog_courses",
     "is_ambiguous_single_word",
     "normalize_query",
+    "PHRASE_RULES",
+    "phrase_gate",
+    "resolve_canonical_phrase",
     "resolve_canonical_phrases",
     "score_and_rank",
     "search",

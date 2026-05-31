@@ -1,5 +1,5 @@
 ﻿{
-  "generated": "2026-05-31T08:52:01-05:00",
+  "generated": "2026-05-31T09:22:33-05:00",
   "tool": "update_map.ps1 v2026.05 (Python/Widget Edition)",
   "pinnedFiles": [
     "models.py",
@@ -91,7 +91,8 @@
         "from httpx import AsyncClient as HttpxAsyncClient",
         "from httpx import Response as HttpxResponse",
         "from fastapi import FastAPI, HTTPException, status",
-        "from pydantic import BaseModel, ConfigDict, Field"
+        "from pydantic import BaseModel, ConfigDict, Field",
+        "from api import deterministic_search"
       ],
       "routes": [
         "def _resolve_analytics_log_path() -> Path:",
@@ -156,19 +157,25 @@
       "functions": [],
       "imports": [
         "from __future__ import annotations",
+        "import json",
         "import re",
-        "from dataclasses import dataclass"
+        "from dataclasses import dataclass",
+        "from pathlib import Path"
       ],
       "routes": [
+        "def load_phrase_rules() -> dict[str, object]:",
+        "def _normalize_rules(raw_rules: dict[str, object]) -> dict[str, dict[str, set[str]]]:",
         "def _normalize_text(value: object) -> str:",
         "def _tokenize(text: str) -> list[str]:",
         "def _compile_phrase_pattern(phrase: str) -> re.Pattern[str]:",
         "def _has_phrase_boundary(text: str, phrase: str) -> bool:",
         "def _has_word_boundary(text: str, token: str) -> bool:",
+        "def resolve_canonical_phrase(query: str) -> tuple[str | None, dict[str, object] | None]:",
         "def normalize_query(query: str) -> dict[str, object]:",
         "def is_ambiguous_single_word(query_state: dict[str, object], canonical_phrases: list[str]) -> bool:",
         "def _extract_prefix(course_code: str) -> str:",
         "def _course_searchable_text(course: dict[str, object]) -> str:",
+        "def phrase_gate(course: dict[str, object], query: str) -> bool:",
         "def flatten_catalog_courses(payload: dict[str, object]) -> list[dict[str, object]]:",
         "def _count_boundary_token_hits(text: str, tokens: set[str]) -> int:",
         "def _result_sort_key(row: dict[str, object]) -> tuple[float, float, str, str]:"
@@ -205,6 +212,15 @@
       "path": "CHANGELOG.md",
       "isPinned": false,
       "extension": ".md",
+      "classes": [],
+      "functions": [],
+      "imports": [],
+      "routes": []
+    },
+    {
+      "path": "config/phrase_rules.json",
+      "isPinned": false,
+      "extension": ".json",
       "classes": [],
       "functions": [],
       "imports": [],
@@ -252,15 +268,6 @@
         "def discover_all_program_links(session: requests.Session, base_url: str) -> list[str]:",
         "def _map_program(session: requests.Session, program_url: str, index: int, total: int) -> dict[str, object] | None:"
       ]
-    },
-    {
-      "path": "data/analytics_logs.json",
-      "isPinned": false,
-      "extension": ".json",
-      "classes": [],
-      "functions": [],
-      "imports": [],
-      "routes": []
     },
     {
       "path": "data/catalog_mvp.json",
@@ -556,7 +563,14 @@
         "def test_mixed_domain_contamination_keeps_video_results_and_excludes_biotech() -> None:",
         "def test_ambiguous_borderline_query_requires_clarification() -> None:",
         "def test_anti_term_evasion_does_not_leak_gene_editing() -> None:",
-        "def test_prefix_spoofing_does_not_select_biotech_course() -> None:"
+        "def test_prefix_spoofing_does_not_select_biotech_course() -> None:",
+        "def test_video_production_resolves_to_media_domain() -> None:",
+        "def test_media_alias_maps_to_video_production() -> None:",
+        "def test_phrase_gate_allows_valid_media_course() -> None:",
+        "def test_phrase_gate_blocks_biotech_for_video_production() -> None:",
+        "def test_phrase_rules_loaded_from_config() -> None:",
+        "def test_config_alias_resolution() -> None:",
+        "def test_config_prefix_enforcement() -> None:"
       ],
       "imports": [
         "from __future__ import annotations",

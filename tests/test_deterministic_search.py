@@ -48,6 +48,11 @@ def _catalog_fixture() -> dict[str, object]:
                                 "title": "Videography and Crediting Basics",
                                 "description": "Crediting workflows without editing specialization.",
                             },
+                            {
+                                "code": "RTVB 1421",
+                                "title": "TV/Video Field Production",
+                                "description": "Hands-on video production studio projects.",
+                            },
                         ],
                     }
                 ],
@@ -154,3 +159,51 @@ def test_prefix_spoofing_does_not_select_biotech_course() -> None:
     assert result["status"] == "needs_clarification"
     assert "BITC 2431" not in codes
     assert codes == []
+
+
+def test_video_production_resolves_to_media_domain() -> None:
+    canonical, _ = deterministic_search.resolve_canonical_phrase("video production")
+
+    assert canonical == "video production"
+
+
+def test_media_alias_maps_to_video_production() -> None:
+    canonical, _ = deterministic_search.resolve_canonical_phrase("media production")
+
+    assert canonical == "video production"
+
+
+def test_phrase_gate_allows_valid_media_course() -> None:
+    catalog = _catalog_fixture()
+    result: dict[str, object] = deterministic_search.search("video production", catalog)
+
+    assert any(
+        str(row.get("code", "")).startswith(("RTVB", "FLMC"))
+        for row in result["results"]
+    )
+
+
+def test_phrase_gate_blocks_biotech_for_video_production() -> None:
+    catalog = _catalog_fixture()
+    result: dict[str, object] = deterministic_search.search("video production", catalog)
+
+    assert all(
+        not str(row.get("code", "")).startswith("BITC")
+        for row in result["results"]
+    )
+
+
+def test_phrase_rules_loaded_from_config() -> None:
+    assert "video production" in deterministic_search.PHRASE_RULES
+
+
+def test_config_alias_resolution() -> None:
+    canonical, _ = deterministic_search.resolve_canonical_phrase("tv production")
+
+    assert canonical == "video production"
+
+
+def test_config_prefix_enforcement() -> None:
+    rules: dict[str, set[str]] = deterministic_search.PHRASE_RULES["video production"]
+
+    assert "RTVB" in rules["allowed_prefixes"]

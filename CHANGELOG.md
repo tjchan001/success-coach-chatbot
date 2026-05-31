@@ -15,12 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added adversarial regression coverage for phrase mutation, mixed-domain contamination, ambiguous borderline queries, anti-term evasion, and prefix spoofing.
 - Added strict location guardrail helpers in [api/chat.py](api/chat.py) plus [tests/test_location_guardrail.py](tests/test_location_guardrail.py) to prevent inferred delivery modes and require explicit campus extraction.
 - Added strict schema regression coverage in [embed_pathways.py](embed_pathways.py) and [seed_supabase.py](seed_supabase.py) so pipeline helpers keep structured data minimal and keep LLM enrichment text out of database-facing rows.
+- Added canonical phrase-rule coverage for `video production` aliases and centralized phrase-gate tests in [tests/test_deterministic_search.py](tests/test_deterministic_search.py).
+- Added external phrase-rule configuration at [config/phrase_rules.json](config/phrase_rules.json) with loader/normalization tests in [tests/test_deterministic_search.py](tests/test_deterministic_search.py).
 
 ### Fixed
 - Updated supplemental semantic program matching in [api/chat.py](api/chat.py) to allow partial-title resolution (for example, `Veterinary Technology` now correctly matches `Veterinary Technology A.A.S.` and related title variants).
 - Hardened course keyword retrieval in [api/chat.py](api/chat.py) with strict multi-word phrase filtering so intents like `video editing` and `audio engineering` do not bleed into unrelated departments.
 - Clarified borderline noncanonical retrieval queries in [api/deterministic_search.py](api/deterministic_search.py) so weak intent markers route to clarification instead of unsafe fallback retrieval.
 - Restored strict projection in [embed_pathways.py](embed_pathways.py) so pending pathway fetches return only `id` and `content`, and restored code-only content generation in [seed_supabase.py](seed_supabase.py).
+- Moved phrase-prefix gating logic out of [api/chat.py](api/chat.py) into [api/deterministic_search.py](api/deterministic_search.py), preserving deterministic behavior while removing retrieval-specific phrase rules from the chat boundary.
+- Updated [api/deterministic_search.py](api/deterministic_search.py) to load `PHRASE_RULES` from JSON with safe fallback to an empty ruleset when the config cannot be read.
 
 ### Changed
 - Added department-prefix validation (`FLMC`, `RTVB`, `COMM` for video; `MUSC` for audio) as a guarded fallback when exact multi-word skill phrases are absent from course text.
