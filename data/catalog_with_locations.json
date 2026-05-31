@@ -1548,7 +1548,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Mountain View",
+        "North Lake"
+      ]
     },
     {
       "program_id": "Audio_Visual_Specialist_Certificate",
@@ -2263,7 +2268,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Business_Administration_A_A_S",
@@ -4528,7 +4535,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Web_Developer_Certificate",
@@ -4713,7 +4725,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Web_Development_Certificate",
@@ -4763,7 +4780,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Vocational_Nursing_Certificate",
@@ -5488,7 +5510,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Network_Administrator_and_Support_A_A_S",
