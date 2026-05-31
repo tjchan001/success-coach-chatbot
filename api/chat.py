@@ -323,24 +323,31 @@ class CatalogSearchEngine:
         return sorted(matched)
 
     def is_out_of_bounds_query(self, user_query: str) -> bool:
-        lowered_query: str = user_query.lower().strip()
-        if not lowered_query:
+        query_lower: str = user_query.lower().strip()
+        if not query_lower:
             return True
 
-        if re.search(r"\b[a-z]{4}\s*\d{4}\b", lowered_query):
+        geo_keywords: tuple[str, ...] = (
+            "campus",
+            "campuses",
+            "location",
+            "locations",
+            "where",
+            "offered",
+            "teach",
+            "taught",
+        )
+        if any(keyword in query_lower for keyword in geo_keywords):
             return False
 
-        has_geographic_signal: bool = any(
-            keyword in lowered_query for keyword in self._geographic_keywords
-        )
-        if has_geographic_signal:
+        if re.search(r"\b[a-z]{4}\s*\d{4}\b", query_lower):
             return False
 
         has_academic_signal: bool = any(
-            keyword in lowered_query for keyword in self._academic_keywords
+            keyword in query_lower for keyword in self._academic_keywords
         )
         has_non_academic_signal: bool = any(
-            keyword in lowered_query for keyword in self._non_academic_keywords
+            keyword in query_lower for keyword in self._non_academic_keywords
         )
 
         if has_non_academic_signal and not has_academic_signal:
