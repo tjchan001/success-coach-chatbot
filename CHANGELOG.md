@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.3] - 2026-05-31
+
+### Fixed
+- Updated supplemental semantic program matching in [api/chat.py](api/chat.py) to allow partial-title resolution (for example, `Veterinary Technology` now correctly matches `Veterinary Technology A.A.S.` and related title variants).
+- Hardened course keyword retrieval in [api/chat.py](api/chat.py) with strict multi-word phrase filtering so intents like `video editing` and `audio engineering` do not bleed into unrelated departments.
+
+### Changed
+- Added department-prefix validation (`FLMC`, `RTVB`, `COMM` for video; `MUSC` for audio) as a guarded fallback when exact multi-word skill phrases are absent from course text.
+
+## [0.3.2] - 2026-05-31
+
+### Changed
+- Rehydrated isolated course lookups in [api/chat.py](api/chat.py) so matching course codes now pull parent program and campus metadata into the retrieval context.
+
+### Added
+- Added semantic supplementation for animal medicine queries so vet-related searches inherit Veterinary Technology program context.
+
+### Fixed
+- Fixed course-only retrieval paths that previously returned program-level context without an explicit `PROGRAM:` / `CAMPUSES:` / `COURSE DETAILS:` fragment header.
+
+## [0.3.1] - 2026-05-30
+
+### Added
+- Added [patch_locations.py](patch_locations.py) to repair empty campus arrays for core demo programs, including Nursing, Vet Tech, Criminal Justice, and Web Development.
+
+### Changed
+- Upgraded [seed_supabase.py](seed_supabase.py) and [embed_pathways.py](embed_pathways.py) so location metadata is baked directly into the text chunks as `Offered at Campuses` before insertion and embedding.
+- Standardized campus-aware pathway text generation across the full 305-program catalog so every offering can participate in location-aware vector retrieval.
+
+### Fixed
+- Added deterministic fallback text (`Online / General Catalog`) to prevent empty campus arrays and NULL-style failures when location data is missing.
+
 ## [0.3.0] - 2026-05-30
 
 ### Added

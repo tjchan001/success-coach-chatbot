@@ -483,28 +483,65 @@ class CatalogSearchEngine:
         )
 
     def _resolve_semantic_program_titles(self, user_query: str) -> list[str]:
-        """Map broader skill phrases to veterinary program titles."""
+        """Map broader skill phrases to supplemental program-title hints."""
         lowered_query: str = user_query.lower()
         semantic_signals: tuple[str, ...] = ("animal medicine", "animal care", "vet")
         if not any(signal in lowered_query for signal in semantic_signals):
             return []
 
-        matched_titles: list[str] = []
-        seen_titles: set[str] = set()
-        for program in self._programs():
-            raw_title: object = program.get("title", "")
-            program_title: str = raw_title.strip() if isinstance(raw_title, str) else ""
-            program_id: str = str(program.get("program_id", "")).strip()
-            lowered_title: str = program_title.lower()
-            lowered_program_id: str = program_id.lower()
-            if "veterinary" not in lowered_title and "veterinary" not in lowered_program_id:
-                continue
-            if lowered_title in seen_titles:
-                continue
-            seen_titles.add(lowered_title)
-            matched_titles.append(program_title)
+        return ["Veterinary Technology", "Veterinary Assisting"]
 
-        return matched_titles
+    def _course_matches_user_intent(
+        self,
+        user_query: str,
+        expanded_terms: list[str],
+        course: dict[str, object],
+    ) -> bool:
+        """Match course text safely, prioritizing exact multi-word phrases over loose tokens."""
+        code: str = str(course.get("code", "")).strip().lower()
+        title: str = str(course.get("title", "")).strip().lower()
+        description: str = str(course.get("description", "")).strip().lower()
+        notes: str = str(course.get("notes", "")).strip().lower()
+        searchable_text: str = " ".join(part for part in (title, description, notes) if part).strip()
+
+        strict_phrase_prefixes: dict[str, set[str]] = {
+            "video editing": {"FLMC", "RTVB", "COMM"},
+            "audio engineering": {"MUSC"},
+        }
+        lowered_query: str = user_query.lower()
+        for phrase, allowed_prefixes in strict_phrase_prefixes.items():
+            if phrase not in lowered_query:
+                continue
+
+            if phrase in searchable_text:
+                return True
+
+            course_prefix: str = code[:4].upper()
+            phrase_parts: list[str] = [part for part in phrase.split() if part]
+            if course_prefix in allowed_prefixes and any(part in searchable_text for part in phrase_parts):
+                return True
+
+            return False
+
+        if any(term in code for term in expanded_terms):
+            return True
+
+        for term in expanded_terms:
+            normalized_term: str = term.strip().lower()
+            if not normalized_term:
+                continue
+
+            if " " in normalized_term:
+                if normalized_term in searchable_text:
+                    return True
+                continue
+
+            if len(normalized_term) < 3:
+                continue
+            if normalized_term in searchable_text:
+                return True
+
+        return False
 
     def _find_program_course_matches(
         self,
@@ -587,6 +624,7 @@ class CatalogSearchEngine:
         parent_program_title: str = str(program.get("title", "")).strip() or str(
             program.get("program_id", "")
         ).strip()
+        parent_program_id: str = str(program.get("program_id", "")).strip()
         campuses: list[str] = self._normalize_campuses(program)
         parent_campuses: str = ", ".join(campuses) if campuses else "Online / General Catalog"
 
@@ -595,7 +633,7 @@ class CatalogSearchEngine:
         credits: str = str(course.get("credits", "")).strip()
         verification_url: str = self._build_course_catalog_url(course_code) if course_code else ""
         course_content: str = (
-            f"Semester: {semester_name}. Course Code: {course_code}. "
+            f"Parent Program ID: {parent_program_id}. Semester: {semester_name}. Course Code: {course_code}. "
             f"Title: {course_title}. Credits: {credits}."
         )
         if verification_url:
@@ -1099,7 +1137,13 @@ class CatalogSearchEngine:
             for program in self._programs():
                 raw_title: object = program.get("title", "")
                 program_title: str = raw_title.strip() if isinstance(raw_title, str) else ""
-                if program_title.lower() in matched_program_title_set:
+                normalized_program_title: str = program_title.lower()
+                has_exact_program_match: bool = normalized_program_title in matched_program_title_set
+                has_partial_supplemental_match: bool = any(
+                    supplemental.lower() in normalized_program_title
+                    for supplemental in supplemental_program_titles
+                )
+                if has_exact_program_match or has_partial_supplemental_match:
                     program_id = str(program.get("program_id", "")).strip()
                     current_source_url: str = self._resolve_program_catalog_source_url(program)
                     context_chunk = self._build_targeted_program_context(
@@ -1145,13 +1189,11 @@ class CatalogSearchEngine:
                             for course in courses:
                                 if not isinstance(course, dict):
                                     continue
-                                raw_course_code: object = course.get("code", "")
-                                normalized_course_code: str = (
-                                    raw_course_code.lower().strip()
-                                    if isinstance(raw_course_code, str)
-                                    else ""
-                                )
-                                if any(term in normalized_course_code for term in expanded_terms):
+                                if self._course_matches_user_intent(
+                                    user_query=user_query,
+                                    expanded_terms=expanded_terms,
+                                    course=course,
+                                ):
                                     context_chunk = self._build_rehydrated_course_fragment(
                                         program=program,
                                         semester_name=str(semester.get("name", "Requirements")).strip()
