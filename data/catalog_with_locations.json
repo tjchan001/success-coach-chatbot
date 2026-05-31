@@ -33,7 +33,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Accounting_A_A_S",
@@ -118,7 +123,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Accounting_Assistant_Certificate",
@@ -163,7 +176,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Accounting_Clerk_Certificate",
@@ -193,7 +214,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Administrative_Certificate",
@@ -248,7 +277,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Administrative_Specialist_Certificate",
@@ -318,7 +349,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Adult_Cardiac_Sonography_A_A_S",
@@ -473,7 +512,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Adult_Cardiac_Sonography_Advanced_Technical_Certificate",
@@ -583,7 +624,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Advanced_Architectural_Drafting_Certificate",
@@ -643,7 +686,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Advanced_Mechanical_Drafting_Certificate",
@@ -703,7 +751,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Air_Conditioning_and_Refrigeration_Technology_A_A_S",
@@ -803,7 +856,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Technician_Level_I_Certificate_in_Air_Conditioning",
@@ -858,7 +914,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Technician_Level_II_Certificate_in_Air_Conditioning",
@@ -958,7 +1017,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Animation_Certificate",
@@ -1038,7 +1100,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Apparel_Design_A_A_S",
@@ -1173,7 +1237,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "El Centro",
+        "Brookhaven",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Architectural_Drafting_Certificate",
@@ -1218,7 +1289,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Architectural_Drafting_Occupational_Skills_Award",
@@ -1258,7 +1334,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Associate_Degree_Nursing_A_A_S",
@@ -1552,7 +1633,10 @@
         "Brookhaven",
         "El Centro",
         "Mountain View",
-        "North Lake"
+        "North Lake",
+        "Cedar Valley",
+        "Eastfield",
+        "Richland"
       ]
     },
     {
@@ -1623,7 +1707,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Auto_Body_Metal_Technician_Certificate",
@@ -1668,7 +1754,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Auto_Body_Painter_Certificate",
@@ -1723,7 +1812,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Auto_Body_Technology_A_A_S",
@@ -1823,7 +1915,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Auto_Body_Technology_Certificate",
@@ -1913,7 +2013,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Bakery_Pastry_A_A_S",
@@ -2063,7 +2171,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Bakery_Pastry_Foundations_Certificate",
@@ -2118,7 +2234,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Bakery_Pastry_Specialist_Certificate",
@@ -2218,7 +2336,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Basic_Criminal_Justice_Studies_Certificate",
@@ -2269,7 +2395,7 @@
         }
       ],
       "campuses": [
-        "Eastfield"
+        "Online / General Catalog"
       ]
     },
     {
@@ -2385,7 +2511,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Marketing_A_A_S",
@@ -2505,7 +2639,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Business_Office_Specialist_Certificate",
@@ -2555,7 +2697,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Business_Operations_Generalist_Certificate",
@@ -2600,7 +2750,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Business_Operations_Specialist_Certificate",
@@ -2665,7 +2823,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "C_Developer_Certificate",
@@ -2715,7 +2881,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "C_Programming_Occupational_Skills_Award",
@@ -2750,7 +2921,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "C_Developer_Certificate",
@@ -2800,7 +2976,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "C_Programming_Occupational_Skills_Award",
@@ -2835,7 +3016,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Travel_and_Destination_Management_Certificate",
@@ -2890,7 +3076,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Meeting_and_Events_Professional_Certificate",
@@ -2945,7 +3139,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Chassis_Service_Technician_Certificate",
@@ -2985,7 +3187,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Child_Development_Early_Childhood_Education_A_A_S",
@@ -3095,7 +3299,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "CISCO_Networking_CCNA_Occupational_Skills_Award",
@@ -3130,7 +3336,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Civil_Drafting_Certificate",
@@ -3180,7 +3391,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Civil_Drafting_Occupational_Skills_Award",
@@ -3220,7 +3436,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Cloud_Computing_A_A_S",
@@ -3355,7 +3576,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Cloud_Computing_Certificate",
@@ -3405,7 +3634,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Cloud_Computing_Occupational_Skills_Award",
@@ -3440,7 +3677,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Cloud_System_Operations_A_A_S",
@@ -3560,7 +3805,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "CNC_Mill_and_Lathe_Operator_Certificate",
@@ -3615,7 +3868,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "CNC_Mill_and_Lathe_Operator_Occupational_Skills_Award",
@@ -3660,7 +3920,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Commercial_Construction_Assistant_Superintendent_Certificate",
@@ -3720,7 +3983,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Commercial_Construction_Certificate",
@@ -3760,7 +4031,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Commercial_Electrical_Technology_A_A_S",
@@ -3875,7 +4149,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Commercial_Electrical_Technology_Certificate",
@@ -3945,7 +4226,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Songwriter_Certificate",
@@ -4025,7 +4309,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Computed_Tomography_Advanced_Technical_Certificate",
@@ -4080,7 +4366,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Wholesale_and_Manufacturing_Sales_Representative_Certificate",
@@ -4155,7 +4443,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Welding_Applications_A_A_S",
@@ -4335,7 +4631,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Welding_Applications_Certificate",
@@ -4500,7 +4799,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Web_Design_Occupational_Skills_Award",
@@ -4610,7 +4912,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Web_Development_A_A_S",
@@ -4900,7 +5207,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Mountain View",
+        "North Lake"
+      ]
     },
     {
       "program_id": "Visual_Presentation_Specialist_Certificate",
@@ -4945,7 +5257,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Visual_Design_Certificate",
@@ -5020,7 +5340,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Video_Technology_A_A_S",
@@ -5125,7 +5450,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Transmission_Service_Technician_Certificate",
@@ -5170,7 +5497,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "UX_UI_Design_Certificate",
@@ -5250,7 +5579,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Vascular_Interventional_Advanced_Technical_Certificate",
@@ -5325,7 +5659,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Veterinary_Assisting_Certificate",
@@ -5385,7 +5721,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley",
+        "Brookhaven",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Veterinary_Technology_A_A_S",
@@ -5511,7 +5855,13 @@
         }
       ],
       "campuses": [
-        "Cedar Valley"
+        "Brookhaven",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Cedar Valley",
+        "Eastfield",
+        "Richland"
       ]
     },
     {
@@ -5737,7 +6087,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Networking_Associate_Certificate",
@@ -5787,7 +6142,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Networking_Support_Certificate",
@@ -5837,7 +6197,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Networking_Virtualization_Skills_Achievement_Award",
@@ -5862,7 +6227,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Mobile_Applications_Occupational_Skills_Award",
@@ -5897,7 +6267,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Mortgage_Banking_A_A_S",
@@ -6017,7 +6392,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Mortgage_Banking_Intern_Certificate",
@@ -6062,7 +6439,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Music_Business_and_Entrepreneurship_A_A_S",
@@ -6212,7 +6591,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley",
+        "Brookhaven",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Music_Business_and_Entrepreneurship_Certificate",
@@ -6292,7 +6679,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley",
+        "Brookhaven",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Medical_Assisting_Generalist_Certificate",
@@ -6342,7 +6737,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Medical_Front_Office_Assistant_Certificate",
@@ -6407,7 +6804,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Medical_Front_Office_Assistant_Occupational_Skills_Award",
@@ -6442,7 +6844,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Medical_Laboratory_Technology_A_A_S",
@@ -6582,7 +6989,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Mental_Health_Substance_Abuse_Prevention_Certificate",
@@ -6632,7 +7041,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Mechanical_Drafting_Certificate",
@@ -6677,7 +7094,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Mechanical_Drafting_Occupational_Skills_Award",
@@ -6717,7 +7139,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Mechatronics_Technology_Certificate",
@@ -6792,7 +7219,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Medical_Assisting_Certificate",
@@ -6902,7 +7334,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "LINUX_Skills_Achievement_Award",
@@ -6932,7 +7366,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Logistics_and_Supply_Chain_Management_A_A_S",
@@ -7062,7 +7498,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Logistics_Distribution_Technician_Certificate",
@@ -7117,7 +7561,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Logistics_Distribution_Technician_Occupational_Skills_Award",
@@ -7157,7 +7609,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Magnetic_Resonance_Imaging_Advanced_Technical_Certificate",
@@ -7227,7 +7687,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Management_A_A_S",
@@ -7347,7 +7809,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Management_Certificate",
@@ -7422,7 +7892,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Invasive_Cardiovascular_Technology_Advanced_Technical_Certificate",
@@ -7522,7 +8000,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Java_Developer_Certificate",
@@ -7572,7 +8052,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Java_Programming_Occupational_Skills_Award",
@@ -7607,7 +8092,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Land_Surveying_and_Geospatial_Technology_A_A_S",
@@ -7727,7 +8217,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Land_Surveying_Certificate",
@@ -7782,7 +8279,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Leadership_Occupational_Skills_Award",
@@ -7822,7 +8321,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Interior_Design_A_A_S",
@@ -7952,7 +8459,11 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "El Centro"
+      ]
     },
     {
       "program_id": "International_Business_and_Trade_A_A_S",
@@ -8072,7 +8583,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "International_Business_and_Trade_Certificate",
@@ -8147,7 +8666,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "International_Business_and_Trade_Skills_Achievement_Award",
@@ -8177,7 +8704,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Invasive_Cardiovascular_Technology_A_A_S",
@@ -8317,7 +8846,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Cyber_Operations_Certificate",
@@ -8372,7 +8903,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Information_Security_Occupational_Skills_Award",
@@ -8412,7 +8948,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Information_Systems_Administration_Foundations_Certificate",
@@ -8467,7 +9008,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Insurance_Customer_Service_Representative_Certificate",
@@ -8517,7 +9066,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Interactive_Simulation_and_Game_Technology_A_A_S",
@@ -8782,7 +9339,13 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Honda_Professional_Automotive_Career_Training_A_A_S",
@@ -8897,7 +9460,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Hospitality_Management_A_A_S",
@@ -8977,7 +9542,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Human_Resources_Assistant_Certificate",
@@ -9017,7 +9590,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Human_Resources_Associate_Certificate",
@@ -9062,7 +9643,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Human_Resources_Management_A_A_S",
@@ -9152,7 +9741,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Human_Services_Certificate",
@@ -9232,7 +9829,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Global_Trade_Specialist_Certificate",
@@ -9277,7 +9882,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Industrial_Automation_Certificate",
@@ -9352,7 +9965,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Equine_Clinical_Skills_Enhanced_Skills_Certificate",
@@ -9382,7 +10000,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Executive_Assistant_A_A_S",
@@ -9512,7 +10132,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Experience_Design_User_Interface_UX_UI_A_A_S",
@@ -9662,7 +10290,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Engine_Repair_and_Performance_Technician_Certificate",
@@ -9712,7 +10345,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Engineering_Technology_Certificate",
@@ -9792,7 +10427,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Emergency_Medical_Technician_Basic_Certificate",
@@ -9852,7 +10489,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro"
+      ]
     },
     {
       "program_id": "Emergency_Medical_Services_Paramedic_A_A_S",
@@ -10012,7 +10652,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Fashion_Marketing_A_A_S",
@@ -10132,7 +10780,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Financial_Services_Associate_Certificate",
@@ -10182,7 +10838,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Fire_Arson_Investigation_Certificate",
@@ -10232,7 +10890,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Fire_Protection_Technology_A_A_S",
@@ -10442,7 +11103,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Fire_Science_Certificate",
@@ -10492,7 +11158,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Criminal_Justice_and_Public_Safety_A_A_S",
@@ -10612,7 +11281,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Criminal_Justice_Management_Certificate_30_Hours",
@@ -10687,7 +11358,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Construction_Management_A_A_S",
@@ -10867,7 +11546,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Construction_Technology_A_A_S",
@@ -11167,7 +11854,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Credential_for_Critical_Care_Professionals_Enhanced_Skills_Certificate",
@@ -11197,7 +11887,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro"
+      ]
     },
     {
       "program_id": "Conflict_Management_Basic_Mediator_Certificate",
@@ -11282,7 +11975,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Toyota_Technician_Training_and_Education_Network_A_A_S",
@@ -11397,7 +12098,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Theatrical_Costuming_Certificate",
@@ -11482,7 +12185,11 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "El Centro"
+      ]
     },
     {
       "program_id": "Technical_Pattern_Design_A_A_S",
@@ -11617,7 +12324,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "El Centro",
+        "Brookhaven",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Surveying_Occupational_Skills_Award",
@@ -11652,7 +12366,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Surgical_Technologist_A_A_S",
@@ -11772,7 +12488,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Supervisor_Certificate",
@@ -11822,7 +12540,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Substance_Abuse_Counseling_Certificate",
@@ -11902,7 +12628,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Substance_Abuse_Counseling_A_A_S",
@@ -12022,7 +12756,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Structural_Welding_Certificate",
@@ -12107,7 +12849,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "SQL_Occupational_Skills_Award",
@@ -12142,7 +12887,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Software_Development_A_A_S",
@@ -12237,7 +12984,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Software_Application_Specialist_Certificate",
@@ -12287,7 +13039,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Social_Work_Associate_Generalist_A_A_S",
@@ -12427,7 +13184,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Entrepreneurial_Foundation_Certificate",
@@ -12472,7 +13237,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Shielded_Metal_Arc_Welding_SMAW_Certificate",
@@ -12512,7 +13285,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Automotive_Career_Technician_A_A_S",
@@ -12647,7 +13423,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Sales_and_Marketing_Professional_Certificate",
@@ -12692,7 +13470,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Robotics_and_Industrial_Automation_A_A_S",
@@ -12832,7 +13618,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Rising_Welder_Certificate",
@@ -12882,7 +13670,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Rising_Plumber_Certificate",
@@ -12937,7 +13728,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Rising_Land_Surveyor_Certificate",
@@ -12987,7 +13781,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Rising_HVAC_Technician_Certificate",
@@ -13037,7 +13833,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Rising_Electrical_Technician_Occupational_Skills_Award",
@@ -13072,7 +13871,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Rising_Electrical_Technician_Certificate",
@@ -13127,7 +13928,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Retail_Management_Certificate",
@@ -13212,7 +14016,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Respiratory_Care_A_A_S",
@@ -13372,7 +14184,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Residential_Construction_Occupational_Skills_Award",
@@ -13407,7 +14221,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Residential_Construction_Foreman_Certificate",
@@ -13467,7 +14284,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Residential_Construction_Certificate",
@@ -13507,7 +14332,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Recording_Technology_Certificate_One_Year_Certificate",
@@ -13577,7 +14405,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Recording_Technology_Level_II_Certificate",
@@ -13672,7 +14502,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Recording_Technology_A_A_S",
@@ -13827,7 +14659,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Real_Estate_Certificate",
@@ -13872,7 +14706,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Real_Estate_A_A_S",
@@ -13987,7 +14823,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Radiologic_Technology_A_A_S",
@@ -14102,7 +14946,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Python_Programming_Occupational_Skills_Award",
@@ -14137,7 +14983,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Python_Developer_Certificate",
@@ -14187,7 +15038,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Advanced_Technical_Certificate_in_Professional_Accountancy",
@@ -14262,7 +15118,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Preventive_Maintenance_Technician_Certificate",
@@ -14337,7 +15201,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Precision_Machining_Technology_A_A_S",
@@ -14462,7 +15329,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Personal_Computer_Support_A_A_S",
@@ -14572,7 +15446,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Perioperative_Nursing_Enhanced_Skills_Certificate",
@@ -14622,7 +15501,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Mountain View",
+        "North Lake"
+      ]
     },
     {
       "program_id": "Performing_Musician_Certificate",
@@ -14702,7 +15586,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Performing_Musician_A_A_S",
@@ -14847,7 +15733,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Patient_Care_Technician_Certificate",
@@ -14907,7 +15795,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Paramedic_Certificate",
@@ -15012,7 +15908,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Paralegal_A_A_S",
@@ -15132,7 +16036,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Occupational_Therapy_Assistant_A_A_S",
@@ -15277,7 +16183,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "High_Performance_Modification_Certificate",
@@ -15327,7 +16241,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Help_Desk_User_Support_Technician_Certificate",
@@ -15377,7 +16293,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Health_Professions_Readiness_II_Skills_Achievement_Award",
@@ -15407,7 +16328,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Health_Professions_Readiness_I_Skills_Achievement_Award",
@@ -15437,7 +16360,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Health_Information_Technology_Medical_Coder_Certificate",
@@ -15522,7 +16453,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Health_Information_Technology_A_A_S",
@@ -15662,7 +16598,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Google_IT_Professional_Occupational_Skills_Award",
@@ -15697,7 +16638,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Gerontology_Certificate",
@@ -15752,7 +16698,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Geographic_Information_Systems_Technician_Certificate_C2",
@@ -15867,7 +16821,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Geographic_Information_Systems_Specialist_A_A_S",
@@ -16002,7 +16961,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Gas_Tungsten_Arc_Welding_GTAW_Certificate",
@@ -16042,7 +17006,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Gas_Metal_Arc_Welding_GMAW_Certificate",
@@ -16082,7 +17049,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Game_Development_Certificate",
@@ -16252,7 +17222,13 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Fundamentals_of_Information_Technology_Skills_Achievement_Award",
@@ -16272,7 +17248,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Forensic_Science_Technician_Certificate",
@@ -16362,7 +17343,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Food_and_Beverage_Specialist_Certificate",
@@ -16422,7 +17405,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Cyber_Security_A_A_S",
@@ -16792,7 +17783,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Customer_Service_Representative_Certificate",
@@ -16837,7 +17836,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Culinary_Arts_Specialist_Certificate",
@@ -16932,7 +17939,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Culinary_Arts_Foundations_Certificate",
@@ -16987,7 +18002,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Culinary_Arts_A_A_S",
@@ -17137,7 +18154,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Crisis_Intervention_Certificate",
@@ -17252,7 +18277,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Computer_Aided_Design_and_Drafting_A_A_S",
@@ -17357,7 +18390,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "DBA_Certificate",
@@ -17407,7 +18445,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Dealership_Sponsored_Technician_A_A_S",
@@ -17612,7 +18655,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Dental_Hygiene_A_A_S",
@@ -17802,7 +18847,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Designate_Certificate",
@@ -17877,7 +18924,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Diagnostic_Medical_Sonography_A_A_S",
@@ -18042,7 +19091,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Diagnostic_Medical_Sonography_Advanced_Technical_Certificate",
@@ -18162,7 +19213,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Digital_Art_and_Design_A_A_S",
@@ -18257,7 +19310,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Digital_Forensics_and_Private_Investigation_Certificate",
@@ -18312,7 +19373,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Digital_Interface_Design_Certificate",
@@ -18387,7 +19453,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Digital_Media_Marketing_Specialist_Certificate",
@@ -18437,7 +19508,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Producer_and_Songwriter_A_A_S",
@@ -18592,7 +19671,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Producer_Certificate",
@@ -18667,7 +19748,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Cedar Valley"
+      ]
     },
     {
       "program_id": "Digital_Photography_Video_Certificate",
@@ -18732,7 +19815,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Bachelor_of_Applied_Science_in_Early_Childhood_Education_and_Teaching",
@@ -18987,7 +20072,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Early_Childhood_Education_and_Teaching_Certificate",
@@ -19027,7 +20120,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Electrical_Engineering_Technology_A_A_S",
@@ -19162,7 +20257,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Electro_Mechanical_Technology_A_A_S",
@@ -19292,7 +20392,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Electronics_and_Climate_Controls_Technician_Certificate",
@@ -19352,7 +20457,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Electronics_Technology_Certificate",
@@ -19412,7 +20520,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Core_Options_for_A_A_S_Awards",
@@ -19557,7 +20672,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Electronics_Technology_Occupational_Skills_Award",
@@ -19602,7 +20725,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Mechatronics_Technology_Occupational_Skills_Award",
@@ -19662,7 +20788,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Entrepreneurial_Management_Certificate",
@@ -19707,7 +20835,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Entrepreneurship_A_A_S",
@@ -19817,7 +20953,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Hotel_Lodging_Operations_Certificate",
@@ -19877,7 +21021,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Rising_Plumber_Occupational_Skills_Award",
@@ -19912,7 +21064,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Tradesman_Plumber_Certificate",
@@ -19962,7 +21116,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Industrial_Automation_Occupational_Skills_Award",
@@ -20012,7 +21169,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Hospitality_Management_Certificate",
@@ -20067,7 +21226,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro",
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Plumbing_Technology_A_A_S",
@@ -20167,7 +21334,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Plumbing_Technology_Certificate",
@@ -20262,7 +21432,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Registered_Nurse_to_Bachelor_of_Science_in_Nursing",
@@ -20417,7 +21590,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Cedar Valley",
+        "Eastfield",
+        "Richland"
+      ]
     },
     {
       "program_id": "Theatrical_Light_Board_Operator_Certificate",
@@ -20492,7 +21673,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Heating_and_Air_Conditioning_Occupational_Skills_Award",
@@ -20522,7 +21708,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Rising_HVAC_Technician_Occupational_Skills_Award",
@@ -20552,7 +21740,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Psychiatric_Technician_Certificate",
@@ -20617,7 +21808,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Biotechnology_Certificate",
@@ -20712,7 +21911,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Real_Estate_Certificate_II",
@@ -20792,7 +21993,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Junior_Legal_Assistant_Certificate",
@@ -20867,7 +22076,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Auto_Body_Metal_Technician_Occupational_Skills_Award",
@@ -20897,7 +22108,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Auto_Body_Painter_Occupational_Skills_Award",
@@ -20927,7 +22141,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Auto_Body_Shop_Management_Occupational_Skills_Award",
@@ -20957,7 +22173,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Film_and_Video_Production_Advanced_Technical_Certificate",
@@ -20977,7 +22201,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Early_Childhood_Teacher_Development_Occupational_Skills_Award",
@@ -21007,7 +22233,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Power_Equipment_Technology_Certificate",
@@ -21072,7 +22300,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Power_Sports_Certificate",
@@ -21147,7 +22377,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Power_Equipment_Occupational_Skills_Award",
@@ -21177,7 +22409,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Power_Sports_Occupational_Skills_Award",
@@ -21222,7 +22456,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Alteration_Specialist_Certificate",
@@ -21292,7 +22528,11 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "El Centro"
+      ]
     },
     {
       "program_id": "Fashion_Design_Certificate",
@@ -21367,7 +22607,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "El Centro",
+        "Brookhaven",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Construction_Technology_Occupational_Skills_Award",
@@ -21402,7 +22649,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Rising_Construction_Technology_Occupational_Skills_Award",
@@ -21427,7 +22677,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Rising_Construction_Manager_Certificate",
@@ -21477,7 +22730,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Rising_Construction_Manager_Occupational_Skills_Award",
@@ -21512,7 +22773,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "Cedar Valley",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Multiple_Processes_Welding_Occupational_Skills_Award",
@@ -21552,7 +22821,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Pipe_Welding_and_Fitting_Occupational_Skills_Award",
@@ -21582,7 +22854,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Rising_Welder_Occupational_Skills_Award",
@@ -21612,7 +22887,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Shielded_Metal_Arc_Welding_SMAW_Occupational_Skills_Award",
@@ -21642,7 +22920,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Structural_Welding_Occupational_Skills_Award",
@@ -21677,7 +22958,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Weld_Fabrication_Occupational_Skills_Award",
@@ -21712,7 +22996,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Gas_Metal_Arc_Welding_GMAW_Occupational_Skills_Award",
@@ -21742,7 +23029,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Gas_Tungsten_Arc_Welding_GTAW_Occupational_Skills_Award",
@@ -21772,7 +23062,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Geographic_Information_Systems_Technology_Occupational_Skills_Award",
@@ -21812,7 +23105,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Geographic_Information_Systems_Technician_Advanced_Technical_Certificate",
@@ -21857,7 +23152,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Geographic_Information_Systems_Technician_Certificate_C1",
@@ -21912,7 +23209,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Engine_Repair_and_Performance_Technician_Occupational_Skills_Award",
@@ -21947,7 +23246,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Chassis_Service_Technician_Occupational_Skills_Award",
@@ -21982,7 +23283,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Electronics_and_Climate_Controls_Technician_Occupational_Skills_Award",
@@ -22017,7 +23320,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Transmission_Service_Technician_Occupational_Skills_Award",
@@ -22057,7 +23363,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Diesel_Preventive_Maintenance_Advanced_Technician_Occupational_Skills_Award",
@@ -22092,7 +23400,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Diesel_Preventive_Maintenance_Technician_Occupational_Skills_Award",
@@ -22127,7 +23437,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield"
+      ]
     },
     {
       "program_id": "Basic_Firefighter_Certificate",
@@ -22197,7 +23509,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro"
+      ]
     },
     {
       "program_id": "Commercial_Electrical_Technology_Occupational_Skills_Award",
@@ -22232,7 +23547,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Theatrical_Master_Electrician_Certificate",
@@ -22307,7 +23625,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Theatrical_Sound_Board_Operator_Certificate",
@@ -22382,7 +23705,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Theatrical_Construction_Certificate",
@@ -22457,7 +23785,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "FAME_Manufacturing_Core_Exercises_Enhanced_Skills_Certificate",
@@ -22532,7 +23863,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Simulation_Operations_Specialist_Advanced_Technical_Certificate",
@@ -22572,7 +23908,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Extended_Reality_XR_Certificate",
@@ -22642,7 +23980,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Bachelor_of_Applied_Technology_in_Software_Development",
@@ -22842,7 +24182,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Blockchain_Occupational_Skills_Award",
@@ -22877,7 +24222,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Online / General Catalog"
+      ]
     },
     {
       "program_id": "Intro_to_Data_Analytics_Occupational_Skills_Award",
@@ -22912,7 +24259,12 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Interior_Design_Micro_Credential_Advanced_Technical_Certificate",
@@ -22947,7 +24299,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Interior_Design_Foundational_Certificate",
@@ -23007,7 +24361,9 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "El Centro"
+      ]
     },
     {
       "program_id": "Behavioral_Health_Care_Management_Advanced_Technical_Certificate",
@@ -23087,7 +24443,15 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Brookhaven",
+        "Cedar Valley",
+        "Eastfield",
+        "El Centro",
+        "Mountain View",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Associate_of_Arts_A_A",
@@ -23247,7 +24611,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "NTE_North_Texas_Electrical_Journeyman_Electrician_2_Occupational_Skills_Award",
@@ -23277,7 +24644,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "NTE_North_Texas_Electrical_Journeyman_Electrician_3_Occupational_Skills_Award",
@@ -23307,7 +24677,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "NTE_North_Texas_Electrical_Journeyman_Electrician_4_Occupational_Skills_Award",
@@ -23337,7 +24710,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "NTE_North_Texas_Electrical_Journeyman_Electrician_5_Occupational_Skills_Award",
@@ -23367,7 +24743,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Electrical_Construction_Certificate",
@@ -23447,7 +24826,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     },
     {
       "program_id": "Electrical_Construction_A_A_S",
@@ -23557,7 +24939,14 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View",
+        "Brookhaven",
+        "El Centro",
+        "North Lake",
+        "Richland"
+      ]
     },
     {
       "program_id": "Pre_Apprenticeship_Certificate_in_Electrical_Construction_Technology",
@@ -23602,7 +24991,10 @@
           ]
         }
       ],
-      "campuses": []
+      "campuses": [
+        "Eastfield",
+        "Mountain View"
+      ]
     }
   ],
   "continuing_education_programs": [
